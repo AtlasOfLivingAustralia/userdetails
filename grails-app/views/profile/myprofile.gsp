@@ -59,11 +59,13 @@
                     <g:message code="myprofile.your.alerts" />
                 </a>
             </li>
+            <g:if test="${grailsApplication.config.dataprofile.url}">
             <li>
                 <a href="${grailsApplication.config.dataprofile.url}" target="_blank">
                     <g:message code="myprofile.your.dataprofile" />
                 </a>
             </li>
+            </g:if>
             <li>
                 <g:link controller="registration" action="forgottenPassword">
                     <g:message code="userdetails.index.reset.password" />
