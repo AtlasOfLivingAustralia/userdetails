@@ -378,3 +378,9 @@ environments:
     production:
         dataSource:
             dbCreate: "validate"
+
+# Allow to disable some tools for non-ALA Portals
+myProfile:
+  useDigiVol: true
+  useSandbox: true
+  useBiocollect: true

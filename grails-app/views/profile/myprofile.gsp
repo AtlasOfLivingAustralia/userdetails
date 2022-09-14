@@ -118,19 +118,21 @@
                             <p><g:message code="myprofile.view.records.you.annotated.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <img src="${grailsApplication.config.getProperty('logo.sandbox')}" alt="">
+                    <g:if test="${Holders.config.getProperty('myProfile.useSandbox', Boolean, true)}">
+                        <div class="d-flex">
+                            <div class="image">
+                                <img src="${grailsApplication.config.getProperty('logo.sandbox')}" alt="">
+                            </div>
+                            <div class="content">
+                                <h4 id="records-uploaded">
+                                    <a href="${grailsApplication.config.getProperty('myData.url')}">
+                                        <g:message code="myprofile.your.datasets"/>
+                                    </a>
+                                </h4>
+                                <p><g:message code="myprofile.your.datasets.desc"/></p>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h4 id="records-uploaded">
-                                <a href="${grailsApplication.config.getProperty('myData.url')}">
-                                    <g:message code="myprofile.your.datasets" />
-                                </a>
-                            </h4>
-                            <p><g:message code="myprofile.your.datasets.desc" /></p>
-                        </div>
-                    </div>
+                    </g:if>
                 </div>
 
                 <!-- Column 3 -->
@@ -148,32 +150,36 @@
                             <p><g:message code="myprofile.your.alerts.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <img src="${grailsApplication.config.getProperty('logo.biocollect')}" alt="">
+                    <g:if test="${Holders.config.getProperty('myProfile.useBiocollect', Boolean, true)}">
+                        <div class="d-flex">
+                            <div class="image">
+                                <img src="${grailsApplication.config.getProperty('logo.biocollect')}" alt="">
+                            </div>
+                            <div class="content">
+                                <h4 id="my-biocollect">
+                                    <a href="${grailsApplication.config.getProperty('biocollect.url')}">
+                                        <g:message code="myprofile.biocollect" />
+                                    </a>
+                                </h4>
+                                <p><g:message code="myprofile.biocollect.desc" /></p>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h4 id="my-biocollect">
-                                <a href="${grailsApplication.config.getProperty('biocollect.url')}">
-                                    <g:message code="myprofile.biocollect" />
-                                </a>
-                            </h4>
-                            <p><g:message code="myprofile.biocollect.desc" /></p>
+                    </g:if>
+                    <g:if test="${Holders.config.getProperty('myProfile.useDigiVol', Boolean, true)}">
+                        <div class="d-flex">
+                            <div class="image">
+                                <img src="${grailsApplication.config.getProperty('logo.digivol')}" alt="">
+                            </div>
+                            <div class="content">
+                                <h4 id="record-a-sighting">
+                                    <a href="${grailsApplication.config.getProperty('volunteer.url')}">
+                                        <g:message code="myprofile.tasks.digivol" />
+                                    </a>
+                                </h4>
+                                <p><g:message code="myprofile.tasks.digivol.desc" /></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <img src="${grailsApplication.config.getProperty('logo.digivol')}" alt="">
-                        </div>
-                        <div class="content">
-                            <h4 id="record-a-sighting">
-                                <a href="${grailsApplication.config.getProperty('volunteer.url')}">
-                                    <g:message code="myprofile.tasks.digivol" />
-                                </a>
-                            </h4>
-                            <p><g:message code="myprofile.tasks.digivol.desc" /></p>
-                        </div>
-                    </div>
+                    </g:if>
                     <div class="d-flex">
                         <div class="image">
                             <img src="${grailsApplication.config.getProperty('logo.spatialportal')}" alt="">
@@ -190,8 +196,9 @@
                 </div>
             </div>
         </div>
-
-        <h3><g:message code="myprofile.external.site.linkages" /></h3>
+        <g:if test="${Holders.config.getProperty('oauth.providers.inaturalist.enabled', Boolean, false) || Holders.config.getProperty('oauth.providers.flickr.enabled', Boolean, true) }">
+            <h3><g:message code="myprofile.external.site.linkages" /></h3>
+        </g:if>
 
         <div id="external-linkages" class="row">
 
