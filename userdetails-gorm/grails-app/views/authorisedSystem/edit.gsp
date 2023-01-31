@@ -21,7 +21,7 @@
 		<g:set var="entityName" value="${message(code: 'authorisedSystem.label', default: 'AuthorisedSystem')}" />
 		<title><g:message code="default.edit.label" args="[entityName]" /></title>
 		<meta name="breadcrumbParent" content="${g.createLink(action:"list")},${g.message(code:"default.list.label", args:[entityName])}" />
-		<asset:stylesheet src="application.css" />
+		<asset:stylesheet src="applicationCss.css" />
 	</head>
 	<body>
 		<div class="row">

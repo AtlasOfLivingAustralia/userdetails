@@ -19,7 +19,7 @@
     <meta name="section" content="home"/>
     <title>User Administration | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
     <meta name="breadcrumbParent" content="${g.createLink(controller: 'profile')},My Profile" />
-    <asset:stylesheet src="application.css" />
+    <asset:stylesheet src="applicationCss.css" />
 </head>
 <body>
     <div class="row">

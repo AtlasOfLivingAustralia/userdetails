@@ -19,7 +19,7 @@
     <meta name="section" content="home"/>
     <title>Please check your email | ${grailsApplication.config.getProperty('skin.orgNameLong')} </title>
     <meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},Administration" />
-    <asset:stylesheet src="application.css" />
+    <asset:stylesheet src="applicationCss.css" />
 </head>
 <body>
 <div class="row">

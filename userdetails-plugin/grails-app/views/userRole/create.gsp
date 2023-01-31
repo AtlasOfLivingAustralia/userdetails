@@ -20,7 +20,7 @@
 		<meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}">
 		<g:set var="entityName" value="${message(code: 'userRole.label', default: 'UserRoleRecord')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
-		<asset:stylesheet src="application.css" />
+		<asset:stylesheet src="applicationCss.css" />
 		<meta name="breadcrumbParent" content="${createLink(controller:'user', action:'list')},UserRecord list" />
 	</head>
 	<body>

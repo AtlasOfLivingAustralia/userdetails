@@ -18,7 +18,7 @@
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}"/>
     <meta name="section" content="home"/>
     <title><g:message code="account.activated.created.title" /></title>
-    <asset:stylesheet src="application.css" />
+    <asset:stylesheet src="applicationCss.css" />
 </head>
 <body>
 <div class="row">

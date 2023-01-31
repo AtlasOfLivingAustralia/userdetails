@@ -13,6 +13,7 @@ branches:
     - epic/cognito/userServiceRefactor&PasswordReset
     - epic/cognito/develop
     - epic/cognito/cleanup-2
+    - epic/cognito/asset-pipeline-issue
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

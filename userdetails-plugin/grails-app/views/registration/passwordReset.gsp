@@ -18,7 +18,7 @@
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}"/>
     <meta name="section" content="home"/>
     <title><g:message code="password.reset.title" /></title>
-    <asset:stylesheet src="application.css" />
+    <asset:stylesheet src="applicationCss.css" />
 </head>
 <body>
 <asset:script type="text/javascript">

@@ -25,7 +25,7 @@
         <g:set var="title"><g:message code="create.account.title" /></g:set>
     </g:else>
     <title>${title}</title>
-    <asset:stylesheet src="application.css" />
+    <asset:stylesheet src="applicationCss.css" />
     <asset:stylesheet src="createAccount.css" />
     <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>

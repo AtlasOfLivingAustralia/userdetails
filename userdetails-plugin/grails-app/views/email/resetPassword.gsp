@@ -17,7 +17,7 @@
 <html>
   <head>
       <title>${emailTitle}</title>
-      <asset:stylesheet src="application.css" />
+      <asset:stylesheet src="applicationCss.css" />
       <style>
       body {
           font-family: 'Roboto';
