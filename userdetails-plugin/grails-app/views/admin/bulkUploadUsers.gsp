@@ -19,7 +19,7 @@
         <meta name="section" content="home"/>
         <g:set var="title">Bulk Load Users</g:set>
         <title>${title} | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
-        <asset:stylesheet src="applicationCss.css" />
+        <asset:stylesheet src="userdetails.css" />
     </head>
     <body>
         <g:if test="${flash.message}">

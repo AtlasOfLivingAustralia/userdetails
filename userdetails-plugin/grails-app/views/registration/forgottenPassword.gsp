@@ -21,7 +21,7 @@
     <g:if test="${currentUser}">
         <meta name="breadcrumbParent" content="${g.createLink(controller: 'profile')},My Profile" />
     </g:if>
-    <asset:stylesheet src="applicationCss.css" />
+    <asset:stylesheet src="userdetails.css" />
     <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </g:if>

@@ -20,7 +20,7 @@
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}"/>
     <meta name="breadcrumb" content="${message(code:"my.profile")}" />
     <title><g:message code="userdetails.my.profile" /> | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
-    <asset:stylesheet src="applicationCss.css" />
+    <asset:stylesheet src="userdetails.css" />
 </head>
 <body>
     <div id="content">

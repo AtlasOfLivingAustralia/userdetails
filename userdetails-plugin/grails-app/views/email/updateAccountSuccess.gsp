@@ -17,7 +17,7 @@
 <html>
   <head>
     <title><g:message code="update.account.success.title" /></title>
-    <asset:stylesheet src="applicationCss.css" />
+    <asset:stylesheet src="userdetails.css" />
     <style>
     body {
       font-family: 'Roboto';

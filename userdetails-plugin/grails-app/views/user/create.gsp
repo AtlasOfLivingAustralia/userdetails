@@ -21,7 +21,7 @@
     <g:set var="entityName" value="${message(code: 'user.label', default: 'UserRecord')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
     <meta name="breadcrumbParent" content="${createLink(controller:'user', action:'list')},UserRecord List" />
-    <asset:stylesheet src="applicationCss.css" />
+    <asset:stylesheet src="userdetails.css" />
     <asset:stylesheet src="createAccount.css" />
 </head>
 

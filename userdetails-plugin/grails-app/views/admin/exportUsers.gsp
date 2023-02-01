@@ -19,7 +19,7 @@
         <meta name="section" content="home"/>
         <g:set var="title">Export Users to CSV</g:set>
         <title>${title} | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
-        <asset:stylesheet src="applicationCss.css" />
+        <asset:stylesheet src="userdetails.css" />
     </head>
     <body>
         <g:if test="${flash.message}">

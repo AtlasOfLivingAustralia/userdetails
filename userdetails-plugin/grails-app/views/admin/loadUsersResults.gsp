@@ -20,7 +20,7 @@
         <meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},User Details Administration" />
         <g:set var="title">Bulk Load Users Results |  ${grailsApplication.config.getProperty('skin.orgNameLong')} </g:set>
         <title>${title}</title>
-        <asset:stylesheet src="applicationCss.css" />
+        <asset:stylesheet src="userdetails.css" />
     </head>
     <body>
 
