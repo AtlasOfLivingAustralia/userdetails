@@ -89,7 +89,7 @@ class PropertyController extends BaseController {
     )
     @Path("getProperty")
     @Produces("application/json")
-    @PreAuthorise(requiredScope = 'users/read')
+    @PreAuthorise(requiredScope = 'users/read', requiredRole = '')
     def getProperty() {
         String name = params.name
         Long alaId = params.long('alaId')
@@ -166,7 +166,7 @@ class PropertyController extends BaseController {
     )
     @Path("saveProperty")
     @Produces("application/json")
-    @PreAuthorise(requiredScope = 'users/write')
+    @PreAuthorise(requiredScope = 'users/write', requiredRole = '')
     def saveProperty(){
         String name = params.name;
         String value = params.value;

@@ -6,7 +6,7 @@ branches:
   only:
     - dev
     - master
-    - hotfix
+    - /^hotfix.*$/
     - grails3
     - experimental_jwt
     - /^feature.*$/
