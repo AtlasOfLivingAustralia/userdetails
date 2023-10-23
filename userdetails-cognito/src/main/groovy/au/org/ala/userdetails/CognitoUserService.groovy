@@ -862,7 +862,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     def addCustomUserProperty(UserRecord user, String name, String value){
         Collection<AttributeType> userAttributes = new ArrayList<>()
 
-        userAttributes.add(new AttributeType().withName('custom:' + name).withValue(value))
+        userAttributes.add(new AttributeType().withName('custom:' + name).withValue(value ?: ""))
 
         AdminUpdateUserAttributesRequest updateUserRequest =
                 new AdminUpdateUserAttributesRequest()
