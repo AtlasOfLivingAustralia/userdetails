@@ -63,6 +63,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     AWSCognitoIdentityProvider cognitoIdp
     String poolId
     JwtProperties jwtProperties
+    List<String> socialLoginGroups
 
     @Value('${attributes.affiliations.enabled:false}')
     boolean affiliationsEnabled = false
@@ -119,7 +120,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         params.findAll { customAttrs.contains(it.key) }
                 .each { userAttributes.add(new AttributeType().withName("custom:${it.key}").withValue(it.value)) }
 
-        if (affiliationsEnabled) {
+        if (affiliationsEnabled && params.get('affiliation')) {
             userAttributes.add(new AttributeType().withName("custom:affiliation").withValue(params.get('affiliation', '')))
         }
 
@@ -314,7 +315,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         params.findAll {customAttrs.contains(it.key) }
                 .each {userAttributes.add(new AttributeType().withName("custom:${it.key}").withValue(it.value as String)) }
 
-        if (affiliationsEnabled) {
+        if (affiliationsEnabled && params.get('affiliation')) {
             userAttributes.add(new AttributeType().withName("custom:affiliation").withValue(params.get('affiliation', '')))
         }
         request.userAttributes = userAttributes
@@ -537,7 +538,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         return false
     }
 
-    private GroupType getCognitoGroup(String roleName) {
+    private GroupType getCognitoGroup(String roleName, boolean addNewRole = false) {
 
         String cognitoRoleName = getCognitoRoleName(roleName)
 
@@ -549,22 +550,24 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
             )
             return isSuccessful(getGroupResult) ? getGroupResult.group : null
         }
-        catch (ResourceNotFoundException e){
+        catch (ResourceNotFoundException e) {
 
-            def roleInstance = new RoleRecord(role: cognitoRoleName, description: cognitoRoleName)
-            def role = addRole(roleInstance)
-            if(role) {
-                return cognitoRoleName
+            if (addNewRole) {
+                def roleInstance = new RoleRecord(role: cognitoRoleName, description: cognitoRoleName)
+                def role = addRole(roleInstance)
+                if (role) {
+                    return cognitoRoleName
+                } else {
+                    return null
+                }
             }
-            else {
-                return null
-            }
+            return null
         }
     }
 
     private boolean checkGroupExists(String roleName) {
-        def group = getCognitoGroup(roleName)
-        return group?.groupName == roleName
+        def group = getCognitoGroup(roleName, false)
+        return group?.groupName == getCognitoRoleName(roleName)
     }
 
     @Override
@@ -735,7 +738,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         //max value for pagination in cognito is 60
         def max = Math.min(params.int('max', 5), 60)
         if (role) {
-            def group = getCognitoGroup(role)
+            def group = getCognitoGroup(role, false)
             if (group) {
                 String cognitoRoleName = getCognitoRoleName(role)
                 def listUsersInGroupResult = cognitoIdp.listUsersInGroup(
@@ -874,6 +877,11 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     }
 
     String getCognitoRoleName(String role) {
+        List socialLoginRoles = socialLoginGroups.collect { jwtProperties.getRolePrefix() + it.toUpperCase()}
+
+        if(socialLoginRoles.contains(role)) {
+            return socialLoginGroups.find{r -> role.contains(r.toUpperCase())}
+        }
         return role.contains(jwtProperties.getRolePrefix()) ? role.split(jwtProperties.getRolePrefix())[1].toLowerCase() : role
     }
 

@@ -32,7 +32,7 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
 
     @Override
     def list(GrailsParameterMap params) {
-        def list, fullList = []
+        def list = []
         def count = 0
         def query = params.q as String
         def reload = params.getBoolean("reload", false)
@@ -43,17 +43,18 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
                 log.error "Unable to reload configuration. Please correct problem and try again: ${e}", e
             }
         }
+
+        def fullList = grailsApplication.config.getProperty('authorised.systems', List, [])
+                .collect{ it as AuthorisedSystemRecord }
+        def max = Math.min(params.max ?: 10, fullList.size())
+        def offset = (params.offset?: 0) as int
+
         if (query) {
-            def records = grailsApplication.config.getProperty('authorised.systems', List, [])
-                    .collect{ it as AuthorisedSystemRecord }
-            list = records.findAll{ it.host.contains(query) || it.description.contains(query)}
-            count = records.size()
+            def filteredList = fullList.findAll{ it.host.contains(query) || it.description.contains(query)}
+            list = filteredList.subList(offset, offset + max <= filteredList.size() ? offset + max : filteredList.size())
+            count = filteredList.size()
 
         } else {
-            fullList = grailsApplication.config.getProperty('authorised.systems', List, [])
-                    .collect{ it as AuthorisedSystemRecord }
-            def max = Math.min(params.max ?: 10, fullList.size())
-            def offset = (params.offset?: 0) as int
             list = fullList.subList(offset, offset + max <= fullList.size() ? offset + max : fullList.size())
             count = fullList.size()
         }

@@ -103,6 +103,7 @@
 
 <hr/>
 
+<g:if test="${edit}">
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'userRoles', 'error')} ">
     <label for="userRoles">
         <g:message code="user.userRoles.label" default=" Roles"/>
@@ -130,6 +131,7 @@
                     params="['user.id': userInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'userRole.label', default: 'UserRoleRecord')])}</g:link>
 
 </div>
+</g:if>
 
 </div>
 

@@ -50,6 +50,14 @@ class UserController {
     }
 
     def save() {
+        if(!params.email){
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false, error:"Email is mandatory"])
+            return
+        }
+        else if(userService.isEmailInUse(params.email)){
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false, error:"Email is already in use"])
+            return
+        }
         IUser user = userService.registerUser(params)
 
         if (!user) {

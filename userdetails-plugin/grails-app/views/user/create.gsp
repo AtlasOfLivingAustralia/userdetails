@@ -33,6 +33,9 @@
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
+            <g:if test="${error}">
+                <div class="alert alert-danger" role="alert">${error}</div>
+            </g:if>
             <g:hasErrors bean="${userInstance}">
                 <ul class="errors" role="alert">
                     <g:eachError bean="${userInstance}" var="error">
@@ -43,7 +46,7 @@
             </g:hasErrors>
             <g:form action="save">
                 <fieldset class="form">
-                    <g:render template="form"/>
+                    <g:render template="form" model="[edit: false]"/>
                 </fieldset>
                 <fieldset class="buttons">
                     <g:submitButton name="create" class="btn btn-primary"
