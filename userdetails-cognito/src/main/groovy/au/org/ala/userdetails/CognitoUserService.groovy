@@ -59,6 +59,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     EmailService emailService
     TokenService tokenService
+    LocationService locationService
 
     AWSCognitoIdentityProvider cognitoIdp
     String poolId
@@ -461,7 +462,24 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     @Override
     List<String[]> countByProfileAttribute(String s, Date date, Locale locale) {
-        return null
+        def token
+        def counts = [:]
+        def results = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))
+
+        while (results) {
+            def users = results.getUsers()
+            token = results.getPaginationToken()
+
+            users.each {
+                def value = it.attributes.find { it.name == "custom.$s" }?.value
+                counts[value ?: ''] = ((counts[value ?: '']) ?: 0)++
+            }
+
+            results = token ? cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token)) : null
+        }
+        def affiliations = locationService.affiliationSurvey(locale)
+
+        return counts.collect { [affiliations[it.key] ?: it.key, it.value.toString()].toArray(new String[0]) }
     }
 
     @Override
