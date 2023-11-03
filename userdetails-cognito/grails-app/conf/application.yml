@@ -184,6 +184,11 @@ environments:
             cas:
                 appServerName: "https://auth.ala.org.au"
 
+attributes:
+  affiliations:
+    enabled: true
+    attribute-name: 'custom:affiliation'
+
 cognito:
   mapping:
     email: 'email'

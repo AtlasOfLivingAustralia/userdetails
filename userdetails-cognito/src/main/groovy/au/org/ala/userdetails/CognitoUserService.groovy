@@ -59,6 +59,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     EmailService emailService
     TokenService tokenService
+    LocationService locationService
 
     AWSCognitoIdentityProvider cognitoIdp
     String poolId
@@ -461,7 +462,54 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     @Override
     List<String[]> countByProfileAttribute(String s, Date date, Locale locale) {
-        return null
+        def token
+        def counts = [:]
+        def results = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))
+
+        while (results) {
+            def users = results.getUsers()
+            token = results.getPaginationToken()
+
+            users.each {
+                def value = it.attributes.find { it.name == "custom.$s" }?.value
+                counts[value ?: ''] = ((counts[value ?: '']) ?: 0)++
+            }
+
+            results = token ? cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token)) : null
+        }
+        def affiliations = locationService.affiliationSurvey(locale)
+
+        return counts.collect { [affiliations[it.key] ?: it.key, it.value.toString()].toArray(new String[0]) }
+    }
+
+    @Override
+    List<String[]> emailList(Date startDate, Date endDate) {
+        // Initialize list to hold all filtered users across paginated calls
+        def users = new ArrayList<UserType>()
+
+        // Pagination logic
+        def token = null
+        while (true) {
+            def response
+            if (token) {
+                response = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token))
+            } else {
+                response = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))
+            }
+
+            // Filter users based on creation or last modified date and add to filtered_users list
+            users.addAll(response.getUsers().findAll {
+                (it.userCreateDate.after(startDate) && it.userCreateDate.before(endDate)) ||
+                (it.userLastModifiedDate.after(startDate) && it.userLastModifiedDate.before(endDate))
+            })
+
+            token = response.paginationToken
+            if (!token) {
+                break
+            }
+        }
+
+        return users.collect { [it.attributes.find { it.name == 'email' }.value, it.userCreateDate, it.userLastModifiedDate].toArray(new String[0]) }
     }
 
     @Override

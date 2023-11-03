@@ -21,6 +21,7 @@ import com.opencsv.CSVWriterBuilder
 import com.opencsv.RFC4180ParserBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -32,6 +33,9 @@ class AdminController {
     def exportService
     def profileService
     def authorisedSystemService
+
+    @Value('${attributes.affiliations.attribute-name:affiliation}')
+    String affiliationAttribute = 'affiliation'
 
     @Autowired
     @Qualifier('userService')
@@ -153,13 +157,28 @@ class AdminController {
     }
 
     def surveyResults() {
-        def results = userService.countByProfileAttribute('affiliation', null, request.locale)
+        def results = userService.countByProfileAttribute(affiliationAttribute, null, request.locale)
+        respondWithCsv(results, "user-survey-${new Date()}.csv")
+    }
+
+    def emailListForm() {
+
+    }
+
+    def emailList() {
+        def startDate = params.date('start_date')
+        def endDate = params.date('end_date')
+        def results = userService.emailList(startDate, endDate)
+        respondWithCsv(results, "email-list-$startDate-to-${endDate}.csv")
+    }
+
+    private def respondWithCsv(List<String[]> results, String filename) {
         def csvWriter = new CSVWriterBuilder(response.writer)
                 .withParser(new RFC4180ParserBuilder().build())
                 .build()
         response.status = 200
         response.contentType = 'text/csv'
-        response.setHeader('Content-Disposition', "attachment; filename=user-survey-${new Date()}.csv")
+        response.setHeader('Content-Disposition', "attachment; filename=$filename")
         csvWriter.writeAll(results)
         csvWriter.flush()
     }
