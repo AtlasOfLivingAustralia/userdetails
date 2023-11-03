@@ -465,6 +465,36 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     }
 
     @Override
+    List<String[]> emailList(Date startDate, Date endDate) {
+        // Initialize list to hold all filtered users across paginated calls
+        def users = new ArrayList<UserType>()
+
+        // Pagination logic
+        def token = null
+        while (true) {
+            def response
+            if (token) {
+                response = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token))
+            } else {
+                response = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))
+            }
+
+            // Filter users based on creation or last modified date and add to filtered_users list
+            users.addAll(response.getUsers().findAll {
+                (it.userCreateDate.after(startDate) && it.userCreateDate.before(endDate)) ||
+                (it.userLastModifiedDate.after(startDate) && it.userLastModifiedDate.before(endDate))
+            })
+
+            token = response.paginationToken
+            if (!token) {
+                break
+            }
+        }
+
+        return users.collect { [it.attributes.find { it.name == 'email' }.value, it.userCreateDate, it.userLastModifiedDate].toArray(new String[0]) }
+    }
+
+    @Override
     Collection<RoleRecord> listRoles() {
         ListGroupsResult result = cognitoIdp.listGroups(
             new ListGroupsRequest()

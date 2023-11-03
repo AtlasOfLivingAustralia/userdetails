@@ -117,6 +117,8 @@ interface IUserService<U extends IUser<? extends Serializable>, P extends IUserP
 
     List<String[]> countByProfileAttribute(String s, Date date, Locale locale)
 
+    List<String[]> emailList(Date startDate, Date endDate)
+
     /***
      * This method can be used to get users by username
      * The following paging params are always supported:

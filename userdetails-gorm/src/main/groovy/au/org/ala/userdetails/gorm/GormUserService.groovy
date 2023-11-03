@@ -520,6 +520,30 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
     }
 
     @Override
+    List<String[]> emailList(Date startDate, Date endDate) {
+        def results = User.withCriteria {
+            or {
+                and {
+                    gt 'dateCreated' startDate
+                    lt 'dateCreated' endDate
+                }
+                and {
+                    gt 'lastUpdated' startDate
+                    lt 'lastUpdated' endDate
+                }
+            }
+            projections {
+                property 'email'
+                property 'dateCreated'
+                property 'lastUpdated'
+            }
+        }
+        return results.collect {
+            [it[0], it[1], it[2]].toArray(new String[0])
+        }
+    }
+
+    @Override
     Collection<Role> listRoles() {
         Role.list()
     }
