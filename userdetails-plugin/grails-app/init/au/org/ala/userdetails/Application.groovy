@@ -15,25 +15,10 @@
 
 package au.org.ala.userdetails
 
-import au.org.ala.recaptcha.RecaptchaClient
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsAutoConfiguration
 import grails.plugins.metadata.PluginSource
 import groovy.util.logging.Slf4j
-import okhttp3.OkHttpClient
-import org.springframework.boot.actuate.mongo.MongoHealthIndicator
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
-import org.springframework.boot.autoconfigure.mongo.MongoProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.session.data.mongo.config.annotation.web.http.EnableMongoHttpSession
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Slf4j
 @PluginSource

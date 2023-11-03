@@ -198,3 +198,11 @@ account:
   MFAenabled: true
 authorised-systems:
   edit-enabled: false
+oauth.support.dynamic.client.defaultCallbackURLs: ["http://localhost:8080", "http://localhost:8080/", "http://localhost:8080/*", "https://tokens.ala.org.au/login", "https://tokens.test.ala.org.au/login", "https://tokens-cognito-support.dev.ala.org.au/login"]
+oauth.support.dynamic.client.registration: true
+oauth.support.dynamic.client.scopes: ["email", "openid", "profile", "ala/attrs" , "ala/roles"]
+oauth.support.dynamic.client.galah.callbackURLs: ["http://localhost:1410", "http://localhost:1410/", "http://localhost:1410/*"]
+oauth.support.dynamic.client.postmanExample: https://www:postman.com/sushantcsiro/workspace/ala-common-apis/request/23926959-e63a1ccd-63ab-45c2-8de3-a856fd29ce57
+tokenApp.url: https://tokens-cognito-support.dev.ala.org.au
+oauth.support.dynamic.client.supportedIdentityProviders: ["COGNITO", "Facebook", "Google", "AAF", "SignInWithApple"]
+oauth.support.dynamic.client.authFlows: ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH"]

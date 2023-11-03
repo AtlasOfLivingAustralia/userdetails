@@ -32,7 +32,7 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
 
     @Override
     def list(GrailsParameterMap params) {
-        def list = []
+        def list, fullList = []
         def count = 0
         def query = params.q as String
         def reload = params.getBoolean("reload", false)
@@ -50,9 +50,12 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
             count = records.size()
 
         } else {
-            list = grailsApplication.config.getProperty('authorised.systems', List, [])
+            fullList = grailsApplication.config.getProperty('authorised.systems', List, [])
                     .collect{ it as AuthorisedSystemRecord }
-            count = list.size()
+            def max = Math.min(params.max ?: 10, fullList.size())
+            def offset = (params.offset?: 0) as int
+            list = fullList.subList(offset, offset + max <= fullList.size() ? offset + max : fullList.size())
+            count = fullList.size()
         }
 
         return [list: list, count: count]

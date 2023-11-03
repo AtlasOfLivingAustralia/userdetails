@@ -17,6 +17,7 @@ package au.org.ala.userdetails
 
 import au.org.ala.auth.PreAuthorise
 import au.org.ala.users.IUser
+import au.org.ala.ws.security.JwtProperties
 import grails.gorm.transactions.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -32,6 +33,8 @@ class UserController {
     @Autowired
     @Qualifier('userService')
     IUserService userService
+    @Autowired
+    JwtProperties jwtProperties
 
     def index() {
         redirect(action: "list", params: params)
@@ -43,14 +46,14 @@ class UserController {
     }
 
     def create() {
-        [userInstance: userService.newUser(params)]
+        [userInstance: userService.newUser(params), visibleMFA: false]
     }
 
     def save() {
         IUser user = userService.registerUser(params)
 
         if (!user) {
-            render(view: "create", model: [userInstance: userService.newUser(params)])
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false])
             return
         }
         userService.sendAccountActivation(user)
@@ -81,7 +84,7 @@ class UserController {
             redirect(action: "list")
             return
         }
-        [userInstance: userInstance, props:userInstance.propsAsMap()]
+        [userInstance: userInstance, props:userInstance.propsAsMap(), visibleMFA: isMFAVisible(userInstance)]
     }
 
     def update(String id, Long version) {
@@ -97,7 +100,7 @@ class UserController {
         def success = userService.adminUpdateUser(id, params, request.locale)
 
         if (!success) {
-            render(view: "edit", model: [ userInstance: userInstance ])
+            render(view: "edit", model: [ userInstance: userInstance, visibleMFA: isMFAVisible(userInstance) ])
             return
         }
 
@@ -130,5 +133,14 @@ class UserController {
     def disableMfa() {
         userService.enableMfa(params.userId, false)
         redirect(action: "edit", id: params.userId)
+    }
+
+    private isMFAVisible(userInstance) {
+        boolean isMFAEnabled = grailsApplication.config.getProperty('account.MFAenabled', Boolean, false)
+        List MFAUnsupportedRoles = grailsApplication.config.getProperty('users.delegated-group-names', List, []).collect { jwtProperties.getRolePrefix() + it.toUpperCase()}
+        boolean hasMFAUnsupportedRoles = userInstance.roles.stream().anyMatch(userRoleRecord ->
+                MFAUnsupportedRoles.contains(userRoleRecord.role.role))
+
+        return isMFAEnabled && !hasMFAUnsupportedRoles
     }
 }

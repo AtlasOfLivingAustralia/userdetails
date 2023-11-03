@@ -146,3 +146,61 @@ body #main {
     text-align: center;
     padding-top: 10px;
 }
+
+#callback-list {
+    padding-bottom: 0.5em;
+}
+
+.tag {
+    font-size: 14px;
+    padding: .3em .4em .4em;
+    margin: 0 .1em;
+}
+.tag a {
+    color: #bbb;
+    cursor: pointer;
+    opacity: 0.6;
+    margin: 0 -0.4em 0 .3em;
+    padding: .1em .4em;
+}
+.tag a:hover {
+    opacity: 1.0
+}
+/*.tag .remove {*/
+/*    vertical-align: bottom;*/
+/*    top: 0;*/
+/*}*/
+.tag a i {
+    vertical-align: initial;
+}
+/*.tag a .glyphicon-white {*/
+/*    color: #fff;*/
+/*    margin-bottom: 2px;*/
+/*}*/
+
+/* plus glyph for showing collapsible panels */
+.panel-heading .accordion-plus-toggle:before {
+    font-family: FontAwesome;
+    content: "\f068";
+    float: right;
+}
+
+.panel-heading .accordion-plus-toggle.collapsed:before {
+    content: "\f067";
+}
+
+/* arrow glyph for showing collapsible panels */
+.panel-heading .accordion-arrow-toggle:before {
+    font-family: FontAwesome;
+    content: "\f078";
+    float: right;
+}
+
+.panel-heading .accordion-arrow-toggle.collapsed:before {
+    content: "\f054";
+}
+
+/* sets the link to the width of the entire panel title */
+.panel-title > a {
+    display: block;
+}

@@ -22,6 +22,7 @@ import au.org.ala.userdetails.IUserService
 import au.org.ala.userdetails.PasswordService
 import au.org.ala.userdetails.RegistrationController
 import au.org.ala.users.IUser
+import au.org.ala.ws.security.JwtProperties
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.grails.web.servlet.mvc.SynchronizerTokensHolder
@@ -38,6 +39,12 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
     def recaptchaClient = Mock(RecaptchaClient)
 
     void setup() {
+        defineBeans {
+            jwtProperties(JwtProperties) {
+                enabled = true
+                fallbackToLegacyBehaviour = true
+            }
+        }
         controller.passwordService = passwordService
         controller.userService = userService
         controller.emailService = emailService

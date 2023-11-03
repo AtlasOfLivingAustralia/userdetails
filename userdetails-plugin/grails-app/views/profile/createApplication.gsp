@@ -1,5 +1,5 @@
 %{--
-  - Copyright (C) 2022 Atlas of Living Australia
+  - Copyright (C) 2023 Atlas of Living Australia
   - All Rights Reserved.
   -
   - The contents of this file are subject to the Mozilla Public
@@ -12,15 +12,14 @@
   - implied. See the License for the specific language governing
   - rights and limitations under the License.
   --}%
-
-<%@ page import="au.org.ala.users.UserRecord" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}">
-    <g:set var="entityName" value="${message(code: 'user.label', default: 'User')}"/>
+    <g:set var="entityName" value="${message(code: 'application.label', default: 'Application')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
-    <meta name="breadcrumbParent" content="${createLink(controller:'user', action:'list')},UserRecord List" />
+    <meta name="breadcrumbParent" content="${createLink(controller:'profile', action:'index')},My Profile, ${createLink(controller:'profile', action:'applications', fragment: 'applications')},My Applications" />
+    <meta name="fluidLayout" content="${false}" />
     <asset:stylesheet src="userdetails.css" />
     <asset:stylesheet src="createAccount.css" />
 </head>
@@ -33,17 +32,17 @@
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${userInstance}">
-                <ul class="errors" role="alert">
-                    <g:eachError bean="${userInstance}" var="error">
-                        <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message
-                                error="${error}"/></li>
-                    </g:eachError>
-                </ul>
-            </g:hasErrors>
-            <g:form action="save">
+%{--            <g:hasErrors bean="${userInstance}">--}%
+%{--                <ul class="errors" role="alert">--}%
+%{--                    <g:eachError bean="${userInstance}" var="error">--}%
+%{--                        <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message--}%
+%{--                                error="${error}"/></li>--}%
+%{--                    </g:eachError>--}%
+%{--                </ul>--}%
+%{--            </g:hasErrors>--}%
+            <g:form action="generateClient">
                 <fieldset class="form">
-                    <g:render template="form"/>
+                    <g:render template="applicationForm"/>
                 </fieldset>
                 <fieldset class="buttons">
                     <g:submitButton name="create" class="btn btn-primary"
@@ -53,11 +52,5 @@
         </div>
     </div>
 </div>
-<asset:javascript src="createAccount.js"/>
-<asset:script type="text/javascript">
-    $(function() {
-        userdetails.initCountrySelect('.chosen-select', '#country', '#state', "${g.createLink(uri: '/ws/registration/states')}");
-    });
-</asset:script>
 </body>
 </html>

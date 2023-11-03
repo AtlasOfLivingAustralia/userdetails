@@ -102,9 +102,10 @@ dependencies {
 
     // regular JAR dependencies
 
-    implementation 'com.amazonaws:aws-java-sdk-cognitoidentity:1.12.279'
-    implementation 'com.amazonaws:aws-java-sdk-cognitoidp:1.12.279'
-    implementation 'com.amazonaws:aws-java-sdk-cognitosync:1.12.279'
+    implementation 'com.amazonaws:aws-java-sdk-cognitoidentity:1.12.447'
+    implementation 'com.amazonaws:aws-java-sdk-cognitoidp:1.12.447'
+    implementation 'com.amazonaws:aws-java-sdk-cognitosync:1.12.447'
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.447'
 
 }
 

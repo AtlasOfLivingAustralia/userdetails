@@ -18,14 +18,26 @@ package au.org.ala.userdetails
 import au.org.ala.auth.UpdatePasswordCommand
 import au.org.ala.recaptcha.RecaptchaClient
 import au.org.ala.users.IUser
+import au.org.ala.ws.security.JwtProperties
 import au.org.ala.ws.service.WebService
 import grails.converters.JSON
-
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.passay.RuleResult
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.validation.Errors
+
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 /**
  * Controller that handles the interactions with general public.
@@ -48,6 +60,8 @@ class RegistrationController {
     RecaptchaClient recaptchaClient
     WebService webService
     def messageSource
+    @Autowired
+    JwtProperties jwtProperties
 
     @Value('${userdetails.features.requirePasswordForUserUpdate:true}')
     boolean requirePasswordForUserUpdate
@@ -58,13 +72,14 @@ class RegistrationController {
 
     def createAccount() {
         render(view: 'createAccount', model: [
-                passwordPolicy: passwordService.buildPasswordPolicy(),
+                passwordPolicy: passwordService.buildPasswordPolicy(), visibleMFA: false
         ])
     }
 
     def editAccount() {
         def user = userService.currentUser
-        render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy()])
+        render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy(),
+                visibleMFA: isMFAVisible(user)])
     }
 
     def passwordReset() {
@@ -236,7 +251,8 @@ class RegistrationController {
                 def isCorrectPassword = passwordService.checkUserPassword(user, params.confirmUserPassword)
                 if (!isCorrectPassword) {
                     flash.message = 'Incorrect password. Could not update account details. Please try again.'
-                    render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy()])
+                    render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy(),
+                                                          visibleMFA: isMFAVisible(user)])
                     return
                 }
             }
@@ -269,13 +285,15 @@ class RegistrationController {
                     if (!verifyResponse.success) {
                         log.warn('Recaptcha verify reported an error: {}', verifyResponse)
                         flash.message = 'There was an error with the captcha, please try again'
-                        render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy()])
+                        render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
+                                                              visibleMFA: false])
                         return
                     }
                 } else {
                     log.warn("error from recaptcha {}", response)
                     flash.message = 'There was an error with the captcha, please try again'
-                    render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy()])
+                    render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
+                                                          visibleMFA: false])
                     return
                 }
             }
@@ -284,14 +302,16 @@ class RegistrationController {
             if (!paramsEmail || userService.isEmailInUse(paramsEmail)) {
                 def inactiveUser = !userService.isActive(paramsEmail)
                 def lockedUser = userService.isLocked(paramsEmail)
-                render(view: 'createAccount', model: [edit: false, user: params, props: params, alreadyRegistered: true, inactiveUser: inactiveUser, lockedUser: lockedUser, passwordPolicy: passwordService.buildPasswordPolicy()])
+                render(view: 'createAccount', model: [edit: false, user: params, props: params, alreadyRegistered: true, inactiveUser: inactiveUser,
+                                                      lockedUser: lockedUser, passwordPolicy: passwordService.buildPasswordPolicy(),visibleMFA: false])
             } else {
 
                 def passwordValidation = passwordService.validatePassword(paramsEmail, paramsPassword)
                 if (!passwordValidation.valid) {
                     log.warn("The password for user name '${paramsEmail}' did not meet the validation criteria '${passwordValidation}'")
                     flash.message = "The selected password does not meet the password policy. Please try again with a different password. ${buildErrorMessages(passwordValidation)}"
-                    render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy()])
+                    render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
+                                                          visibleMFA: false])
                     return
                 }
 
@@ -351,11 +371,61 @@ class RegistrationController {
         }
     }
 
+    @Operation(
+            method = "GET",
+            tags = "registration",
+            summary = "Get list of registrable countries",
+            operationId = "countries",
+            description = "Get a list of registrable countries",
+            parameters = [],
+            responses = [
+                    @ApiResponse(
+                            description = "Get a list of countries",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = Map))
+                                    )
+                            ]
+                    )
+            ]
+    )
+    @Path("/ws/registration/countries.json")
+    @Produces("application/json")
     def countries() {
         Map locations = locationService.getStatesAndCountries()
         respond locations.countries
     }
-
+    @Operation(
+            method = "GET",
+            tags = "registration",
+            summary = "Get list of registrable states",
+            operationId = "states",
+            description = "Get a list of registrable states, optionally for a specified country",
+            parameters = [
+                    @Parameter(
+                            name = "country",
+                            in = QUERY,
+                            description = "Country to return states for - specified by ISO country code e.g AU, NZ etc.",
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Get a list of states",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = Map))
+                                    )
+                            ]
+                    )
+            ]
+    )
+    @Path("/ws/registration/states.json")
+    @Produces("application/json")
     def states(String country) {
         Map locations = locationService.getStatesAndCountries()
         if (country)
@@ -415,5 +485,14 @@ class RegistrationController {
             }
         }
         return results.unique().sort().join(' ')
+    }
+
+    private isMFAVisible(userInstance) {
+        boolean isMFAEnabled = grailsApplication.config.getProperty('account.MFAenabled', Boolean, false)
+        List MFAUnsupportedRoles = grailsApplication.config.getProperty('users.delegated-group-names', List, []).collect { jwtProperties.getRolePrefix() + it.toUpperCase()}
+        boolean hasMFAUnsupportedRoles = userInstance.roles.stream().anyMatch(userRoleRecord ->
+                MFAUnsupportedRoles.contains(userRoleRecord.role.role))
+
+        return isMFAEnabled && !hasMFAUnsupportedRoles
     }
 }

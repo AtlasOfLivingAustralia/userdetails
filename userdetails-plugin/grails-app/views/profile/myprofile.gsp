@@ -27,7 +27,7 @@
         <div>
             <div class="row">
                 <div class="col-lg-12">
-                    <h1><g:message code="myprofile.hello" args="[user.firstName]" /></h1>
+                    <h1><g:message code="myprofile.hello" args="[user.firstName ?: '']"/></h1>
                 </div>
             </div>
             <div class="row">
@@ -75,6 +75,19 @@
                             </div>
                         </div>
                     </g:if>
+                    <div class="d-flex">
+                        <div class="image">
+                            <i class="glyphicon glyphicon-list-alt"></i>
+                        </div>
+                        <div class="content">
+                            <h4 id="myClientAndApikey">
+                                <g:link controller="profile" action="applications">
+                                    <g:message code="myprofile.myClientAndApikey" />
+                                </g:link>
+                            </h4>
+                            <p><g:message code="myprofile.myClientAndApikey.desc" /></p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Column 2 -->

@@ -24,7 +24,6 @@ import com.amazonaws.services.cognitoidp.model.AdminSetUserMFAPreferenceRequest
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest
 import com.amazonaws.services.cognitoidp.model.AssociateSoftwareTokenRequest
 import com.amazonaws.services.cognitoidp.model.AttributeType
-import com.amazonaws.services.cognitoidp.model.CreateGroupResult
 import com.amazonaws.services.cognitoidp.model.DescribeUserPoolRequest
 import com.amazonaws.services.cognitoidp.model.CreateGroupRequest
 import com.amazonaws.services.cognitoidp.model.GetGroupRequest
@@ -71,9 +70,12 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     @Override
     UserRecord newUser(GrailsParameterMap params) {
-        return params ? new UserRecord(params) : new UserRecord()
+        UserRecord newUser = new UserRecord()
+        newUser.setProperties(params)
+        return newUser
     }
 
+    @Override
     RoleRecord newRole(GrailsParameterMap params) {
         return params ? new RoleRecord(role: params.role, description: params.description) : new RoleRecord()
     }
@@ -116,6 +118,10 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
         params.findAll { customAttrs.contains(it.key) }
                 .each { userAttributes.add(new AttributeType().withName("custom:${it.key}").withValue(it.value)) }
+
+        if (affiliationsEnabled) {
+            userAttributes.add(new AttributeType().withName("custom:affiliation").withValue(params.get('affiliation', '')))
+        }
 
         AdminUpdateUserAttributesRequest request =
                 new AdminUpdateUserAttributesRequest()
@@ -308,6 +314,9 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         params.findAll {customAttrs.contains(it.key) }
                 .each {userAttributes.add(new AttributeType().withName("custom:${it.key}").withValue(it.value as String)) }
 
+        if (affiliationsEnabled) {
+            userAttributes.add(new AttributeType().withName("custom:affiliation").withValue(params.get('affiliation', '')))
+        }
         request.userAttributes = userAttributes
 
         def userResponse = cognitoIdp.adminCreateUser(request)
@@ -459,7 +468,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     Collection<RoleRecord> listRoles() {
         ListGroupsResult result = cognitoIdp.listGroups(
             new ListGroupsRequest()
-                .withUserPoolId(poolId)
+                .withUserPoolId(poolId).withLimit(60)
         )
 
         return result.groups.collect { groupType ->
@@ -659,7 +668,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     }
 
     @Override
-    void removeUserProperty(UserRecord userRecord, ArrayList<String> attributes) {x
+    void removeUserProperty(UserRecord userRecord, ArrayList<String> attributes) {
         attributes.each {
             addCustomUserProperty(userRecord, it, null)
         }
@@ -853,7 +862,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     def addCustomUserProperty(UserRecord user, String name, String value){
         Collection<AttributeType> userAttributes = new ArrayList<>()
 
-        userAttributes.add(new AttributeType().withName('custom:' + name).withValue(value))
+        userAttributes.add(new AttributeType().withName('custom:' + name).withValue(value ?: ""))
 
         AdminUpdateUserAttributesRequest updateUserRequest =
                 new AdminUpdateUserAttributesRequest()
@@ -879,5 +888,4 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         }
         resultStreamer.complete()
     }
-
 }

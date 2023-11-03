@@ -109,7 +109,7 @@ dependencies {
 
     // Grails plugin dependencies
 
-    api "org.grails.plugins:ala-bootstrap3:4.1.0"
+    api "org.grails.plugins:ala-bootstrap3:4.4.0"
     api "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
@@ -172,6 +172,8 @@ dependencies {
 
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
     testImplementation 'io.github.joke:spock-mockable:2.3.0'
+
+    api 'com.amazonaws:aws-java-sdk-api-gateway:1.12.279'
 }
 
 compileJava.dependsOn(processResources)

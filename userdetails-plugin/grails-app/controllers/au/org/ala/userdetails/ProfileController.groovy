@@ -46,6 +46,10 @@ class ProfileController {
     @Autowired
     @Qualifier('userService')
     IUserService userService
+    @Autowired
+    IApplicationService applicationService
+    @Autowired(required = false)
+    IApikeyService apikeyService
 
     def index() {
 
@@ -181,5 +185,123 @@ class ProfileController {
             flash.message = 'Failed to retrieve user details!'
         }
         redirect(controller: 'profile')
+    }
+
+    def generateApikey(String application) {
+        if (!grailsApplication.config.getProperty('apikey.type', 'none')) {
+            render(status: 404)
+            return
+        }
+
+        if(!application) {
+            render(view: "applications", model:[ errors: ['No application name']])
+            return
+        }
+
+        String usagePlanId = grailsApplication.config.getProperty("apigateway.${application}.usagePlanId")
+
+        if(!usagePlanId) {
+            render(view: "applications", model:[ errors: ['No usage plan id to generate api key']])
+            return
+        }
+        try {
+            def response = apikeyService.generateApikey(usagePlanId)
+
+        } catch (e) {
+            render view: "applications", model:[ errors: [e.message]]
+            return
+        }
+        redirect(action: "applications")
+    }
+
+    def generateClient(ApplicationRecord applicationRecord) {
+
+        if (applicationRecord.clientId || applicationRecord.secret) {
+            render(status: 400, model: [ errors: ["Can't specify client id or secret when creating a new application"]])
+            return
+        }
+
+        if(!applicationRecord.name || !applicationRecord.type) {
+            render([errors: ["No application name or type"]] as JSON)
+            return
+        }
+
+        if(applicationRecord.callbacks.findAll().empty && !(applicationRecord.type in [ApplicationType.M2M])) {
+            render([errors: ["callbackURLs cannot be empty if the client is web-app or native"]] as JSON)
+            return
+        }
+
+        try {
+            def response = applicationService.generateClient(userService.currentUser.userId, applicationRecord)
+            render(response as JSON)
+        } catch (e) {
+            log.error('error', e)
+            render(status: 500, [errors: [e.message]] as JSON)
+            return
+        }
+    }
+
+    def updateClient(String id, ApplicationRecord applicationRecord) {
+
+        if (!id) {
+            render(status: 400, model: [ errors: ["No client Id"]])
+            return
+        }
+
+        if(!applicationRecord.name || !applicationRecord.type) {
+            render([errors: ["No application name or type"]] as JSON)
+            return
+        }
+
+        if(applicationRecord.callbacks.findAll().empty && !(applicationRecord.type in [ApplicationType.M2M])) {
+            render([errors: ["callbackURLs cannot be empty if the client is web-app or native"]] as JSON)
+            return
+        }
+
+        try {
+            applicationRecord.clientId = applicationRecord.clientId ?: id;
+            applicationService.updateClient(userService.currentUser.userId, applicationRecord)
+            render(status: 204)
+        } catch (IllegalStateException e) {
+            log.error('ise', e)
+            render(status: 400, [errors: [e.message ]] as JSON)
+        } catch (e) {
+            log.error('error', e)
+            render(status: 500)
+        }
+    }
+
+    def listApplications() {
+        render(applicationService.listApplicationsForUser(userService.currentUser.userId) as JSON)
+    }
+
+    def createApplication() {
+        render(view: 'createApplication', model: [applicationInstance: new ApplicationRecord()])
+    }
+
+    def applications() {
+        def userId = userService.currentUser.userId
+        render(view: 'applications', model: [applicationList: applicationService.listApplicationsForUser(userId)])
+    }
+
+    def application(String id) {
+        if (!id) {
+            render(status: 400, model: [ errors: ["No client Id"]])
+            return
+        }
+
+        def userId = userService.currentUser.userId
+        respond applicationService.findClientByClientId(userId, id)
+    }
+
+    def deleteApplication(String id) {
+        if (!id) {
+            render(status: 400, model: [ errors: ["No client Id"]])
+            return
+        }
+
+        def userId = userService.currentUser.userId
+        applicationService.deleteApplication(userId, id)
+        redirect(action:"applications")
     }
 }
