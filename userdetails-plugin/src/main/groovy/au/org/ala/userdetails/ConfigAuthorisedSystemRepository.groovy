@@ -32,7 +32,7 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
 
     @Override
     def list(GrailsParameterMap params) {
-        def list, fullList = []
+        def list = []
         def count = 0
         def query = params.q as String
         def reload = params.getBoolean("reload", false)
