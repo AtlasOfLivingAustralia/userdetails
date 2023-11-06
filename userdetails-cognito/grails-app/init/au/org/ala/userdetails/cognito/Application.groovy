@@ -94,6 +94,7 @@ class Application extends GrailsAutoConfiguration {
         userService.jwtProperties = jwtProperties
 
         userService.affiliationsEnabled = grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)
+        userService.socialLoginGroups = grailsApplication.config.getProperty('users.delegated-group-names', List, [])
 
         return userService
     }

@@ -27,6 +27,7 @@ interface IUser<T extends Serializable> {
     Boolean getLocked()
 
     String getTempAuthKey()
+    String getDisplayName()
 
     /**
      * Associated roles property.  This is named differently to the original GORM implementations fields due to the

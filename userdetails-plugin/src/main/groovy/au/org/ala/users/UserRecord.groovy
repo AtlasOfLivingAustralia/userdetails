@@ -44,6 +44,7 @@ class UserRecord implements IUser<String>, WebDataBinding, Serializable {
     Boolean locked
 
     String tempAuthKey
+    String displayName
 
     Set<UserRoleRecord> userRoles
     Set<UserPropertyRecord> userProperties
@@ -56,10 +57,15 @@ class UserRecord implements IUser<String>, WebDataBinding, Serializable {
         locked nullable: false
         lastLogin nullable: true
         tempAuthKey nullable: true
+        displayName nullable: true
     }
 
     String getUserId() {
         return this.userName
+    }
+
+    String getDisplayName() {
+        return ((firstName ? firstName + " ": "") + (lastName ?: "")).trim()
     }
 
     def propsAsMap(){

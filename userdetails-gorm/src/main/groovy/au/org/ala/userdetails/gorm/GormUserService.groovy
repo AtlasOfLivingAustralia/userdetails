@@ -373,7 +373,7 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
         ['city', 'organisation', 'state', 'country'].each { propName ->
             setUserProperty(user, propName, params.get(propName, ''))
         }
-        if (affiliationsEnabled) {
+        if (affiliationsEnabled && params.get('affiliation')) {
             setUserProperty(user, 'affiliation', params.get('affiliation', ''))
         }
     }
