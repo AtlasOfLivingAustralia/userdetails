@@ -30,6 +30,8 @@ import javax.ws.rs.Produces
 @Path('/ws')
 class ExternalSiteController {
 
+    static allowedMethods = [flickr: "GET", getUserStats: "GET"]
+
     @Autowired
     IUserService userService
 
