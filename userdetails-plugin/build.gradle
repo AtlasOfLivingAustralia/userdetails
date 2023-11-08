@@ -168,7 +168,7 @@ dependencies {
 
     api 'org.passay:passay:1.6.0' // not technically required in api scope but required in some gorm tests
 
-    api('au.org.ala.plugins:openapi:1.2.0-SNAPSHOT')
+    api('au.org.ala.plugins:openapi:1.2.0')
 
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
     testImplementation 'io.github.joke:spock-mockable:2.3.0'
