@@ -40,7 +40,7 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 @Path("userDetails")
 class UserDetailsController {
 
-    static allowedMethods = [getUserDetails: "POST", getUserList: "POST", getUserListWithIds: "POST", getUserListFull: "POST", getUserDetailsFromIdList: "POST"]
+    static allowedMethods = [getUserDetails: "POST", getUserList: "POST", getUserListWithIds: "POST", getUserListFull: "POST", getUserDetailsFromIdList: "POST", byRole: "GET", search: "GET"]
 
     @Autowired
     @Qualifier('userService')

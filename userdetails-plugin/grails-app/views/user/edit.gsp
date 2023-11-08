@@ -48,7 +48,7 @@
                     <g:hiddenField name="version" value="${userInstance?.version}"/>
                 </g:if>
                 <fieldset class="form">
-                    <g:render template="form"/>
+                    <g:render template="form" model="[edit: true]"/>
                 </fieldset>
                 <fieldset class="buttons">
                     <g:actionSubmit class="btn btn-primary" action="update"

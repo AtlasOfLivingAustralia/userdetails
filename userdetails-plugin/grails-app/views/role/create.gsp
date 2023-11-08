@@ -44,6 +44,9 @@
 				<g:if test="${flash.message}">
 					<div class="message well warning text-danger" role="status">${flash.message}</div>
 				</g:if>
+				<g:if test="${error}">
+					<div class="alert alert-danger" role="alert">${error}</div>
+				</g:if>
 				<g:hasErrors bean="${roleInstance}">
 					<div class="well warning">
 						<ul class="errors" role="alert">

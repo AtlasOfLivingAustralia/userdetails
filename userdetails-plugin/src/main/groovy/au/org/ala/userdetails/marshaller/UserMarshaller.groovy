@@ -35,7 +35,8 @@ class UserMarshaller {
                 email: user.email,
                 activated: user.activated,
                 locked: user.locked,
-                roles: user.roles*.roleObject*.role ?: []
+                roles: user.roles*.roleObject*.role ?: [],
+                displayName: user.displayName
         ]
     }
 
