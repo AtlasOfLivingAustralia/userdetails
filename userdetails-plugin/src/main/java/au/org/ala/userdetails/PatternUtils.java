@@ -6,6 +6,9 @@ public class PatternUtils {
 
     /**
      * Revert Pattern.quote(String)
+     *
+     * @param s The String to unquote
+     * @return The string without the regex quoting
      */
     public static String unquotePattern(String s) {
         if (s.startsWith("\\Q")) {
