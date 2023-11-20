@@ -472,8 +472,8 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
             token = results.getPaginationToken()
 
             users.each {
-                def value = it.attributes.find { it.name == "custom.$s" }?.value
-                counts[value ?: ''] = ((counts[value ?: '']) ?: 0)++
+                def value = it.attributes.find {att ->  att.name == "custom:$s" }?.value
+                counts[value ?: ''] = ((counts[value ?: '']) ?: 0) +1
             }
 
             results = token ? cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token)) : null
@@ -733,8 +733,21 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
             propList.addAll(userRecord.userProperties.findAll { it.name == attribute })
         }
         else if(attribute){
-            //cannot implement this since cognito does not support custom attribute search
-            throw new NotImplementedException()
+            def token
+            def results = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))
+
+            while (results) {
+                def users = results.getUsers()
+                token = results.getPaginationToken()
+
+                users.each {
+                    def value = it.attributes.find {att ->  att.name == "custom:$attribute" }?.value
+                    if(value) {
+                        propList.add(new UserPropertyRecord(user: cognitoUserTypeToUserRecord(it, false), name: attribute, value: value))
+                    }
+                }
+                results = token ? cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId).withPaginationToken(token)) : null
+            }
         }
         else{
             //cannot implement this since cognito does not support custom attribute search

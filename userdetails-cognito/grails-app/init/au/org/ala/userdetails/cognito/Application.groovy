@@ -83,7 +83,8 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean('userService')
-    IUserService userService(TokenService tokenService, EmailService emailService, AWSCognitoIdentityProvider cognitoIdp, JwtProperties jwtProperties) {
+    IUserService userService(TokenService tokenService, EmailService emailService, AWSCognitoIdentityProvider cognitoIdp, JwtProperties jwtProperties,
+                             LocationService locationService) {
 
         CognitoUserService userService = new CognitoUserService()
         userService.cognitoIdp = cognitoIdp
@@ -92,6 +93,7 @@ class Application extends GrailsAutoConfiguration {
         userService.emailService = emailService
         userService.tokenService = tokenService
         userService.jwtProperties = jwtProperties
+        userService.locationService = locationService
 
         userService.affiliationsEnabled = grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)
         userService.socialLoginGroups = grailsApplication.config.getProperty('users.delegated-group-names', List, [])
