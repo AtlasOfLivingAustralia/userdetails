@@ -16,6 +16,7 @@
 package au.org.ala.userdetails.cognito
 
 import au.org.ala.userdetails.*
+import au.org.ala.web.AuthService
 import au.org.ala.web.OidcClientProperties
 import au.org.ala.ws.security.JwtProperties
 import au.org.ala.ws.tokens.TokenService
@@ -84,7 +85,7 @@ class Application extends GrailsAutoConfiguration {
 
     @Bean('userService')
     IUserService userService(TokenService tokenService, EmailService emailService, AWSCognitoIdentityProvider cognitoIdp, JwtProperties jwtProperties,
-                             LocationService locationService) {
+                             LocationService locationService, AuthService authService) {
 
         CognitoUserService userService = new CognitoUserService()
         userService.cognitoIdp = cognitoIdp
@@ -94,6 +95,7 @@ class Application extends GrailsAutoConfiguration {
         userService.tokenService = tokenService
         userService.jwtProperties = jwtProperties
         userService.locationService = locationService
+        userService.authService = authService
 
         userService.affiliationsEnabled = grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)
         userService.socialLoginGroups = grailsApplication.config.getProperty('users.delegated-group-names', List, [])
