@@ -15,13 +15,9 @@
 
 package au.org.ala.userdetails
 
-<<<<<<< HEAD:grails-app/services/au/org/ala/userdetails/PasswordService.groovy
 import au.org.ala.auth.EnglishCustomCharacterData
-=======
 import au.org.ala.auth.PasswordResetFailedException
 import au.org.ala.users.IUser
-import au.org.ala.users.UserRecord
->>>>>>> epic/cognito/develop:userdetails-plugin/grails-app/services/au/org/ala/userdetails/PasswordService.groovy
 import au.org.ala.auth.PasswordPolicy
 import au.org.ala.cas.encoding.BcryptPasswordEncoder
 import au.org.ala.cas.encoding.LegacyPasswordEncoder
