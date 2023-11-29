@@ -1,0 +1,256 @@
+//import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
+
+buildscript {
+    repositories {
+        maven { url "https://nexus.ala.org.au/content/groups/public/" }
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
+        classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:2.6"
+//        classpath "org.grails.plugins:hibernate5:7.3.0"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.4.6"
+    }
+}
+
+plugins {
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id "java-library"
+}
+
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"org.grails.grails-plugin"
+apply plugin:"com.github.erdi.webdriver-binaries"
+apply plugin:"asset-pipeline"
+apply plugin:"org.grails.grails-gsp"
+apply plugin:"maven-publish"
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+repositories {
+    mavenLocal()
+    maven { url "https://nexus.ala.org.au/content/groups/public/" }
+    maven { url "https://repo.grails.org/grails/core" }
+    mavenCentral()
+}
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+//grails {
+//    plugins {
+//        compile project(':openapi-plugin')
+//    }
+//}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    compileOnly "io.micronaut:micronaut-inject-groovy"
+    console "org.grails:grails-console"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.grails:grails-core"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat"
+    implementation "org.grails:grails-web-boot"
+    implementation "org.grails:grails-logging"
+    implementation "org.grails:grails-plugin-rest"
+    implementation "org.grails:grails-plugin-databinding"
+    implementation "org.grails:grails-plugin-i18n"
+    implementation "org.grails:grails-plugin-services"
+    implementation "org.grails:grails-plugin-url-mappings"
+    implementation "org.grails:grails-plugin-interceptors"
+    implementation "org.grails.plugins:cache"
+    implementation "org.grails.plugins:async"
+    implementation "org.grails.plugins:scaffolding"
+    implementation "org.grails.plugins:events"
+//    implementation "org.grails.plugins:hibernate5"
+//    implementation "org.hibernate:hibernate-core:5.6.9.Final"
+//    implementation "org.hibernate:hibernate-jcache"
+    runtimeOnly 'org.ehcache:ehcache'
+    implementation "org.grails.plugins:gsp"
+    profile "org.grails.profiles:web-plugin"
+    runtimeOnly "org.glassfish.web:el-impl:2.2.1-b05"
+//    runtimeOnly "com.h2database:h2"
+//    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+
+//    compileOnly "org.grails:grails-plugin-services"
+//    compileOnly "org.grails:grails-plugin-domain-class"
+
+    runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
+    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.4.6"
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "org.grails:grails-gorm-testing-support"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.grails:grails-web-testing-support"
+    testImplementation "org.grails.plugins:geb"
+    testImplementation "org.seleniumhq.selenium:selenium-remote-driver:4.0.0"
+    testImplementation "org.seleniumhq.selenium:selenium-api:4.0.0"
+    testImplementation "org.seleniumhq.selenium:selenium-support:4.0.0"
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:4.0.0"
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:4.0.0"
+
+    // Grails backwards compat?
+    api 'org.grails.plugins:converters:4.0.1'
+
+    // Groovy backwards compat
+    runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
+
+    // Grails plugin dependencies
+
+    api "org.grails.plugins:ala-bootstrap3:4.4.0"
+    api "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-admin-plugin:2.3.0"
+
+    api 'dk.glasius:external-config:3.1.0'
+    api 'org.grails.plugins:http-builder-helper:1.1.0'
+    api "org.grails.plugins:csv:1.0.1"
+    api 'org.grails.plugins:mail:3.0.0'
+
+    api "org.grails.plugins:oauth:4.0.0"
+    // transitive oauth plugin deps used in code
+    api "com.github.scribejava:scribejava-core:4.0.0"
+    api "com.github.scribejava:scribejava-apis:4.0.0"
+
+    api "domurtag.plugins:grails-simple-captcha:1.0.0-grails3"
+    api "org.grails.plugins:export:2.0.0"
+    api 'org.grails.plugins:grails-markdown:3.0.0'
+
+    // regular JAR dependencies
+
+//    implementation 'com.zaxxer:HikariCP:5.0.1'
+//    implementation 'mysql:mysql-connector-java:8.0.29'
+//    testRuntimeOnly "com.h2database:h2"
+    api 'com.google.guava:guava:21.0'
+//    implementation 'org.apache.httpcomponents:httpcore:4.5.13'
+    api 'org.apache.httpcomponents:httpclient:4.5.13'
+    api 'org.apache.httpcomponents:httpmime:4.5.13'
+    api 'org.apache.commons:commons-lang3:3.12.0'
+    api 'commons-io:commons-io:2.6'
+    api 'commons-beanutils:commons-beanutils:1.8.3'
+    api 'org.mindrot:jbcrypt:0.4'
+    api 'com.opencsv:opencsv:5.5.2'
+
+    api 'org.springframework.session:spring-session-data-mongodb'
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api 'org.grails.plugins:spring-session-helper:2.0.1'
+    api 'org.mongodb:mongodb-driver-sync:4.6.0' // versions mismatch as transitive deps for
+    api 'org.mongodb:mongodb-driver-core:4.6.0'
+    api 'org.mongodb:bson:4.6.0'
+
+//    implementation "com.auth0:java-jwt:3.18.2"
+//    implementation "com.auth0:jwks-rsa:0.20.0"
+
+    // Spring Security to secure actuator endpoints
+    // TODO Upgrade or decommission boot admin
+//    compile 'de.codecentric:spring-boot-admin-starter-client:2.6.2'
+//    compile 'org.springframework.boot:spring-boot-starter-security'
+//    compile 'org.springframework.security:spring-security-web'
+
+    api('org.webjars.bower:chosen:1.8.3')
+    api('org.webjars.bower:chosen-bootstrap:1.1.0') {
+        exclude module: 'jquery' // dependency from skin
+        exclude module: 'bootstrap' // dependency from skin
+    }
+
+    api 'org.passay:passay:1.6.0' // not technically required in api scope but required in some gorm tests
+
+    api('au.org.ala.plugins:openapi:1.2.0')
+
+    testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
+    testImplementation 'io.github.joke:spock-mockable:2.3.0'
+
+    api 'com.amazonaws:aws-java-sdk-api-gateway:1.12.279'
+}
+
+compileJava.dependsOn(processResources)
+
+springBoot {
+    buildInfo()
+}
+
+bootRun {
+    ignoreExitValue true
+    jvmArgs(
+            '-Dspring.output.ansi.enabled=always',
+            '-noverify',
+            '-XX:TieredStopAtLevel=1',
+            '-Xmx1024m')
+    sourceResources sourceSets.main
+    String springProfilesActive = 'spring.profiles.active'
+    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+}
+
+tasks.withType(GroovyCompile) {
+    configure(groovyOptions) {
+        forkOptions.jvmArgs = ['-Xmx1024m']
+    }
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    jvmArgs += ["-javaagent:${classpath.find { it.name.contains('spock-mockable') }.absolutePath}"]
+}
+
+// enable if you wish to package this plugin as a standalone application
+bootJar.enabled = false
+
+assets {
+    packagePlugin = true
+}
+
+webdriverBinaries {
+    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
+        chromedriver {
+            version = '2.45.0'
+            fallbackTo32Bit = true
+        }
+        geckodriver '0.30.0'
+    }
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env')
+    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
+        systemProperty 'webdriver.chrome.driver', System.getProperty('webdriver.chrome.driver')
+        systemProperty 'webdriver.gecko.driver', System.getProperty('webdriver.gecko.driver')
+    } else {
+        systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
+        systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name 'Nexus'
+            url "https://nexus.ala.org.au/content/repositories/${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}"
+            credentials {
+                username = System.getenv('TRAVIS_DEPLOY_USERNAME')
+                password = System.getenv('TRAVIS_DEPLOY_PASSWORD')
+            }
+        }
+    }
+    publications {
+        mavenJar(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+

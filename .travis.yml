@@ -10,6 +10,11 @@ branches:
     - grails3
     - experimental_jwt
     - /^feature.*$/
+    - epic/cognito/userServiceRefactor&PasswordReset
+    - epic/cognito/develop
+    - epic/cognito/cleanup-2
+    - epic/cognito/fix-asset-pipeline-issue
+    - epic/cognito/openapi_fix
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -21,7 +26,7 @@ cache:
   - $HOME/.gradle/wrapper/
 
 after_success:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
 env:
   global:
   - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2

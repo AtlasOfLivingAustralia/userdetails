@@ -1,0 +1,213 @@
+---
+grails:
+    profile: web
+    codegen:
+        defaultPackage: au.org.ala.userdetails.cognito
+    config:
+        locations:
+            - file:/data/userdetails/config/userdetails-cognito-config.yml
+            - file:/data/userdetails/config/userdetails-config.properties
+            - file:/data/userdetails/config/userdetails-config.yml
+            - file:/data/userdetails/config/userdetails-config.groovy
+            - file:/data/userdetails/config/authorised-systems.yml
+
+info:
+    app:
+        name: '@info.app.name@'
+        version: '@info.app.version@'
+        grailsVersion: '@info.app.grailsVersion@'
+spring:
+    main:
+        banner-mode: "off"
+    groovy:
+        template:
+            check-template-location: false
+    data:
+      redis:
+        repositories:
+          enabled: false
+    session:
+      enabled: false
+      store-type: none # Spring Session support disabled by default.
+#        disable-redis-config-action: false
+      grails:
+        mutableAttributes:
+          - SYNCHRONIZER_TOKENS_HOLDER
+    jmx:
+      unique-names: true
+    devtools:
+      restart:
+        additional-exclude:
+          - '*.gsp'
+          - '**/*.gsp'
+          - '*.gson'
+          - '**/*.gson'
+          - 'logback.groovy'
+          - '*.properties'
+server:
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+      remote-ip-header: x-forwarded-for
+      protocol-header-https-value: https
+
+---
+grails:
+    mime:
+        use:
+            accept:
+                header: true
+        disable:
+            accept:
+                header:
+                    userAgents: []
+        types:
+            all: '*/*'
+            atom: application/atom+xml
+            css: text/css
+            csv: text/csv
+            form: application/x-www-form-urlencoded
+            html:
+              - text/html
+              - application/xhtml+xml
+            js: text/javascript
+            json:
+              - application/json
+              - text/json
+            multipartForm: multipart/form-data
+            pdf: application/pdf
+            rss: application/rss+xml
+            text: text/plain
+            hal:
+              - application/hal+json
+              - application/hal+xml
+            xml:
+              - text/xml
+              - application/xml
+    urlmapping:
+        cache:
+            maxsize: 1000
+    controllers:
+        defaultScope: singleton
+    converters:
+        encoding: UTF-8
+    views:
+        default:
+            codec: html
+        gsp:
+            encoding: UTF-8
+            htmlcodec: xml
+            codecs:
+                expression: html
+                scriptlets: html
+                taglib: none
+                staticparts: none
+    databinding:
+        convertEmptyStringsToNull: false
+    cache:
+        enabled: true
+        ehcache:
+            cacheManagerName: 'userdetails-cache-manager'
+            ehcacheXmlLocation: 'classpath:userdetails-ehcache.xml'
+            reloadable: false
+
+security:
+  oidc:
+    scope: openid profile email ala/attrs ala/roles aws.cognito.signin.user.admin
+    logoutAction: cognito
+
+password:
+  encoder: bcrypt # or legacy
+  generatedLength: 10
+  # Passwords must satisfy this policy.
+  # The minLength policy is always required, even when the policy is disabled. It has a default value of 8.
+  # To remove / disable an aspect of the policy, either remove the item or set to 0 / false, whichever is relevant.
+  policy:
+    enabled: true
+    minLength: 8
+#    maxLength: 64
+    excludeUsername: false
+    excludeUsQwertyKeyboardSequence: false
+    excludeCommonPasswords: false
+    charGroupMinRequired: 4
+    charGroupMinUpperCase: 1
+    charGroupMinLowerCase: 1
+#    charGroupMinUpperOrLowerCase: 0
+    charGroupMinDigit: 1
+    charGroupMinSpecial: 1
+  requireAuthKeyCheck: false
+  requireCodeToResetPassword: true
+
+openapi:
+  title: UserDetails REST services
+  description: REST services for interacting with the user details webapp
+  terms: https://www.ala.org.au/terms
+  contact:
+    name: Support
+    email: support@ala.org.au
+  license:
+    name: Mozilla Public License 1.1
+    url: https://www.mozilla.org/en-US/MPL/1.1/
+  version: '@info.app.version@'
+  cachetimeoutms: 0
+  components:
+    security:
+      oauth2:
+        scopes:
+          users/read: Read or list any or all user records
+          users/write: Write to a user's record, eg update a user's attributes.
+
+environments:
+    development:
+        grails:
+            serverURL: "http://devt.ala.org.au:8080/userdetails"
+            mail:
+                host: "localhost"
+                port: 1025
+                username: postie.emailSender
+        security:
+            cas:
+                appServerName: "http://devt.ala.org.au:8080"
+    test:
+        security:
+            cas:
+                appServerName: "https://auth.ala.org.au"
+    production:
+        grails:
+            serverURL: "https://auth.ala.org.au/userdetails"
+            mail:
+                host: "localhost"
+                port: 25
+        security:
+            cas:
+                appServerName: "https://auth.ala.org.au"
+
+attributes:
+  affiliations:
+    enabled: true
+    attribute-name: 'affiliation'
+
+cognito:
+  mapping:
+    email: 'email'
+    firstName: 'given_name'
+    lastName: 'family_name'
+    country: 'custom:country'
+    state: 'custom:state'
+    affiliation: 'custom:affiliation'
+    roles: ''
+    keys: ''
+account:
+  MFAenabled: true
+authorised-systems:
+  edit-enabled: false
+oauth.support.dynamic.client.defaultCallbackURLs: ["http://localhost:8080", "http://localhost:8080/", "http://localhost:8080/*", "https://tokens.ala.org.au/login", "https://tokens.test.ala.org.au/login", "https://tokens-cognito-support.dev.ala.org.au/login"]
+oauth.support.dynamic.client.registration: true
+oauth.support.dynamic.client.scopes: ["email", "openid", "profile", "ala/attrs" , "ala/roles"]
+oauth.support.dynamic.client.galah.callbackURLs: ["http://localhost:1410", "http://localhost:1410/", "http://localhost:1410/*"]
+oauth.support.dynamic.client.postmanExample: https://www:postman.com/sushantcsiro/workspace/ala-common-apis/request/23926959-e63a1ccd-63ab-45c2-8de3-a856fd29ce57
+tokenApp.url: https://tokens-cognito-support.dev.ala.org.au
+oauth.support.dynamic.client.supportedIdentityProviders: ["COGNITO", "Facebook", "Google", "AAF", "SignInWithApple"]
+oauth.support.dynamic.client.authFlows: ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH"]

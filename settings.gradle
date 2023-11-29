@@ -1,1 +1,4 @@
-rootProject.name='userdetails'
+rootProject.name='userdetails-project'
+include 'userdetails-plugin'
+include 'userdetails-cognito'
+include 'userdetails-gorm'
