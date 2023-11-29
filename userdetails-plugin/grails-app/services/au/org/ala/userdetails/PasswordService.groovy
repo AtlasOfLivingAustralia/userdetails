@@ -15,9 +15,9 @@
 
 package au.org.ala.userdetails
 
+import au.org.ala.auth.EnglishCustomCharacterData
 import au.org.ala.auth.PasswordResetFailedException
 import au.org.ala.users.IUser
-import au.org.ala.users.UserRecord
 import au.org.ala.auth.PasswordPolicy
 import au.org.ala.cas.encoding.BcryptPasswordEncoder
 import au.org.ala.cas.encoding.LegacyPasswordEncoder
@@ -244,7 +244,7 @@ class PasswordService {
                     ruleGroup.rules.add(new CharacterRule(EnglishCharacterData.Digit, policy.charGroupMinDigit))
                 }
                 if (policy.charGroupMinSpecial > 0) {
-                    ruleGroup.rules.add(new CharacterRule(EnglishCharacterData.Special, policy.charGroupMinSpecial))
+                    ruleGroup.rules.add(new CharacterRule(EnglishCustomCharacterData.Special, policy.charGroupMinSpecial))
                 }
             }
 
