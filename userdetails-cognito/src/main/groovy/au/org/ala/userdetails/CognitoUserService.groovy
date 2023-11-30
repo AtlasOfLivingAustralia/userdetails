@@ -5,6 +5,7 @@ import au.org.ala.users.RoleRecord
 import au.org.ala.users.UserPropertyRecord
 import au.org.ala.users.UserRecord
 import au.org.ala.users.UserRoleRecord
+import au.org.ala.web.AuthService
 import au.org.ala.ws.security.JwtProperties
 import au.org.ala.ws.tokens.TokenService
 import com.amazonaws.AmazonWebServiceResult
@@ -65,6 +66,8 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     String poolId
     JwtProperties jwtProperties
     List<String> socialLoginGroups
+    AuthService authService
+    boolean useGatewayAPI
 
     @Value('${attributes.affiliations.enabled:false}')
     boolean affiliationsEnabled = false
@@ -192,12 +195,19 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     @Override
     boolean isEmailInUse(String email) {
 
-        ListUsersRequest request = new ListUsersRequest()
-            .withUserPoolId(poolId)
-            .withFilter("email=\"${email}\"")
+        if (useGatewayAPI) {
+            //using gateway API which consolidate both users from cognito pool and CAS
+            def user = authService.getUserForEmailAddress(email)
+            return user != null
+        }
+        else {
+            ListUsersRequest request = new ListUsersRequest()
+                    .withUserPoolId(poolId)
+                    .withFilter("email=\"${email}\"")
 
-        ListUsersResult response = cognitoIdp.listUsers(request)
-        return response.users
+            ListUsersResult response = cognitoIdp.listUsers(request)
+            return response.users
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@
     </eh:cache-template>
     <eh:cache alias="userDetailsCache">
         <eh:key-type>java.io.Serializable</eh:key-type>
-        <eh:value-type>java.io.Serializable</eh:value-type>
+        <eh:value-type>java.util.Optional</eh:value-type>
         <eh:expiry>
             <eh:tti>3600</eh:tti>
 <!--            <eh:ttl>3600</eh:ttl>-->

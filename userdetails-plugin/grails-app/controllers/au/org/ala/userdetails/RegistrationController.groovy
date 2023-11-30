@@ -298,10 +298,16 @@ class RegistrationController {
                 }
             }
 
+            def isEmailInUse = userService.isEmailInUse(paramsEmail)
+
             //create user account...
-            if (!paramsEmail || userService.isEmailInUse(paramsEmail)) {
-                def inactiveUser = !userService.isActive(paramsEmail)
-                def lockedUser = userService.isLocked(paramsEmail)
+            if (!paramsEmail || isEmailInUse) {
+                def user = null
+                if (isEmailInUse) {
+                    user = userService.getUserByEmail(paramsEmail)
+                }
+                def inactiveUser = user?.activated ?: false
+                def lockedUser = user?.locked ?: false
                 render(view: 'createAccount', model: [edit: false, user: params, props: params, alreadyRegistered: true, inactiveUser: inactiveUser,
                                                       lockedUser: lockedUser, passwordPolicy: passwordService.buildPasswordPolicy(),visibleMFA: false])
             } else {
