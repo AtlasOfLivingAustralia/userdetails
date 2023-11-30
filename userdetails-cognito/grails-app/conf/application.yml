@@ -211,3 +211,5 @@ oauth.support.dynamic.client.postmanExample: https://www:postman.com/sushantcsir
 tokenApp.url: https://tokens-cognito-support.dev.ala.org.au
 oauth.support.dynamic.client.supportedIdentityProviders: ["COGNITO", "Facebook", "Google", "AAF", "SignInWithApple"]
 oauth.support.dynamic.client.authFlows: ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH"]
+
+userdetails.api.useGatewayAPI: true

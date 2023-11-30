@@ -67,6 +67,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     JwtProperties jwtProperties
     List<String> socialLoginGroups
     AuthService authService
+    boolean useGatewayAPI
 
     @Value('${attributes.affiliations.enabled:false}')
     boolean affiliationsEnabled = false
@@ -194,15 +195,19 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     @Override
     boolean isEmailInUse(String email) {
 
-        //using gateway API which consolidate both users from cognito pool and CAS
-        def user = authService.getUserForEmailAddress(email)
-//        ListUsersRequest request = new ListUsersRequest()
-//            .withUserPoolId(poolId)
-//            .withFilter("email=\"${email}\"")
-//
-//        ListUsersResult response = cognitoIdp.listUsers(request)
-//        return response.users
-        return user != null
+        if (useGatewayAPI) {
+            //using gateway API which consolidate both users from cognito pool and CAS
+            def user = authService.getUserForEmailAddress(email)
+            return user != null
+        }
+        else {
+            ListUsersRequest request = new ListUsersRequest()
+                    .withUserPoolId(poolId)
+                    .withFilter("email=\"${email}\"")
+
+            ListUsersResult response = cognitoIdp.listUsers(request)
+            return response.users
+        }
     }
 
     @Override

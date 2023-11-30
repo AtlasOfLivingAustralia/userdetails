@@ -99,6 +99,7 @@ class Application extends GrailsAutoConfiguration {
 
         userService.affiliationsEnabled = grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)
         userService.socialLoginGroups = grailsApplication.config.getProperty('users.delegated-group-names', List, [])
+        userService.useGatewayAPI = grailsApplication.config.getProperty('userdetails.api.useGatewayAPI', Boolean, false)
 
         return userService
     }

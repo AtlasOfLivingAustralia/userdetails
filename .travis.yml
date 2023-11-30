@@ -15,7 +15,6 @@ branches:
     - epic/cognito/cleanup-2
     - epic/cognito/fix-asset-pipeline-issue
     - epic/cognito/openapi_fix
-    - feature/fix_isEmailInUse
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
