@@ -13,16 +13,20 @@
  * rights and limitations under the License.
  */
 
-package au.org.ala.userdetails
+package au.org.ala.userdetails.gorm
 
+import au.org.ala.userdetails.IUserService
+import au.org.ala.userdetails.PropertyController
 import au.org.ala.ws.security.JwtProperties
 import grails.converters.JSON
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
+import au.org.ala.userdetails.ProfileService
 
 class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTest<PropertyController>, DataTest{
 
     def profileService = Mock(ProfileService)
+    def userService = Mock(IUserService)
 
     static doWithSpring = {
         jwtProperties(JwtProperties) {
@@ -42,6 +46,7 @@ class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTe
         registerMarshallers()
         user = createUser()
         controller.profileService = profileService
+        controller.userService = userService
     }
 
     void "Get user property"() {
