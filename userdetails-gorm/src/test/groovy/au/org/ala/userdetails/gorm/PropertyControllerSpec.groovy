@@ -22,6 +22,7 @@ import grails.converters.JSON
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import au.org.ala.userdetails.ProfileService
+import org.grails.spring.beans.factory.InstanceFactoryBean
 
 class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTest<PropertyController>, DataTest{
 
@@ -43,6 +44,9 @@ class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTe
     }
 
     void setup() {
+        defineBeans {
+            userService(InstanceFactoryBean, Mock(IUserService), IUserService)
+        }
         registerMarshallers()
         user = createUser()
         controller.profileService = profileService
@@ -57,6 +61,7 @@ class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTe
         controller.getProperty()
 
         then:
+        1 * userService.getUserById('1') >> user
         1 * profileService.getUserProperty(user, 'prop1') >> { [ new UserProperty(user: user, name: 'prop1', value:
                 user.userProperties.find {it.name == "prop1"}.value)] }
 
@@ -74,6 +79,7 @@ class PropertyControllerSpec extends UserDetailsSpec implements ControllerUnitTe
         controller.saveProperty()
 
         then:
+        1 * userService.getUserById('1') >> user
         1 * profileService.saveUserProperty(user, 'city', 'city') >> { new UserProperty(user: user, name: 'city', value:'city') }
 
         def deserializedJson = JSON.parse(response.text)
