@@ -360,6 +360,7 @@
                 }
                  else{
                      document.getElementById("message").value = result.error
+                     document.getElementById("message").style.color = "red"
                      document.getElementById("message").hidden = false
                  }
             }});
@@ -369,6 +370,7 @@
              var code = $("#code").val();
              if(code == null || code === "" || isNaN(code)) {
                  document.getElementById("message").innerHTML = "Invalid code"
+                 document.getElementById("message").style.color = "red"
                  document.getElementById("message").hidden = false
              }
              else {
@@ -378,11 +380,13 @@
                  success: function(result){
                      if(result.success){
                         document.getElementById("message").innerHTML = "Success"
+                        document.getElementById("message").style.color = "green"
                         document.getElementById("message").hidden = false
                         document.getElementById("enableMFA").checked = true;
                     }
                      else{
                          document.getElementById("message").innerHTML = result.error
+                         document.getElementById("message").style.color = "red"
                          document.getElementById("message").hidden = false
                      }
                 }});

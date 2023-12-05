@@ -496,7 +496,7 @@ class RegistrationController {
     private isMFAVisible(userInstance) {
         boolean isMFAEnabled = grailsApplication.config.getProperty('account.MFAenabled', Boolean, false)
         List MFAUnsupportedRoles = grailsApplication.config.getProperty('users.delegated-group-names', List, []).collect { jwtProperties.getRolePrefix() + it.toUpperCase()}
-        boolean hasMFAUnsupportedRoles = userInstance.roles.stream().anyMatch(userRoleRecord ->
+        boolean hasMFAUnsupportedRoles = userInstance.roles.stream().every(userRoleRecord ->
                 MFAUnsupportedRoles.contains(userRoleRecord.role.role))
 
         return isMFAEnabled && !hasMFAUnsupportedRoles
