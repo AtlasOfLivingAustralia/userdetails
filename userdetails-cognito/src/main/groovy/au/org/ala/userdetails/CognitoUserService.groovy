@@ -195,12 +195,15 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     @Override
     boolean isEmailInUse(String email) {
 
+        log.info("useGatewayAPI " + useGatewayAPI)
         if (useGatewayAPI) {
             //using gateway API which consolidate both users from cognito pool and CAS
             def user = authService.getUserForEmailAddress(email)
+            log.info("user " + user)
             return user != null
         }
         else {
+            log.info("Came here")
             ListUsersRequest request = new ListUsersRequest()
                     .withUserPoolId(poolId)
                     .withFilter("email=\"${email}\"")
