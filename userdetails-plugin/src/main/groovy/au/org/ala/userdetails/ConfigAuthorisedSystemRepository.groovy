@@ -50,7 +50,8 @@ class ConfigAuthorisedSystemRepository implements IAuthorisedSystemRepository {
         def offset = (params.offset?: 0) as int
 
         if (query) {
-            def filteredList = fullList.findAll{ it.host.contains(query) || it.description.contains(query)}
+            def filteredList = fullList.findAll{ it.host?.toLowerCase()?.contains(query.toLowerCase())
+                    || it.description?.toLowerCase()?.contains(query.toLowerCase())}
             list = filteredList.subList(offset, offset + max <= filteredList.size() ? offset + max : filteredList.size())
             count = filteredList.size()
 
