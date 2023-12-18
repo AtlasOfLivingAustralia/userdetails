@@ -61,7 +61,7 @@ class UserRecord implements IUser<String>, WebDataBinding, Serializable {
     }
 
     String getUserId() {
-        return this.userName
+        return this.id
     }
 
     String getDisplayName() {
