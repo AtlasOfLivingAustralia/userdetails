@@ -279,7 +279,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
                 dateCreated: userType.userCreateDate, lastUpdated: userType.userLastModifiedDate,
                 activated: userType.userStatus != "UNCONFIRMED", locked: !userType.enabled,
                 firstName: attributes['given_name'], lastName: attributes['family_name'],
-                email: attributes['email'], userName: userType.username,
+                email: attributes['email'], userName: attributes['email'],
                 userRoles: [],
                 userProperties: userProperties)
         if (findRoles) {
@@ -390,7 +390,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
                     dateCreated: userResponse.userCreateDate, lastUpdated: userResponse.userLastModifiedDate,
                     activated: userResponse.userStatus != "UNCONFIRMED", locked: !userResponse.enabled,
                     firstName: attributes['given_name'], lastName: attributes['family_name'],
-                    email: attributes['email'], userName: userResponse.username,
+                    email: attributes['email'], userName: attributes['email'],
                     userRoles: [],
                     userProperties: userProperties
             )
@@ -443,7 +443,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
                     dateCreated: response.users[0].userCreateDate, lastUpdated: response.users[0].userLastModifiedDate,
                     activated: response.users[0].userStatus != "UNCONFIRMED", locked: !response.users[0].enabled,
                     firstName: attributes['given_name'], lastName: attributes['family_name'],
-                    email: attributes['email'], userName: userResponse.username,
+                    email: attributes['email'], userName: attributes['email'],
                     userProperties: userProperties
             )
             user.userRoles = rolesForUser(userResponse.username).collect { new UserRoleRecord(user: user, role: it) }
