@@ -1,56 +1,41 @@
-//import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
-
 buildscript {
-    repositories {
-        maven { url "https://nexus.ala.org.au/content/groups/public/" }
-        maven { url "https://repo.grails.org/grails/core" }
-    }
-    dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:2.6"
-        classpath "org.grails.plugins:hibernate5:7.3.0"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:3.4.6"
-    }
+    version "3.1-SNAPSHOT"
+    group "au.org.ala"
+    description "Userdetails  gorm application"
 }
 
 plugins {
+    id "groovy"
+    id "org.grails.grails-web" version "6.0.0"
+    id "org.grails.grails-gsp" version "6.0.0"
+    id "application"
+    id "war"
+    id "maven-publish"
+    id "com.bertramlabs.asset-pipeline" version "4.3.0"
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
-
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"war"
-apply plugin:"org.grails.grails-web"
-apply plugin:"com.github.erdi.webdriver-binaries"
-apply plugin:"com.bertramlabs.asset-pipeline"
-apply plugin:"org.grails.grails-gsp"
-apply plugin:"maven-publish"
-
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
 
 repositories {
     mavenLocal()
     maven { url "https://nexus.ala.org.au/content/groups/public/" }
-    maven { url "https://repo.grails.org/grails/core" }
     mavenCentral()
 }
 
 configurations {
     developmentOnly
     runtimeClasspath {
-        extendsFrom developmentOnly
+        extendsFrom implementation
     }
 }
 
-//grails {
-//    plugins {
-//        compile project(':openapi-plugin')
-//    }
-//}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    resolutionStrategy.cacheChangingModulesFor 0, "seconds"
 }
 
 dependencies {
@@ -75,17 +60,15 @@ dependencies {
     implementation "org.grails.plugins:async"
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:events"
-    implementation "org.grails.plugins:hibernate5"
-    implementation "org.hibernate:hibernate-core:5.6.9.Final"
+    implementation "org.grails.plugins:hibernate5:${gormVersion}"
+    implementation "org.hibernate:hibernate-core:5.6.15.Final"
     implementation "org.hibernate:hibernate-jcache"
     runtimeOnly 'org.ehcache:ehcache'
     implementation "org.grails.plugins:gsp"
     profile "org.grails.profiles:web"
     runtimeOnly "org.glassfish.web:el-impl:2.2.1-b05"
-//    runtimeOnly "com.h2database:h2"
-//    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
     runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
-    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.4.6"
+    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:4.3.0"
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
@@ -98,7 +81,7 @@ dependencies {
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:4.0.0"
 
     // Groovy backwards compat
-    runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
+    runtimeOnly "org.codehaus.groovy:groovy-dateutil"
 
     // Grails plugin dependencies
 
@@ -107,18 +90,22 @@ dependencies {
 
     // regular JAR dependencies
 
-    implementation 'com.zaxxer:HikariCP:5.0.1'
-    implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation "com.zaxxer:HikariCP:5.0.1"
+    implementation "mysql:mysql-connector-java:8.0.29"
     testRuntimeOnly "com.h2database:h2"
-    testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
+    testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 
 }
+
+
 
 springBoot {
     buildInfo()
 }
 
 bootRun {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClassName = 'au.org.ala.userdetails.gorm.Application'
     ignoreExitValue true
     jvmArgs(
             '-Dspring.output.ansi.enabled=always',
@@ -133,6 +120,11 @@ bootRun {
 bootWar {
     launchScript()
     classifier = 'exec'
+    dependsOn(compileGroovyPages)
+}
+
+war {
+    dependsOn(compileGroovyPages)
 }
 
 tasks.withType(GroovyCompile) {
@@ -141,18 +133,14 @@ tasks.withType(GroovyCompile) {
     }
 }
 
-tasks.withType(Test) {
-    useJUnitPlatform()
+
+tasks.withType(JavaExec) {
+    classpath = configurations.runtimeClasspath
 }
 
-webdriverBinaries {
-    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
-        chromedriver {
-            version = '2.45.0'
-            fallbackTo32Bit = true
-        }
-        geckodriver '0.30.0'
-    }
+
+tasks.withType(Test) {
+    useJUnitPlatform()
 }
 
 tasks.withType(Test) {

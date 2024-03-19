@@ -15,6 +15,13 @@ branches:
     - epic/cognito/cleanup-2
     - epic/cognito/fix-asset-pipeline-issue
     - epic/cognito/openapi_fix
+    - feature/grails6-upgrade
+
+before_install:
+  - sudo mkdir -p /data/userdetails
+  - sudo chmod o+xw /data
+  - sudo chmod o+xw /data/userdetails
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -24,6 +31,10 @@ cache:
   - $HOME/.m2
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
+
+install:
+  - 'travis_wait 30 ./gradlew clean'
+  - './gradlew assemble'
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew clean && travis_retry ./gradlew publish'
