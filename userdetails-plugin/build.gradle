@@ -163,16 +163,6 @@ bootRun {
     systemProperty springProfilesActive, System.getProperty(springProfilesActive)
 }
 
-bootWar {
-    launchScript()
-    classifier = 'exec'
-    dependsOn(compileGroovyPages)
-}
-
-war {
-    dependsOn(compileGroovyPages)
-}
-
 tasks.withType(GroovyCompile) {
     configure(groovyOptions) {
         forkOptions.jvmArgs = ['-Xmx1024m']
@@ -217,8 +207,12 @@ publishing {
     publications {
         mavenJar(MavenPublication) {
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
         }
     }
 }
