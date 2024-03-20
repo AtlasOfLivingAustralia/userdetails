@@ -1,5 +1,5 @@
 buildscript {
-    version "3.1-SNAPSHOT"
+    version "4.1-SNAPSHOT"
     group "au.org.ala"
     description "Userdetails cognito application"
 }
