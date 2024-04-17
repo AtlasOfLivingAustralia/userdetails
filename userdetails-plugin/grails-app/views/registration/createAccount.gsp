@@ -105,7 +105,7 @@
                 <h2><g:message code="create.account.your.account.title" /></h2>
                 <p>
                     <g:message code="create.account.your.email.will.be.your.account.login"
-                               args="[grailsApplication.config.skin.orgNameShort]" />
+                               args="[grailsApplication.config.getProperty('skin.orgNameShort')]" />
                     <g:if test="${grailsApplication.config.getProperty('registration.showAlaMessage')}">
                         <g:message code="create.account.your.email.will.be.your.account.login.ala" args="[grailsApplication.config.getProperty('registration.resetPasswordArticle'), grailsApplication.config.getProperty('registration.alertArticle')]" />
                     </g:if>
