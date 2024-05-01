@@ -179,14 +179,17 @@
                            data-errormessage-value-missing="${message(code:'create.account.email.is.required')}"
                     />
                 </div>
-                <div class="form-group">
-                    <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
-                    <input id="confirm-email" name="confirm-email" type="text" class="form-control" value="${user?.email}"
-                           data-validation-engine="validate[required,custom[email],equals[email]]"
-                           data-errormessage-value-missing="${message(code:'create.account.confirm.email.is.required')}"
-                           data-errormessage-pattern-mismatch="${message(code:'create.account.confirm.email.mismatch')}"
-                    />
-                </div>
+                %{--TODO: Should come up with a way to verify the new email address before changing it--}%
+                <g:if test="${!edit}">
+                    <div class="form-group">
+                        <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
+                        <input id="confirm-email" name="confirm-email" type="text" class="form-control" value="${user?.email}"
+                               data-validation-engine="validate[required,custom[email],equals[email]]"
+                               data-errormessage-value-missing="${message(code:'create.account.confirm.email.is.required')}"
+                               data-errormessage-pattern-mismatch="${message(code:'create.account.confirm.email.mismatch')}"
+                        />
+                    </div>
+                </g:if>
 
                 <g:if test="${!edit}">
                     <div class="form-group">
@@ -309,6 +312,13 @@
 <asset:script type="text/javascript">
     $(function() {
         userdetails.initCountrySelect('.chosen-select', '#country', '#state', "${g.createLink(uri: '/ws/registration/states')}");
+
+        if("${raw(edit)}"){
+            $("#email").attr('disabled','disabled');
+        }
+        else{
+            $('#email').removeAttr('disabled');
+        }
 
         $('#updateAccountForm').validationEngine('attach', { scroll: false });
         $("#updateAccountSubmit").click(function(e) {
