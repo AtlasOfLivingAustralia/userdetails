@@ -85,13 +85,15 @@
 
 </div>
 <div class="col-md-6 well well-lg">
-    <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'activated', 'error')} ">
-        <div class="checkbox">
-            <label>
-                <g:checkBox name="activated" value="${userInstance?.activated}"/> <g:message code="user.form.activated" />
-            </label>
+    <g:if test="${!grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+        <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'activated', 'error')} ">
+            <div class="checkbox">
+                <label>
+                    <g:checkBox name="activated" value="${userInstance?.activated}"/> <g:message code="user.form.activated" />
+                </label>
+            </div>
         </div>
-    </div>
+    </g:if>
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'locked', 'error')} ">
     <div class="checkbox">

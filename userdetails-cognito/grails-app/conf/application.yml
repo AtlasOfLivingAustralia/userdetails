@@ -213,3 +213,4 @@ oauth.support.dynamic.client.supportedIdentityProviders: ["COGNITO", "Facebook",
 oauth.support.dynamic.client.authFlows: ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH"]
 
 userdetails.api.useGatewayAPI: true
+userdetails.cognito.auth: true
