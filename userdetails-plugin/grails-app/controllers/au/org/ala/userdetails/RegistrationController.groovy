@@ -501,4 +501,20 @@ class RegistrationController {
 
         return isMFAEnabled && !hasMFAUnsupportedRoles
     }
+
+    def verifyAttributeChangeWithCode(String attribute, String code) {
+        try  {
+            def success = userService.verifyUserAttribute(attribute, code)
+            if (success) {
+                render([success: true] as JSON)
+            }
+            else {
+                render([success: false] as JSON)
+            }
+        } catch (e) {
+            def result = [success: false, error: e.message]
+            render result as JSON
+        }
+
+    }
 }

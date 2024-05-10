@@ -24,7 +24,7 @@
     border-color: rgba(82, 168, 236, 0.8);
 }
 
-#qrcode, #instruction, #secret, #code, #buttonsDiv, #codeLabel {
+#qrcode, #instruction, #secret, #code, #buttonsDiv, #codeLabel, #newEmailMessage, #newEmail, #emailCodeDiv, #emailCode {
     padding-top: 10px;
 }
 
@@ -32,8 +32,12 @@
     color: blue;
 }
 
-#code {
+#code, #newEmail, #emailCode {
     width: 20%;
+}
+
+#requestCode, #verifyCode {
+    margin-top: 10px;
 }
 
 #message {

@@ -242,6 +242,8 @@ interface IUserService<U extends IUser<? extends Serializable>, P extends IUserP
 
     boolean verifyUserCode(String userCode)
 
+    boolean verifyUserAttribute(String attribute, String code)
+
     void enableMfa(String userId, boolean enable)
 
 //    *********** Property related services *************

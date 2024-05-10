@@ -41,6 +41,7 @@ import com.amazonaws.services.cognitoidp.model.SchemaAttributeType
 import com.amazonaws.services.cognitoidp.model.SoftwareTokenMfaSettingsType
 import com.amazonaws.services.cognitoidp.model.UserNotFoundException
 import com.amazonaws.services.cognitoidp.model.UserType
+import com.amazonaws.services.cognitoidp.model.VerifyUserAttributeRequest
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import com.amazonaws.services.cognitoidp.model.VerifySoftwareTokenRequest
 import grails.converters.JSON
@@ -873,6 +874,21 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         request.userCode = userCode
         def response= cognitoIdp.verifySoftwareToken(request)
         return response.status == "SUCCESS"
+    }
+
+    @Override
+    boolean verifyUserAttribute(String attribute, String code) {
+        AccessToken accessToken = tokenService.getAuthToken(true)
+
+        if (accessToken == null) {
+            throw new IllegalStateException("No current user available")
+        }
+        VerifyUserAttributeRequest request = new VerifyUserAttributeRequest()
+        request.accessToken = accessToken.value
+        request.attributeName = attribute
+        request.code = code
+        def response= cognitoIdp.verifyUserAttribute(request)
+        return isSuccessful(response)
     }
 
     @Override

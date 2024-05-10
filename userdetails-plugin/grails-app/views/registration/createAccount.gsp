@@ -159,6 +159,21 @@
                         </div>
                     </div>
                 </g:if>
+                <g:if test="${edit && grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+                    <h2><g:message code="update.email" /></h2>
+                    <p>
+                        <g:message code="update.email.desc" />
+                    </p>
+                    <div id="newEmailDiv">
+                        <p id="newEmailMessage" hidden></p>
+                        <input id="newEmail" name="newEmail" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                        <button class="btn btn-default" id="requestCode">Request Code</button>
+                        <div id="emailCodeDiv" hidden="hidden">
+                            <input id="emailCode" name="emailCode" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                            <button class="btn btn-primary" id="verifyCode">Verify Code</button>
+                        </div>
+                    </div>
+                </g:if>
             </div>
         </div>
         <div class="col-md-4 col-md-pull-8">
@@ -179,8 +194,7 @@
                            data-errormessage-value-missing="${message(code:'create.account.email.is.required')}"
                     />
                 </div>
-                %{--TODO: Should come up with a way to verify the new email address before changing it--}%
-                <g:if test="${!edit}">
+                <g:if test="${!edit || !grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
                     <div class="form-group">
                         <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
                         <input id="confirm-email" name="confirm-email" type="text" class="form-control" value="${user?.email}"
@@ -313,11 +327,11 @@
     $(function() {
         userdetails.initCountrySelect('.chosen-select', '#country', '#state', "${g.createLink(uri: '/ws/registration/states')}");
 
-        if("${raw(edit)}"){
-            $("#email").attr('disabled','disabled');
+        if(${raw(edit) && grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}){
+            $("#email").attr('readonly','readonly');
         }
         else{
-            $('#email').removeAttr('disabled');
+            $('#email').removeAttr('readonly');
         }
 
         $('#updateAccountForm').validationEngine('attach', { scroll: false });
@@ -408,6 +422,66 @@
              document.getElementById("message").innerHTML = ""
              document.getElementById("message").hidden = true
              document.getElementById("mfa").hidden = true
+         });
+
+         $("#requestCode").click(function(e) {
+             var newEmail = $("#newEmail").val();
+             if(newEmail == null || newEmail === "") {
+                 document.getElementById("newEmailMessage").innerHTML = "Invalid email"
+                 document.getElementById("newEmailMessage").style.color = "red"
+                 document.getElementById("newEmailMessage").hidden = false
+             }
+             else {
+                 $.ajax({
+                 url: "${createLink(action:'update', controller: 'Registration')}?email=" + newEmail,
+                 type: "GET",
+                 success: function(result){
+                     let error = "A user is already registered with the email address"
+                     if(result.includes("Failed to update user profile")){
+                         if(result.includes(error)){
+                             document.getElementById("newEmailMessage").innerHTML = error
+                         }
+                         else {
+                            document.getElementById("newEmailMessage").innerHTML = 'Error please contact us at <a href="mailto:support@ala.org.au">support@ala.org.au</a>'
+                         }
+                         document.getElementById("newEmailMessage").style.color = "red"
+                         document.getElementById("newEmailMessage").hidden = false
+                         document.getElementById("emailCodeDiv").hidden = true
+                    }
+                     else{
+                        document.getElementById("newEmailMessage").innerHTML = "Please enter the code received in your new email"
+                        document.getElementById("newEmailMessage").style.color = "green"
+                        document.getElementById("newEmailMessage").hidden = false
+                        document.getElementById("emailCodeDiv").hidden = false
+                     }
+                }});
+             }
+         });
+
+         $("#verifyCode").click(function(e) {
+            var emailCode = $("#emailCode").val();
+             if(emailCode == null || emailCode === "") {
+                 document.getElementById("newEmailMessage").innerHTML = "Invalid code"
+                 document.getElementById("newEmailMessage").style.color = "red"
+                 document.getElementById("newEmailMessage").hidden = false
+                 document.getElementById("emailCodeDiv").hidden = false
+             }
+             else {
+                 $.ajax({
+                 url: "${createLink(action:'verifyAttributeChangeWithCode', controller: 'Registration')}?attribute=email&code=" + emailCode,
+                 type: "GET",
+                 success: function(result){
+                     if(result.success){
+                        window.location = "${createLink(uri:'/logout')}"
+                    }
+                     else{
+                         document.getElementById("newEmailMessage").innerHTML = result.error
+                         document.getElementById("newEmailMessage").style.color = "red"
+                         document.getElementById("newEmailMessage").hidden = false
+                         document.getElementById("emailCodeDiv").hidden = false
+                     }
+                }});
+             }
          });
 
     });
