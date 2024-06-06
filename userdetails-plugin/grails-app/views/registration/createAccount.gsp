@@ -472,7 +472,7 @@
                  type: "GET",
                  success: function(result){
                      if(result.success){
-                        window.location = "${createLink(uri:'/logout')}"
+                        window.location = "${createLink(uri:'/logout')}?url=/"
                     }
                      else{
                          document.getElementById("newEmailMessage").innerHTML = result.error
