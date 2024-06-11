@@ -313,11 +313,18 @@
     $(function() {
         userdetails.initCountrySelect('.chosen-select', '#country', '#state', "${g.createLink(uri: '/ws/registration/states')}");
 
+        $("#country").on("change", function(evt, params) {
+            if(!params.selected){
+                $(".chosen-container").validationEngine('hide');
+                $('.chosen-container').validationEngine('showPrompt', '* This field is required', 'error')
+            }
+        });
+
         if("${raw(edit)}"){
-            $("#email").attr('disabled','disabled');
+            $("#email").attr('readonly','readonly');
         }
         else{
-            $('#email').removeAttr('disabled');
+            $('#email').removeAttr('readonly');
         }
 
         $('#updateAccountForm').validationEngine('attach', { scroll: false });
@@ -330,11 +337,16 @@
                 alert("The supplied passwords do not match!");
             }
 
+            var validCountry = document.getElementById("country").value != ""
             var valid = $('#updateAccountForm').validationEngine('validate');
 
-            if (valid && pm) {
+            if (valid && validCountry && pm) {
                 $("form[name='updateAccountForm']").submit();
             } else {
+                if(!validCountry) {
+                    $(".chosen-container").validationEngine('hide');
+                    $('.chosen-container').validationEngine('showPrompt', '* This field is required', 'error')
+                }
                 $('#updateAccountSubmit').removeAttr('disabled');
                 e.preventDefault();
             }
