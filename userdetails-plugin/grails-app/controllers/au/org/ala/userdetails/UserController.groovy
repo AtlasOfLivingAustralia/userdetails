@@ -64,6 +64,7 @@ class UserController {
             render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false])
             return
         }
+        passwordService.resetPassword(user, passwordService.generatePassword(user), true, null)
         userService.sendAccountActivation(user)
 
         flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), user.id])
