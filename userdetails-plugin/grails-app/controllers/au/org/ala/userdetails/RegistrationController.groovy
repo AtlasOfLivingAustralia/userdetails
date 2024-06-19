@@ -233,6 +233,8 @@ class RegistrationController {
 
     def update() {
 
+        def hasEmailChanged =  false
+
         def user = userService.currentUser
 
         log.debug("Updating account for " + user)
@@ -245,6 +247,7 @@ class RegistrationController {
                     render(view: "accountError", model: [msg: msg])
                     return
                 }
+                hasEmailChanged = true
             }
 
             if (requirePasswordForUserUpdate) {
@@ -260,6 +263,11 @@ class RegistrationController {
             def success = userService.updateUser(user.userId, params, request.locale)
 
             if (success) {
+                //when email is changed, cannot access my profile until user activate the account
+                if(hasEmailChanged) {
+                    render([success: true] as JSON)
+                    return
+                }
                 redirect(controller: 'profile')
                 log.info("Account details updated for user: " + user.id + " username: " + user.userName)
             } else {
@@ -516,5 +524,23 @@ class RegistrationController {
             render result as JSON
         }
 
+    }
+
+    def deactivateAccountAndSendActivationEmail() {
+        def user = userService.getUserById(params.email)
+
+        log.debug("Disabling account for " + user)
+        if (user) {
+            def success = userService.disableUser(user)
+
+            if (success) {
+                userService.sendAccountActivation(user)
+                render([success: true] as JSON)
+            } else {
+                render([success: false, error: "Failed to disable user profile - unknown error"] as JSON)
+            }
+        } else {
+            render([success: false, error: "The current user details could not be found"] as JSON)
+        }
     }
 }

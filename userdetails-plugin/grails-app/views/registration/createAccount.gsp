@@ -159,19 +159,29 @@
                         </div>
                     </div>
                 </g:if>
-                <g:if test="${edit && grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+                <g:if test="${edit}">
                     <h2><g:message code="update.email" /></h2>
                     <p>
-                        <g:message code="update.email.desc" />
+                        <g:if test="${grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+                            <g:message code="update.email.desc.1" />
+                        </g:if>
+                        <g:else>
+                            <g:message code="update.email.desc.2" />
+                        </g:else>
                     </p>
                     <div id="newEmailDiv">
                         <p id="newEmailMessage" hidden></p>
                         <input id="newEmail" name="newEmail" type="text" class="form-control" data-validation-engine="validate[required]"/>
-                        <button class="btn btn-default" id="requestCode">Request Code</button>
-                        <div id="emailCodeDiv" hidden="hidden">
-                            <input id="emailCode" name="emailCode" type="text" class="form-control" data-validation-engine="validate[required]"/>
-                            <button class="btn btn-primary" id="verifyCode">Verify Code</button>
-                        </div>
+                        <g:if test="${grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+                            <button class="btn btn-default" id="requestCode">Request Code</button>
+                            <div id="emailCodeDiv" hidden="hidden">
+                                <input id="emailCode" name="emailCode" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                                <button class="btn btn-primary" id="verifyCode">Verify Code</button>
+                            </div>
+                        </g:if>
+                        <g:else>
+                            <button class="btn btn-primary" id="updateEmail">Update Email</button>
+                        </g:else>
                     </div>
                 </g:if>
             </div>
@@ -194,7 +204,7 @@
                            data-errormessage-value-missing="${message(code:'create.account.email.is.required')}"
                     />
                 </div>
-                <g:if test="${!edit || !grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+                <g:if test="${!edit}">
                     <div class="form-group">
                         <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
                         <input id="confirm-email" name="confirm-email" type="text" class="form-control" value="${user?.email}"
@@ -334,7 +344,7 @@
             }
         });
 
-        if("${raw(edit) && grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}"){
+        if("${raw(edit)}"){
             $("#email").attr('readonly','readonly');
         }
         else{
@@ -384,7 +394,7 @@
 
          $("#setupMFA").click(function(e) {
              $.ajax({
-             url: "${createLink(action:'getSecretForMfa', controller: 'Registration')}",
+             url: "${createLink(uri:'/registration/getSecretForMfa')}",
              type: "GET",
              success: function(result){
                  if(result.success){
@@ -411,7 +421,7 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(action:'verifyAndActivateMfa', controller: 'Registration')}?userCode=" + code + "&userId=${raw(user?.email)}",
+                 url: "${createLink(uri:'/registration/verifyAndActivateMfa')}?userCode=" + code + "&userId=${raw(user?.email)}",
                  type: "GET",
                  success: function(result){
                      if(result.success){
@@ -445,11 +455,17 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(action:'update', controller: 'Registration')}?email=" + newEmail,
+                 url: "${createLink(uri:'/registration/update')}?email=" + newEmail,
                  type: "GET",
                  success: function(result){
                      let error = "A user is already registered with the email address"
-                     if(result.includes("Failed to update user profile")){
+                     if(result.success) {
+                        document.getElementById("newEmailMessage").innerHTML = "Please enter the code received in your new email"
+                        document.getElementById("newEmailMessage").style.color = "green"
+                        document.getElementById("newEmailMessage").hidden = false
+                        document.getElementById("emailCodeDiv").hidden = false
+                     }
+                     else if(result.includes("Failed to update user profile")){
                          if(result.includes(error)){
                              document.getElementById("newEmailMessage").innerHTML = error
                          }
@@ -460,12 +476,6 @@
                          document.getElementById("newEmailMessage").hidden = false
                          document.getElementById("emailCodeDiv").hidden = true
                     }
-                     else{
-                        document.getElementById("newEmailMessage").innerHTML = "Please enter the code received in your new email"
-                        document.getElementById("newEmailMessage").style.color = "green"
-                        document.getElementById("newEmailMessage").hidden = false
-                        document.getElementById("emailCodeDiv").hidden = false
-                     }
                 }});
              }
          });
@@ -480,7 +490,7 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(action:'verifyAttributeChangeWithCode', controller: 'Registration')}?attribute=email&code=" + emailCode,
+                 url: "${createLink(uri:'/registration/verifyAttributeChangeWithCode')}?attribute=email&code=" + emailCode,
                  type: "GET",
                  success: function(result){
                      if(result.success){
@@ -492,6 +502,50 @@
                          document.getElementById("newEmailMessage").hidden = false
                          document.getElementById("emailCodeDiv").hidden = false
                      }
+                }});
+             }
+         });
+
+         $("#updateEmail").click(function(e) {
+             var newEmail = $("#newEmail").val();
+             if(newEmail == null || newEmail === "") {
+                 document.getElementById("newEmailMessage").innerHTML = "Invalid email"
+                 document.getElementById("newEmailMessage").style.color = "red"
+                 document.getElementById("newEmailMessage").hidden = false
+             }
+             else {
+                 $.ajax({
+                 url: "${createLink(uri:'/registration/update')}?email=" + newEmail,
+                 type: "GET",
+                 success: function(result){
+                     let error = "A user is already registered with the email address"
+                     if(result.success) {
+                         $.ajax({
+                         url: "${createLink(uri:'/registration/deactivateAccountAndSendActivationEmail')}?email=" + newEmail,
+                         type: "GET",
+                         success: function(result){
+                              if(result.success) {
+                                window.location = "${createLink(uri:'/logout')}?url=/"
+                              }
+                              else {
+                                 document.getElementById("newEmailMessage").innerHTML = result.error
+                                 document.getElementById("newEmailMessage").style.color = "red"
+                                 document.getElementById("newEmailMessage").hidden = false
+                                 document.getElementById("emailCodeDiv").hidden = false
+                              }
+                            }
+                         })
+                     }
+                     else if(result.includes("Failed to update user profile")) {
+                         if(result.includes(error)){
+                             document.getElementById("newEmailMessage").innerHTML = error
+                         }
+                         else {
+                            document.getElementById("newEmailMessage").innerHTML = 'Error please contact us at <a href="mailto:support@ala.org.au">support@ala.org.au</a>'
+                         }
+                         document.getElementById("newEmailMessage").style.color = "red"
+                         document.getElementById("newEmailMessage").hidden = false
+                    }
                 }});
              }
          });
