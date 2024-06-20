@@ -386,7 +386,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         IUser<Long> user = createUser(1, authKey)
 
         when:
-        params.email = 'test@example.org'
+        params.email = user.email
         params.firstName = 'Test'
         params.lastName = 'Test'
         params['organisation'] = 'Org'
@@ -400,7 +400,6 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
 
         then:
         1 * userService.currentUser >> user
-        1 * userService.isEmailInUse('test@example.org')
         1 * passwordService.checkUserPassword(user, password) >> true
         1 * userService.updateUser(user.userId, params, _) >> true
         0 * _ // no other interactions
@@ -530,7 +529,8 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         1 * passwordService.checkUserPassword(currentUser, 'password') >> true
         1 * userService.updateUser(_, _, _) >> true
         1 * userService.isEmailInUse(params.email) >> false
-        response.redirectedUrl == '/profile'
+        //when email is changed, cannot access my profile until user activate the account
+        response.getContentAsString() == '{"success":true}'
     }
 
 }
