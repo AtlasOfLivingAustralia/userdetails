@@ -68,6 +68,7 @@ dependencies {
     implementation "org.hibernate:hibernate-jcache"
     runtimeOnly 'org.ehcache:ehcache'
     implementation "org.grails.plugins:gsp"
+    implementation 'org.mongodb:bson:4.11.1'
     profile "org.grails.profiles:web"
     runtimeOnly "org.glassfish.web:el-impl:2.2.1-b05"
 //    runtimeOnly "com.h2database:h2"
