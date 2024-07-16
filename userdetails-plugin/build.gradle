@@ -3,20 +3,17 @@ plugins {
     id "groovy"
     id "org.grails.grails-gsp"
     id "org.grails.grails-web"
-    id "com.github.erdi.webdriver-binaries" version "3.0"
     id "war"
     id "idea"
     id "com.bertramlabs.asset-pipeline"
+    id "org.grails.grails-plugin"
     id "application"
     id "eclipse"
+
+    id "com.github.erdi.webdriver-binaries"
     id "maven-publish"
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
     id "java-library"
-}
-
-java {
-    sourceCompatibility = JavaVersion.toVersion("11")
-    targetCompatibility = JavaVersion.toVersion("11")
 }
 
 repositories {
@@ -44,54 +41,45 @@ configurations.all {
 }
 
 dependencies {
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    compileOnly "io.micronaut:micronaut-inject-groovy"
-    console "org.grails:grails-console"
-    implementation "org.springframework.boot:spring-boot-starter-logging"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.boot:spring-boot-autoconfigure"
-    implementation "org.grails:grails-core"
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-tomcat"
-    implementation "org.grails:grails-web-boot"
-    implementation "org.grails:grails-logging"
-    implementation "org.grails:grails-plugin-rest"
-    implementation "org.grails:grails-plugin-databinding"
-    implementation "org.grails:grails-plugin-i18n"
-    implementation "org.grails:grails-plugin-services"
-    implementation "org.grails:grails-plugin-url-mappings"
-    implementation "org.grails:grails-plugin-interceptors"
-    implementation "org.grails.plugins:cache"
-    implementation "org.grails.plugins:async"
-    implementation "org.grails.plugins:scaffolding"
+    implementation("org.grails:grails-core")
+    implementation("org.grails:grails-logging")
+    implementation("org.grails:grails-plugin-databinding")
+    implementation("org.grails:grails-plugin-i18n")
+    implementation("org.grails:grails-plugin-interceptors")
+    implementation("org.grails:grails-plugin-rest")
+    implementation("org.grails:grails-plugin-services")
+    implementation("org.grails:grails-plugin-url-mappings")
+    implementation("org.grails:grails-web-boot")
+    implementation("org.grails.plugins:gsp")
+//    implementation("org.grails.plugins:hibernate5")
+    implementation("org.grails.plugins:scaffolding")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    compileOnly("io.micronaut:micronaut-inject-groovy")
+    console("org.grails:grails-console")
+    runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
+//    runtimeOnly("com.h2database:h2")
+//    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
+    runtimeOnly("org.fusesource.jansi:jansi:1.18")
+    testImplementation("io.micronaut:micronaut-inject-groovy")
+    testImplementation("org.grails:grails-gorm-testing-support")
+    testImplementation("org.grails:grails-web-testing-support")
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("io.micronaut:micronaut-http-client")
+
+    // TODO Grails IntelliJ Bug?
+    implementation("org.grails:grails-shell:6.1.2")
+
+    // TODO Leftover from Grails 5 to 6 upgrade: Are these required??
     implementation "org.grails.plugins:events"
-//    implementation "org.grails.plugins:hibernate5"
-//    implementation "org.hibernate:hibernate-core:5.6.9.Final"
-//    implementation "org.hibernate:hibernate-jcache"
     runtimeOnly 'org.ehcache:ehcache'
-    implementation "org.grails.plugins:gsp"
-    profile "org.grails.profiles:web-plugin"
-    runtimeOnly "org.glassfish.web:el-impl:2.2.1-b05"
-//    runtimeOnly "com.h2database:h2"
-//    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
-
-//    compileOnly "org.grails:grails-plugin-services"
-//    compileOnly "org.grails:grails-plugin-domain-class"
-
     runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
-    runtimeOnly "com.bertramlabs.plugins:asset-pipeline-grails:3.4.6"
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "org.grails:grails-gorm-testing-support"
-    testImplementation "org.mockito:mockito-core"
-    testImplementation "org.grails:grails-web-testing-support"
-    testImplementation "org.grails.plugins:geb"
-    testImplementation "org.seleniumhq.selenium:selenium-remote-driver:4.0.0"
-    testImplementation "org.seleniumhq.selenium:selenium-api:4.0.0"
-    testImplementation "org.seleniumhq.selenium:selenium-support:4.0.0"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:4.0.0"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:4.0.0"
 
-    // Grails backwards compat?
+    // TODO: Grails backwards compat?  Still required?  Update?
     api 'org.grails.plugins:converters:4.0.1'
 
     // Groovy backwards compat
@@ -141,15 +129,6 @@ dependencies {
     api 'org.mongodb:mongodb-driver-core:4.6.0'
     api 'org.mongodb:bson:4.6.0'
 
-//    implementation "com.auth0:java-jwt:3.18.2"
-//    implementation "com.auth0:jwks-rsa:0.20.0"
-
-    // Spring Security to secure actuator endpoints
-    // TODO Upgrade or decommission boot admin
-//    compile 'de.codecentric:spring-boot-admin-starter-client:2.6.2'
-//    compile 'org.springframework.boot:spring-boot-starter-security'
-//    compile 'org.springframework.security:spring-security-web'
-
     api('org.webjars.bower:chosen:1.8.3')
     api('org.webjars.bower:chosen-bootstrap:1.1.0') {
         exclude module: 'jquery' // dependency from skin
@@ -166,6 +145,24 @@ dependencies {
     api 'com.amazonaws:aws-java-sdk-api-gateway:1.12.279'
 }
 
+application {
+    mainClass.set("au.org.ala.userdetails.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+assets {
+    packagePlugin = true
+    minifyJs = true
+    minifyCss = true
+}
+
 compileJava.dependsOn(processResources)
 
 springBoot {
@@ -175,58 +172,6 @@ springBoot {
 java {
     withSourcesJar()
     withJavadocJar()
-}
-
-bootRun {
-    ignoreExitValue true
-    jvmArgs(
-            '-Dspring.output.ansi.enabled=always',
-            '-noverify',
-            '-XX:TieredStopAtLevel=1',
-            '-Xmx1024m')
-    sourceResources sourceSets.main
-    String springProfilesActive = 'spring.profiles.active'
-    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
-}
-
-tasks.withType(GroovyCompile) {
-    configure(groovyOptions) {
-        forkOptions.jvmArgs = ['-Xmx1024m']
-    }
-}
-
-tasks.withType(Test) {
-    useJUnitPlatform()
-    jvmArgs += ["-javaagent:${classpath.find { it.name.contains('spock-mockable') }.absolutePath}"]
-}
-
-// enable if you wish to package this plugin as a standalone application
-bootJar.enabled = false
-
-assets {
-    packagePlugin = true
-}
-
-webdriverBinaries {
-    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
-        chromedriver {
-            version = '2.45.0'
-            fallbackTo32Bit = true
-        }
-        geckodriver '0.30.0'
-    }
-}
-
-tasks.withType(Test) {
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-    if (!System.getenv().containsKey('GITHUB_ACTIONS')) {
-        systemProperty 'webdriver.chrome.driver', System.getProperty('webdriver.chrome.driver')
-        systemProperty 'webdriver.gecko.driver', System.getProperty('webdriver.gecko.driver')
-    } else {
-        systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
-        systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
-    }
 }
 
 publishing {
