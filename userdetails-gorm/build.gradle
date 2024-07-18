@@ -90,6 +90,9 @@ dependencies {
 
     // Grails plugin dependencies
 
+    // TODO Grails IntelliJ Bug?
+    implementation("org.grails:grails-shell:6.1.2")
+
     // Base Userdetails plugin
     implementation project(':userdetails-plugin')
 
