@@ -58,6 +58,7 @@ dependencies {
     implementation("org.grails:grails-web-boot")
     implementation("org.grails.plugins:gsp")
     implementation("org.grails.plugins:hibernate5")
+    implementation "org.hibernate:hibernate-jcache"
     implementation("org.grails.plugins:scaffolding")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter")
@@ -83,9 +84,6 @@ dependencies {
     testRuntimeOnly("org.seleniumhq.selenium:selenium-firefox-driver:4.19.1")
     testRuntimeOnly("org.seleniumhq.selenium:selenium-safari-driver:4.19.1")
     testImplementation("io.micronaut:micronaut-http-client")
-
-    // TODO Grails IntelliJ Bug?
-    implementation("org.grails:grails-shell:6.1.2")
 
     // Groovy backwards compat
     runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
