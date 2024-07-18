@@ -75,12 +75,12 @@ dependencies {
     implementation("org.grails:grails-shell:6.1.2")
 
     // TODO Leftover from Grails 5 to 6 upgrade: Are these required??
-    implementation "org.grails.plugins:events"
-    runtimeOnly 'org.ehcache:ehcache'
-    runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
+//    implementation "org.grails.plugins:events"
+//    runtimeOnly 'org.ehcache:ehcache'
+//    runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
 
     // TODO: Grails backwards compat?  Still required?  Update?
-    api 'org.grails.plugins:converters:4.0.1'
+//    api 'org.grails.plugins:converters:4.0.1'
 
     // Groovy backwards compat
     runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
