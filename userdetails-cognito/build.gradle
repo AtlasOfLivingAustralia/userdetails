@@ -38,6 +38,7 @@ configurations {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    exclude group: 'org.grails', module: 'grails-shell'
 }
 
 dependencies {
@@ -77,9 +78,6 @@ dependencies {
     testRuntimeOnly("org.seleniumhq.selenium:selenium-firefox-driver:4.19.1")
     testRuntimeOnly("org.seleniumhq.selenium:selenium-safari-driver:4.19.1")
     testImplementation("io.micronaut:micronaut-http-client")
-
-    // TODO Grails IntelliJ Bug?
-    implementation("org.grails:grails-shell:6.1.2")
 
     // Base userdetails plugin
     implementation project(':userdetails-plugin')

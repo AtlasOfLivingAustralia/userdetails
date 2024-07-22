@@ -38,6 +38,7 @@ configurations {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    exclude group: 'org.grails', module: 'grails-shell'
 }
 
 dependencies {
@@ -70,9 +71,6 @@ dependencies {
     testImplementation("org.grails:grails-web-testing-support")
     testImplementation("org.spockframework:spock-core")
     testImplementation("io.micronaut:micronaut-http-client")
-
-    // TODO Grails IntelliJ Bug?
-    implementation("org.grails:grails-shell:6.1.2")
 
     // TODO Leftover from Grails 5 to 6 upgrade: Are these required??
 //    implementation "org.grails.plugins:events"
