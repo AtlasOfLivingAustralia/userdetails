@@ -14,7 +14,9 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
 import com.amazonaws.services.dynamodbv2.model.QueryRequest
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class CognitoApplicationService implements IApplicationService {
 
     IUserService userService
@@ -153,14 +155,20 @@ class CognitoApplicationService implements IApplicationService {
             request.callbackURLs.addAll(tokensCallbackURLs)
         }
 
-        CreateUserPoolClientResult response = cognitoIdp.createUserPoolClient(request)
+        try {
+            CreateUserPoolClientResult response = cognitoIdp.createUserPoolClient(request)
 
-        if (isSuccessful(response)) {
-            def clientId = response.userPoolClient.clientId
-            addClientIdForUser(userId, clientId)
-            return userPoolClientToApplication(response.userPoolClient)
-        } else {
-            throw new RuntimeException("Could not generate client")
+            if (isSuccessful(response)) {
+                def clientId = response.userPoolClient.clientId
+                addClientIdForUser(userId, clientId)
+                return userPoolClientToApplication(response.userPoolClient)
+            } else {
+                throw new RuntimeException("Could not generate client")
+            }
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e)
+            throw new RuntimeException("Could not create client")
         }
     }
 
@@ -200,9 +208,15 @@ class CognitoApplicationService implements IApplicationService {
             request.callbackURLs.addAll(tokensCallbackURLs)
         }
 
-        def response = cognitoIdp.updateUserPoolClient(request)
-        if (!isSuccessful(response)) {
-            throw new RuntimeException("Could not update client $applicationRecord.clientId")
+        try {
+            def response = cognitoIdp.updateUserPoolClient(request)
+            if (!isSuccessful(response)) {
+                throw new RuntimeException("Could not update client $applicationRecord.clientId")
+            }
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e)
+            throw new RuntimeException("Could not update client")
         }
     }
 

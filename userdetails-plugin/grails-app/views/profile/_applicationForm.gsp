@@ -118,24 +118,38 @@
     function addCallback() {
         let $callback = $('#callbacks');
 
-        if (!$callback[0].checkValidity()) {
-            alert('not a valid url');
+        if (isValidUrl($callback[0].value)) {
+            let value = $callback.val();
+            $callback.val('');
+
+            let $callbacks = $('#callback-list');
+            let length = $callbacks.children('input').length;
+
+            let span = $('<span></span>', {class: 'tag label label-default', 'data-index': length});
+            let innerSpan = $('<span></span>', {text: value});
+            let button = $('<a></a>', {'data-index': length, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fa fa-trash"></i>');
+            let input = $('<input></input>', {value: value, 'data-index': length, type: 'hidden', name: 'callbacks'});
+
+            span.append(innerSpan);
+            span.append(button);
+            $callbacks.append(span);
+            $callbacks.append(input);
         }
-        let value = $callback.val();
-        $callback.val('');
+    }
 
-        let $callbacks = $('#callback-list');
-        let length = $callbacks.children('input').length;
-
-        let span = $('<span></span>', {class: 'tag label label-default', 'data-index': length});
-        let innerSpan = $('<span></span>', {text: value});
-        let button = $('<a></a>', {'data-index': length, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fa fa-trash"></i>');
-        let input = $('<input></input>', {value: value, 'data-index': length, type: 'hidden', name: 'callbacks'});
-
-        span.append(innerSpan);
-        span.append(button);
-        $callbacks.append(span);
-        $callbacks.append(input);
+    function isValidUrl(string) {
+      try {
+        const newUrl = new URL(string);
+        let ifCognito = "${grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}"
+        if (ifCognito && newUrl.protocol === 'http:' && newUrl.hostname !== 'localhost') {
+          alert('Not a valid http url. HTTPS is required over HTTP, except for http://localhost. Additionally, app callback URLs like myapp://example are supported.');
+          return false;
+        }
+        return true;
+      } catch (err) {
+         alert('Not a valid url.');
+         return false;
+      }
     }
 
     function removeCallback(i) {

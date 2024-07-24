@@ -247,7 +247,7 @@
             addCallbackToForm($callbacks, callbacks, i, true);
         }
 
-        $('input.callbacks').val('');
+        $('#callbacks').val('');
 
         let url = '<g:createLink controller="profile" action="updateClient" id="clientId"/>'.replace('clientId', data.clientId);
         $('#modal-save-form').validationEngine('attach', { scroll: false });
@@ -260,13 +260,16 @@
                 let $saveButtonContent = $saveButton.content;
                 $saveButton.html('<i class="fa fa-spinner"></i>');
                 setModalButtonsDisabled(true);
+                $('#callbacks').val('');
                 $.post(
                     url,
                     $(this).serialize()
                 ).done(function(data) {
                     refreshAppTable();
                     $('#client-modal').modal('hide');
-                }).always(function() {
+                }).fail(function(data) {
+                    alert( "Error when updating the application ");
+                  }).always(function() {
                     $saveButton.html($saveButtonContent);
                     setModalButtonsDisabled(false);
                 });
@@ -292,6 +295,8 @@
         $callbacks.children().remove();
         addCallbackToForm($callbacks, ["http://localhost:8080/callback"], 0, false);
 
+        $('#callbacks').val('');
+
         let url = '<g:createLink controller="profile" action="generateClient" />';
         $('#modal-save-form').validationEngine('attach', { scroll: false });
         $("#modal-save-form").off('submit').on('submit', function (e) {
@@ -303,6 +308,7 @@
                 let $saveButtonContent = $saveButton.content;
                 $saveButton.html('<i class="fa fa-spinner"></i>');
                 setModalButtonsDisabled(true);
+                $('#callbacks').val('');
                 $.post(
                     url,
                     $(this).serialize()
@@ -314,7 +320,9 @@
                         showEditModal(data);
                         refreshAppTable();
                     }
-                }).always(function() {
+                }).fail(function(data) {
+                    alert( "Error when creating the application");
+                  }).always(function() {
                     $saveButton.html($saveButtonContent);
                     setModalButtonsDisabled(false);
                 });
