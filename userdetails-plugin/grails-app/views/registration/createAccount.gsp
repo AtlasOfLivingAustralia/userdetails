@@ -374,10 +374,10 @@
              type: "GET",
              success: function(result){
                  if(result.success){
-                    document.getElementById("secret").innerHTML = ""
-                    document.getElementById("secret").innerHTML = result.code
+                    document.getElementById("secret").textContent = ""
+                    document.getElementById("secret").textContent = result.code
                     document.getElementById("mfa").hidden = false
-                    document.getElementById("qrcode").innerHTML = ""
+                    document.getElementById("qrcode").textContent = ""
                     new QRCode(document.getElementById("qrcode"), "otpauth://totp/${grailsApplication.config.getProperty('serverName')}:${raw(user?.email)}?secret=" + result.code);
                 }
                  else{
@@ -391,7 +391,7 @@
          $("#verifyMFA").click(function(e) {
              var code = $("#code").val();
              if(code == null || code === "" || isNaN(code)) {
-                 document.getElementById("message").innerHTML = "Invalid code"
+                 document.getElementById("message").textContent = "${message(code: 'invalid.code', default: 'Invalid code')}"
                  document.getElementById("message").style.color = "red"
                  document.getElementById("message").hidden = false
              }
@@ -401,13 +401,13 @@
                  type: "GET",
                  success: function(result){
                      if(result.success){
-                        document.getElementById("message").innerHTML = "Success"
+                        document.getElementById("message").textContent = "${message(code: 'success', default: 'Success')}"
                         document.getElementById("message").style.color = "green"
                         document.getElementById("message").hidden = false
                         document.getElementById("enableMFA").checked = true;
                     }
                      else{
-                         document.getElementById("message").innerHTML = result.error
+                         document.getElementById("message").textContent = result.error
                          document.getElementById("message").style.color = "red"
                          document.getElementById("message").hidden = false
                      }
@@ -417,7 +417,7 @@
 
          $("#hide").click(function(e) {
              document.getElementById("code").value = ""
-             document.getElementById("message").innerHTML = ""
+             document.getElementById("message").textContent = ""
              document.getElementById("message").hidden = true
              document.getElementById("mfa").hidden = true
          });

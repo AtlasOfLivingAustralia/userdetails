@@ -140,8 +140,8 @@
     function isValidUrl(string) {
       try {
         const newUrl = new URL(string);
-        let ifCognito = "${grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}"
-        if (ifCognito && newUrl.protocol === 'http:' && newUrl.hostname !== 'localhost') {
+        let insecureUrlsAllowed = "${grailsApplication.config.getProperty('userdetails.applications.insecure-urls-allowed', boolean, true)}"
+        if (!insecureUrlsAllowed && newUrl.protocol === 'http:' && newUrl.hostname !== 'localhost') {
           alert('Not a valid http url. HTTPS is required over HTTP, except for http://localhost. Additionally, app callback URLs like myapp://example are supported.');
           return false;
         }

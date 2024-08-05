@@ -85,7 +85,7 @@
 
 </div>
 <div class="col-md-6 well well-lg">
-    <g:if test="${!grailsApplication.config.getProperty('userdetails.cognito.auth', boolean, false)}">
+    <g:if test="${!grailsApplication.config.getProperty('userdetails.users.reactivation-allowed', boolean, true)}">
         <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'activated', 'error')} ">
             <div class="checkbox">
                 <label>
