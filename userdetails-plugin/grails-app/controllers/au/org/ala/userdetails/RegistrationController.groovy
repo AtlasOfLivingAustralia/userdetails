@@ -233,22 +233,11 @@ class RegistrationController {
 
     def update() {
 
-        def hasEmailChanged =  false
-
         def user = userService.currentUser
 
         log.debug("Updating account for " + user)
 
         if (user) {
-            if (params.email != user.email) {
-                // email address has changed
-                if (userService.isEmailInUse(params.email)) {
-                    def msg = message(code: "update.account.failure.msg", default: "Failed to update user profile - A user is already registered with the email address.")
-                    render(view: "accountError", model: [msg: msg])
-                    return
-                }
-                hasEmailChanged = true
-            }
 
             if (requirePasswordForUserUpdate) {
                 def isCorrectPassword = passwordService.checkUserPassword(user, params.confirmUserPassword)
@@ -263,11 +252,6 @@ class RegistrationController {
             def success = userService.updateUser(user.userId, params, request.locale)
 
             if (success) {
-                //when email is changed, cannot access my profile until user activate the account
-                if(hasEmailChanged) {
-                    render([success: true] as JSON)
-                    return
-                }
                 redirect(controller: 'profile')
                 log.info("Account details updated for user: " + user.id + " username: " + user.userName)
             } else {
@@ -275,6 +259,35 @@ class RegistrationController {
             }
         } else {
             render(view: "accountError", model: [msg: "The current user details could not be found"])
+        }
+    }
+
+    def updateEmail() {
+
+        def user = userService.currentUser
+
+        log.debug("Updating email for " + user)
+
+        if (user) {
+            if (params.email != user.email) {
+                if (userService.isEmailInUse(params.email)) {
+                    def msg = message(code: "update.account.failure.msg", default: "Failed to update user profile - A user is already registered with the email address.")
+                    render(view: "accountError", model: [msg: msg])
+                    return
+                }
+
+                def success = userService.updateUser(user.userId, params, request.locale)
+
+                if (success) {
+                    redirect(action: 'deactivateAccountAndSendActivationEmail')
+                    render([success: true] as JSON)
+                    return
+                } else {
+                    render([success: false, error: "Failed to update user email - unknown error"] as JSON)
+                }
+            }
+        } else {
+            render([success: false, error: "The current user could not be found"] as JSON)
         }
     }
 

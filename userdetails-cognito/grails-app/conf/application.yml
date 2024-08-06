@@ -212,5 +212,10 @@ tokenApp.url: https://tokens-cognito-support.dev.ala.org.au
 oauth.support.dynamic.client.supportedIdentityProviders: ["COGNITO", "Facebook", "Google", "AAF", "SignInWithApple"]
 oauth.support.dynamic.client.authFlows: ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH"]
 
-userdetails.api.useGatewayAPI: true
-userdetails.cognito.auth: true
+userdetails:
+  api:
+    useGatewayAPI: true
+  applications:
+    insecure-urls-allowed: false
+  users:
+    reactivation-allowed: false
