@@ -264,10 +264,10 @@ class RegistrationController {
             if (success) {
                 //when email is changed, cannot access my profile until user activate the account
                 if(hasEmailChanged) {
-                    def isCodeRequiredForChange = params.isCodeRequiredForChange as boolean ?: false
+                    def isCodeRequiredForChange = params.getBoolean("isCodeRequiredForChange") ?: false
                     //if code is required for the change, account deactivation should happen after the code verification.
                     if(!isCodeRequiredForChange) {
-                        redirect(action: 'deactivateAccountAndSendActivationEmail')
+                        redirect(action: 'deactivateAccountAndSendActivationEmail', params: params)
                     }
                     render([success: true] as JSON)
                     return
