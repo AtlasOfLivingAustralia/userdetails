@@ -445,7 +445,7 @@
          $("#verifyCode").click(function(e) {
             var emailCode = $("#emailCode").val();
              if(emailCode == null || emailCode === "") {
-                 document.getElementById("newEmailMessage").textContent = "Invalid code"
+                 document.getElementById("newEmailMessage").textContent = "${message(code: 'Invalid email', default: 'Invalid email')}"
                  document.getElementById("newEmailMessage").style.color = "red"
                  document.getElementById("newEmailMessage").hidden = false
                  document.getElementById("emailCodeDiv").hidden = false
@@ -478,15 +478,16 @@
              }
              else {
                  const clickedButton = e.target.textContent;
+                 const isCodeRequiredForChange = clickedButton === "Request Code" ?? false;
 
                  $.ajax({
-                 url: "${createLink(uri:'/registration/updateEmail')}",
-                 data: { email: newEmail },
+                 url: "${createLink(uri:'/registration/update')}",
+                 data: { email: newEmail, isCodeRequiredForChange: isCodeRequiredForChange },
                  type: "GET",
                  success: function(result){
                      if(result.success) {
                          if(clickedButton === "Request Code") {
-                             document.getElementById("newEmailMessage").textContent = "${message(code: 'enter.email.code', default: 'Invalid email')}"
+                             document.getElementById("newEmailMessage").textContent = "${message(code: 'enter.email.code', default: 'Please enter the code received in your new email')}"
                              document.getElementById("newEmailMessage").style.color = "green"
                              document.getElementById("newEmailMessage").hidden = false
                              document.getElementById("emailCodeDiv").hidden = false
