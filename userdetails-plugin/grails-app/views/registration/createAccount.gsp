@@ -389,7 +389,7 @@
 
          $("#setupMFA").click(function(e) {
              $.ajax({
-             url: "${createLink(uri:'/registration/getSecretForMfa')}",
+             url: "${createLink(action:'getSecretForMfa', controller: 'registration')}",
              type: "GET",
              success: function(result){
                  if(result.success){
@@ -416,9 +416,9 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(uri:'/registration/verifyAndActivateMfa')}",
+                 url: "${createLink(action:'verifyAndActivateMfa', controller: 'registration')}",
                  data: {userCode: code, userId: "${raw(user?.email)}"},
-                 type: "GET",
+                 type: "POST",
                  success: function(result){
                      if(result.success){
                         document.getElementById("message").textContent = "${message(code: 'success', default: 'Success')}"
@@ -452,9 +452,9 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(uri:'/registration/verifyAttributeChangeWithCode')}",
+                 url: "${createLink(action:'verifyAttributeChangeWithCode', controller: 'registration')}",
                  data: { attribute: 'email',code: emailCode },
-                 type: "GET",
+                 type: "POST",
                  success: function(result){
                      if(result.success){
                         window.location = "${createLink(uri:'/logout')}?url=/"
@@ -481,9 +481,9 @@
                  const isCodeRequiredForChange = clickedButton === "Request Code" ?? false;
 
                  $.ajax({
-                 url: "${createLink(uri:'/registration/update')}",
+                 url: "${createLink(action:'update', controller: 'registration')}",
                  data: { email: newEmail, isCodeRequiredForChange: isCodeRequiredForChange },
-                 type: "GET",
+                 type: "POST",
                  success: function(result){
                      if(result.success) {
                          if(clickedButton === "Request Code") {

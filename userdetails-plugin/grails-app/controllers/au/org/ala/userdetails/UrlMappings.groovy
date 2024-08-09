@@ -37,6 +37,7 @@ class UrlMappings {
         "/ws/registration/countries(.$format)?"(controller: 'registration', action: 'countries', format: 'json')
 
         "/registration/$action?/$id?"(controller: 'registration')
+        "/registration/$action"(controller: 'registration')
 
         "/registration/activateAccount/$userId/$authKey"(controller:'registration', action: 'activateAccount')
         "/registration/activateAccount/$userId"(controller:'registration', action: 'activateAccount')
