@@ -219,3 +219,7 @@ userdetails:
     insecure-urls-allowed: false
   users:
     reactivation-allowed: false
+
+mail:
+  ses:
+    enabled: true

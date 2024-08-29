@@ -94,7 +94,6 @@ dependencies {
     api 'dk.glasius:external-config:4.0.0'
     api 'org.grails.plugins:http-builder-helper:1.1.0'
     api "org.grails.plugins:csv:1.0.1"
-    api 'org.grails.plugins:mail:3.0.0'
 
     api "org.grails.plugins:oauth:4.0.0"
     // transitive oauth plugin deps used in code

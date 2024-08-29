@@ -103,6 +103,8 @@ dependencies {
     testRuntimeOnly "com.h2database:h2"
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
 
+    implementation 'org.grails.plugins:mail:3.0.0'
+
 }
 
 application {
