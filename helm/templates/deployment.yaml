@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ala-userdetails.fullname" . }}
+  labels:
+    {{- include "ala-userdetails.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ala-userdetails.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ala-userdetails.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: userdetails-ses-email-sender
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /data/userdetails/config/userdetails-config.yml
+              subPath: userdetails-config.yml
+            - name: logback-volume
+              mountPath: /data/userdetails/config/logback.xml
+              subPath: logback.xml
+            - name: authorised-systems-volume
+              mountPath: /data/userdetails/config/authorised-systems.yml
+              subPath: logback.groovy
+            - name: system-message-volume
+              mountPath: /data/userdetails/config/system-message.json
+              subPath: system-message.json
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: userdetails-config-secret
+        - name: logback-volume
+          configMap:
+            name: logback-config
+            optional: true
+        - name: authorised-systems-volume
+          configMap:
+            name: authorised-systems-config
+            optional: true
+        - name: system-message-volume
+          configMap:
+            name: system-message-config
+            optional: true
