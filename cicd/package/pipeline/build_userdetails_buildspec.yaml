@@ -30,8 +30,8 @@ phases:
     commands:
       - echo Build started on $(date)
       - echo Building the project...
-      - ./gradlew build --stacktrace
-      - ./gradlew bootWar --stacktrace
+      - ./gradlew build -Dorg.gradle.parallel=false
+      - ./gradlew bootWar -Dorg.gradle.parallel=false
 
   post_build:
     commands:
