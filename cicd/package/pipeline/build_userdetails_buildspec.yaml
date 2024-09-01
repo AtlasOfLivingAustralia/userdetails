@@ -24,7 +24,7 @@ phases:
         && apt-get update
         && apt-get install -y docker-ce
       - ./gradlew clean
-      - ./gradlew assemble
+      - ./gradlew assemble -Dorg.gradle.parallel=false
 
   build:
     commands:
