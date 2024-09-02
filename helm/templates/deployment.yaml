@@ -32,7 +32,7 @@ spec:
               subPath: logback.xml
             - name: authorised-systems-volume
               mountPath: /data/userdetails/config/authorised-systems.yml
-              subPath: logback.groovy
+              subPath: authorised-systems.yml
             - name: system-message-volume
               mountPath: /data/userdetails/config/system-message.json
               subPath: system-message.json
