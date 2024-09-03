@@ -60,6 +60,40 @@ Resources:
               - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       Description: !Sub Userdetails app ${pEnvironment} secrets
 
+  UserdetailsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Permissions to deploy userdetails
+      ManagedPolicyName: userdetails-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - apigateway:*
+              - cognito-identity:*
+              - cognito-idp:*
+              - dynamodb:*
+              - ses:*
+            Resource:
+              - "*"
+
+  UserdetailsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: userdetails-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - eks.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                eks.amazonaws.com:aud: "sts.amazonaws.com"
+
 
 Outputs:
 
