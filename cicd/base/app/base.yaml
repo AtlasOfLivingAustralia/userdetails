@@ -70,13 +70,39 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - apigateway:*
-              - cognito-identity:*
-              - cognito-idp:*
-              - dynamodb:*
-              - ses:*
+              - ses:SendEmail
+              - ses:SendTemplatedEmail
+              - ses:SendRawEmail
             Resource:
               - "*"
+          - Effect: Allow
+            Action:
+              - apigateway:POST
+              - apigateway:GET
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:UpdateTimeToLive
+              - dynamodb:ConditionCheckItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:Scan
+              - dynamodb:ListTagsOfResource
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+              - dynamodb:DescribeTimeToLive
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+            Resource:
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*/stream/*
+      Roles:
+        - !Ref UserdetailsRole
 
   UserdetailsRole:
     Type: AWS::IAM::Role
@@ -93,6 +119,9 @@ Resources:
             Condition:
               StringEquals:
                 eks.amazonaws.com:aud: "sts.amazonaws.com"
+      ManagedPolicyArns:
+        - !Ref UserdetailsPolicy
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
 
 Outputs:
