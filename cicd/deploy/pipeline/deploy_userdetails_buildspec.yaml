@@ -35,14 +35,26 @@ phases:
   build:
     commands:
       - echo Build started on $(date)
-      - aws eks --region ap-southeast-2 update-kubeconfig --name $EKS_CLUSTER_NAME
-      - export REPO=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$USERDETAILS_ECR_REPOSITORY_NAME
-      - kubectl config set-context --current --namespace=userdetails
+      - aws eks --region $REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - export REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
+      - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
-      - eksctl create iamserviceaccount --name userdetails-service-account --namespace userdetails --cluster $EKS_CLUSTER_NAME --role-name userdetails-role --attach-policy-arn arn:aws:iam::748909248546:policy/userdetails-policy --approve --override-existing-serviceaccounts --tags "product=userdetails,environment=development,branch=${CLEAN_BRANCH}"
+      - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
+      - eksctl create iamserviceaccount --name userdetails-service-account 
+                                        --namespace $PRODUCT_NAME 
+                                        --cluster $EKS_CLUSTER_NAME 
+                                        --role-name $USERDETAILS_ROLE_NAME
+                                        --attach-role-arn $USERDETAILS_ROLE_ARN
+                                        --approve 
+                                        --override-existing-serviceaccounts 
+                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
       - cd helm
-      - export CERTIFICATE_ARN=$(aws acm list-certificates --region ap-southeast-2 --query "CertificateSummaryList[?DomainName=='*.dev.ala.org.au' && Status=='ISSUED'].CertificateArn" --output text)
-      - helm upgrade --install ala-userdetails . -n userdetails --set image.repository=$REPO --set image.tag=$IMAGE_TAG --set ingress.hostname=userdetails.dev.ala.org.au --set ingress.certificateArn=$CERTIFICATE_ARN
+      - helm upgrade --install $IMAGE_NAME . 
+                     -n $PRODUCT_NAME 
+                     --set image.repository=$REPO 
+                     --set image.tag=$IMAGE_TAG 
+                     --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
+                     --set ingress.certificateArn=$SSL_CERTIFICATE
 
   post_build:
     commands:
