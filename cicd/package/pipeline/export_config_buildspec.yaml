@@ -7,14 +7,13 @@ env:
   shell: bash
   git-credential-helper: yes
   variables:
-    DEBIAN_FRONTEND: "noninteractive"
+    DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - CODEBUILD_BUILD_NUMBER
     - PRODUCT_NAME
     - PRODUCT_COMPONENT
     - SLACK_DEPLOY_NOTIFICATION
     - SLACK_CHANNEL
-    - USERDETAILS_ECR_REPOSITORY_NAME
 
 phases:
 
@@ -57,9 +56,7 @@ phases:
       - set -a ; source env.txt ; set +a
       # import stack export from the base cloudformation stack
       - echo importing stack output...
-      - USERDETAILS_ECR_REPOSITORY_NAME=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsRepositoryName'].OutputValue" --output text)
       - USERDETAILS_SECRETS=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecrets'].OutputValue" --output text)
-      - echo USERDETAILS_ECR_REPOSITORY_NAME=$USERDETAILS_ECR_REPOSITORY_NAME
       - echo USERDETAILS_SECRETS=$USERDETAILS_SECRETS
     finally:
       - #echo This always runs
