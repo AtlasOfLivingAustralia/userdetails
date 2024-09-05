@@ -98,9 +98,6 @@ Resources:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:7.0
-        EnvironmentVariables:
-          - Name: IMAGE_TAG
-            Value: 'latest'
       Source:
         Type: CODEPIPELINE
         BuildSpec: !Sub cicd/${pProductComponent}/pipeline/deploy_userdetails_buildspec.yaml
@@ -220,11 +217,11 @@ Resources:
               ProjectName: !Ref DeployUserdetails
               EnvironmentVariables: !Sub |
                 [
-                  { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" },
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
-                  { "name":"USERDETAILS_ECR_REPOSITORY_NAME", "value":"#{ExportConfigNS.USERDETAILS_ECR_REPOSITORY_NAME}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"EKS_CLUSTER_NAME", "value":"${pEksClusterName}" }
+                  { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" },
+                  { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" }
                 ]
             InputArtifacts:
               - Name: 'SourceArtifact'
