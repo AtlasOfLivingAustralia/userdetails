@@ -16,7 +16,6 @@ env:
     - SLACK_DEPLOY_NOTIFICATION
     - SLACK_CHANNEL
     - USERDETAILS_SECRET_NAME
-    - USERDETAILS_ECR_REPOSITORY_NAME
 
 phases:
 
@@ -59,9 +58,7 @@ phases:
       - set -a ; source env.txt ; set +a
       - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecret'].OutputValue" --output text)
       - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
-      - USERDETAILS_ECR_REPOSITORY_NAME=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsRepositoryName'].OutputValue" --output text)
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
-      - echo USERDETAILS_ECR_REPOSITORY_NAME=$USERDETAILS_ECR_REPOSITORY_NAME
     finally:
       - #echo This always runs
 
