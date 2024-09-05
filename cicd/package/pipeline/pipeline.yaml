@@ -235,7 +235,6 @@ Resources:
               ProjectName: !Ref BuildUserdetails
               EnvironmentVariables: !Sub |
                 [
-                  { "name":"USERDETAILS_ECR_REPOSITORY_NAME", "value":"#{ExportConfigNS.USERDETAILS_ECR_REPOSITORY_NAME}" },
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" }
                 ]
