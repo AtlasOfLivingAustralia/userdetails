@@ -10,10 +10,12 @@ env:
     DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - CODEBUILD_BUILD_NUMBER
-    - PRODUCT_NAME
+    - IMAGE_NAME
+    - IMAGE_TAG
     - PRODUCT_COMPONENT
-    - SLACK_DEPLOY_NOTIFICATION
+    - PRODUCT_NAME
     - SLACK_CHANNEL
+    - SLACK_DEPLOY_NOTIFICATION
 
 phases:
 
