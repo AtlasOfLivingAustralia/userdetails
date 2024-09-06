@@ -9,6 +9,9 @@ phases:
   install:
     commands:
       - echo Installing dependencies...
+      - echo bsname $BASE_STACK_NAME
+      - aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text
+      - exit 1
       - apt update -y
         && cat /etc/lsb-release
         && apt-get -q -y install openjdk-11-jdk
