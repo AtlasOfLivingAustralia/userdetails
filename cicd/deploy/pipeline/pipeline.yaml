@@ -206,7 +206,6 @@ Resources:
             OutputArtifacts:
               - Name: ExportConfigArtifact
             RunOrder: 1
-
           - Name: DeployUserdetails
             ActionTypeId:
               Owner: AWS
@@ -220,7 +219,7 @@ Resources:
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
-                  { "name":"EKS_CLUSTER_NAME", "value":"${pEksClusterName}" }
+                  { "name":"EKS_CLUSTER_NAME", "value":"${pEksClusterName}" },
                   { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" },
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" }
@@ -228,7 +227,6 @@ Resources:
             InputArtifacts:
               - Name: 'SourceArtifact'
             RunOrder: 2
-
           - Name: DeployNotification
             ActionTypeId:
               Owner: AWS
@@ -254,7 +252,6 @@ Resources:
             InputArtifacts:
               - Name: 'SourceArtifact'
             RunOrder: 3
-
       - Name: Teardown
         Actions:
           - Name: ApprovalForPipelineTeardown
