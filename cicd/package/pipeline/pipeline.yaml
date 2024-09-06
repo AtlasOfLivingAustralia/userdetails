@@ -217,6 +217,7 @@ Resources:
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
+                  { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
                   { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" }
                 ]
             InputArtifacts:

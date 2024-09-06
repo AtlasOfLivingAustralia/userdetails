@@ -36,10 +36,8 @@ phases:
     commands:
       - echo Build started on $(date)
       - aws eks --region $REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-      - export REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
-      - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
       - eksctl create iamserviceaccount --name userdetails-service-account 
                                         --namespace $PRODUCT_NAME 
                                         --cluster $EKS_CLUSTER_NAME 
@@ -51,7 +49,7 @@ phases:
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME 
-                     --set image.repository=$REPO 
+                     --set image.repository=$ECR_REPO 
                      --set image.tag=$IMAGE_TAG 
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
                      --set ingress.certificateArn=$SSL_CERTIFICATE

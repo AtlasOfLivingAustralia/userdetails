@@ -11,6 +11,7 @@ env:
   exported-variables:
     - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
+    - ECR_REPO
     - IMAGE_NAME
     - IMAGE_TAG
     - PRODUCT_COMPONENT
@@ -61,6 +62,9 @@ phases:
       - echo importing stack output...
       - USERDETAILS_SECRETS=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecrets'].OutputValue" --output text)
       - echo USERDETAILS_SECRETS=$USERDETAILS_SECRETS
+      - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
+      - echo BASE_STACK_NAME=$BASE_STACK_NAME
+      - echo ECR_REPO=$ECR_REPO
     finally:
       - #echo This always runs
 

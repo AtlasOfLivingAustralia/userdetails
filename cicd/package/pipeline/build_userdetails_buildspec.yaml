@@ -9,9 +9,6 @@ phases:
   install:
     commands:
       - echo Installing dependencies...
-      - echo bsname $BASE_STACK_NAME
-      - aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text
-      - exit 1
       - apt update -y
         && cat /etc/lsb-release
         && apt-get -q -y install openjdk-11-jdk
@@ -48,11 +45,9 @@ phases:
       - echo Building the Docker image...
       - docker build -t $IMAGE_NAME .
       - echo Tagging the Docker image...
-      - export REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
-      - echo REPO=$REPO
       - echo tagging
-      - docker tag $IMAGE_NAME:$IMAGE_TAG $REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker tag $IMAGE_NAME:$IMAGE_TAG $REPO:$IMAGE_TAG
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
       - echo Pushing the Docker image to Amazon ECR...
-      - docker push $REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker push $REPO:$IMAGE_TAG
+      - docker push $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
+      - docker push $ECR_REPO:$IMAGE_TAG
