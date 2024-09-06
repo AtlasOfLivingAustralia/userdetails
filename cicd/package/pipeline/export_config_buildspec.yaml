@@ -9,6 +9,7 @@ env:
   variables:
     DEBIAN_FRONTEND: noninteractive
   exported-variables:
+    - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
     - IMAGE_NAME
     - IMAGE_TAG
