@@ -38,6 +38,14 @@ phases:
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
+      - echo eksctl create iamserviceaccount --name userdetails-service-account 
+                                        --namespace $PRODUCT_NAME 
+                                        --cluster $EKS_CLUSTER_NAME 
+                                        --role-name $USERDETAILS_ROLE_NAME
+                                        --attach-role-arn $USERDETAILS_ROLE_ARN
+                                        --approve 
+                                        --override-existing-serviceaccounts 
+                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
       - eksctl create iamserviceaccount --name userdetails-service-account 
                                         --namespace $PRODUCT_NAME 
                                         --cluster $EKS_CLUSTER_NAME 
