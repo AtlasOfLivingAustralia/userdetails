@@ -49,7 +49,6 @@ phases:
       - eksctl create iamserviceaccount --name userdetails-service-account 
                                         --namespace $PRODUCT_NAME 
                                         --cluster $EKS_CLUSTER_NAME 
-                                        --role-name $PRODUCT_NAME-userdetails-role
                                         --attach-role-arn $USERDETAILS_ROLE_ARN
                                         --approve 
                                         --override-existing-serviceaccounts 
