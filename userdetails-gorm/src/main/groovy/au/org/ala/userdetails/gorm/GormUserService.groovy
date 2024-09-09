@@ -748,6 +748,9 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
     boolean verifyUserCode(String userCode){}
 
     @Override
+    boolean verifyUserAttribute(String attribute, String code) {}
+
+    @Override
     void enableMfa(String userId, boolean enable){}
 
     def getUserDetailsFromIdList(List idList){
