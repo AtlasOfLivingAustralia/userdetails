@@ -14,7 +14,7 @@ spec:
       labels:
         {{- include "ala-userdetails.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: userdetails-ses-email-sender
+      serviceAccountName: userdetails-service-account
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
