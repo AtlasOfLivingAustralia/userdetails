@@ -45,13 +45,21 @@ phases:
                                         --approve 
                                         --override-existing-serviceaccounts 
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
+      - |
+          if [ "$ENVIRONMENT" == "development" ]; then
+            export RESOURCE_NAME=$CLEAN_BRANCH
+          else
+            export RESOURCE_NAME=$ENVIRONMENT
+          fi
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
-                     -n $PRODUCT_NAME 
+                     -n $PRODUCT_NAME-$RESOURCE_NAME 
                      --set image.repository=$ECR_REPO 
                      --set image.tag=$IMAGE_TAG 
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
                      --set ingress.certificateArn=$SSL_CERTIFICATE
+                     --set labels.product=userdetails
+                     --set labels.environment=development
 
   post_build:
     commands:
