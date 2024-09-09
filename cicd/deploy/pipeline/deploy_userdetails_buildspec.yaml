@@ -34,23 +34,23 @@ phases:
 
   build:
     commands:
-      - echo Build started on $(date)
-      - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-      - kubectl config set-context --current --namespace=$PRODUCT_NAME
-      - printf "$(kubectl config current-context)\n"
-      - eksctl create iamserviceaccount --name userdetails-service-account 
-                                        --namespace $PRODUCT_NAME 
-                                        --cluster $EKS_CLUSTER_NAME 
-                                        --attach-role-arn $USERDETAILS_ROLE_ARN
-                                        --approve 
-                                        --override-existing-serviceaccounts 
-                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
       - |
           if [ "$ENVIRONMENT" == "development" ]; then
             export RESOURCE_NAME=$CLEAN_BRANCH
           else
             export RESOURCE_NAME=$ENVIRONMENT
           fi
+      - echo Build started on $(date)
+      - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - kubectl config set-context --current --namespace=$PRODUCT_NAME-$RESOURCE_NAME
+      - printf "$(kubectl config current-context)\n"
+      - eksctl create iamserviceaccount --name userdetails-service-account 
+                                        --namespace $PRODUCT_NAME-$RESOURCE_NAME 
+                                        --cluster $EKS_CLUSTER_NAME 
+                                        --attach-role-arn $USERDETAILS_ROLE_ARN
+                                        --approve 
+                                        --override-existing-serviceaccounts 
+                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME-$RESOURCE_NAME 
