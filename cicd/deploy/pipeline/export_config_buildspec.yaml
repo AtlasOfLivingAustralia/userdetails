@@ -9,14 +9,21 @@ env:
   variables:
     DEBIAN_FRONTEND: "noninteractive"
   exported-variables:
-    - CODEBUILD_BUILD_NUMBER
     - BASE_STACK_FILE_PFIX
-    - PRODUCT_NAME
+    - BASE_STACK_NAME
+    - CODEBUILD_BUILD_NUMBER
+    - ECR_REPO
+    - HOSTED_ZONE
+    - IMAGE_NAME
+    - IMAGE_TAG
     - PRODUCT_COMPONENT
-    - SLACK_DEPLOY_NOTIFICATION
+    - PRODUCT_NAME
     - SLACK_CHANNEL
+    - SLACK_DEPLOY_NOTIFICATION
+    - SUB_DOMAIN
+    - USERDETAILS_ROLE_ARN
     - USERDETAILS_SECRET_NAME
-    - USERDETAILS_ECR_REPOSITORY_NAME
+    - SSL_CERTIFICATE
 
 phases:
 
@@ -59,9 +66,10 @@ phases:
       - set -a ; source env.txt ; set +a
       - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecret'].OutputValue" --output text)
       - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
-      - USERDETAILS_ECR_REPOSITORY_NAME=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsRepositoryName'].OutputValue" --output text)
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
-      - echo USERDETAILS_ECR_REPOSITORY_NAME=$USERDETAILS_ECR_REPOSITORY_NAME
+      - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
+      - echo ECR_REPO=$ECR_REPO
+      - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
     finally:
       - #echo This always runs
 

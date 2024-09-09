@@ -5,7 +5,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-    DEBIAN_FRONTEND: "noninteractive"
+    DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - CODEBUILD_BUILD_NUMBER
   secrets-manager:

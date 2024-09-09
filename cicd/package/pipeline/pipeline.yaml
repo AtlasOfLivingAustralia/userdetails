@@ -93,33 +93,12 @@ Resources:
         Type: CODEPIPELINE
       Environment:
         Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
+        ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/standard:7.0
       Source:
         Type: CODEPIPELINE
         BuildSpec: !Sub cicd/${pProductComponent}/pipeline/build_userdetails_buildspec.yaml
       TimeoutInMinutes: 30
-
-  DeployUserdetails:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: !Sub
-              - ${pProductName}-${pProductComponent}-deploy-userdetails-${ResourceName}
-              - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      Description: Deploy userdetails
-      ServiceRole:
-               Fn::ImportValue:
-                 Fn::Sub: ${pBootstrapStackName}-CodeBuildServiceRoleArn
-      Artifacts:
-        Type: CODEPIPELINE
-      Environment:
-        Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/standard:7.0
-      Source:
-        Type: CODEPIPELINE
-        BuildSpec: !Sub cicd/${pProductComponent}/pipeline/deploy_userdetails_buildspec.yaml
-      TimeoutInMinutes: 20
 
   DeployNotification:
     Type: AWS::CodeBuild::Project
@@ -235,9 +214,11 @@ Resources:
               ProjectName: !Ref BuildUserdetails
               EnvironmentVariables: !Sub |
                 [
-                  { "name":"USERDETAILS_ECR_REPOSITORY_NAME", "value":"#{ExportConfigNS.USERDETAILS_ECR_REPOSITORY_NAME}" },
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
-                  { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" }
+                  { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                  { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
+                  { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
+                  { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" }
                 ]
             InputArtifacts:
               - Name: 'SourceArtifact'

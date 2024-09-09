@@ -43,13 +43,11 @@ phases:
       - aws ecr get-login-password | docker login -u AWS --password-stdin "https://$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
       - rm -rf build/libs/*-plain.war
       - echo Building the Docker image...
-      - docker build -t ala-userdetails .
+      - docker build -t $IMAGE_NAME .
       - echo Tagging the Docker image...
-      - export REPO=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$USERDETAILS_ECR_REPOSITORY_NAME
-      - echo REPO=$REPO
       - echo tagging
-      - docker tag ala-userdetails:latest $REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker tag ala-userdetails:latest $REPO:latest
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
+      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
       - echo Pushing the Docker image to Amazon ECR...
-      - docker push $REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker push $REPO:latest
+      - docker push $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
+      - docker push $ECR_REPO:$IMAGE_TAG

@@ -64,7 +64,9 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: Permissions to deploy userdetails
-      ManagedPolicyName: userdetails-policy
+      ManagedPolicyName: !Sub 
+                           - userdetails-policy-${ResourceName}
+                           - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -107,7 +109,9 @@ Resources:
   UserdetailsRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: userdetails-role
+      RoleName: !Sub
+                  - userdetails-role-${ResourceName}
+                  - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -120,7 +124,6 @@ Resources:
               StringEquals:
                 eks.amazonaws.com:aud: "sts.amazonaws.com"
       ManagedPolicyArns:
-        - !Ref UserdetailsPolicy
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
 
@@ -134,6 +137,18 @@ Outputs:
     Description: The ECR repository ARN for the userdetails service
     Value: !Ref UserdetailsRepository
 
+  UserdetailsRepositoryUri:
+    Description: The ECR repository ARN for the userdetails service
+    Value: !GetAtt UserdetailsRepository.RepositoryUri
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsRepositoryUri
+
   UserdetailsSecret:
     Description: The Secrets name for userdetails
     Value: !Ref UserdetailsSecret
+
+  UserdetailsRoleArn:
+    Description: The name of the userdetails role
+    Value: !GetAtt UserdetailsRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsRoleArn
