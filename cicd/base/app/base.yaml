@@ -12,15 +12,15 @@ Parameters:
   pEnvironment:
     Type: String
     Description: The AWS environment this belongs to
-  pEksClusterId:
-    Type: String
-    Description: The EKS cluster id
-  pProductName:
-    Type: String
-    Description: The name of the product
-  pServiceAccountName:
-    Type: String
-    Description: The name of the service account
+#  pEksClusterId:
+#    Type: String
+#    Description: The EKS cluster id
+#  pProductName:
+#    Type: String
+#    Description: The name of the product
+#  pServiceAccountName:
+#    Type: String
+#    Description: The name of the service account
 
 Conditions:
 
