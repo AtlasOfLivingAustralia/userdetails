@@ -130,7 +130,7 @@ Resources:
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
-                !Sub oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}:sub: "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                !Sub "oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
                 eks.amazonaws.com:aud: "sts.amazonaws.com"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
