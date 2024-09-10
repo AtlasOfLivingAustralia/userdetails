@@ -12,6 +12,15 @@ Parameters:
   pEnvironment:
     Type: String
     Description: The AWS environment this belongs to
+  pEksClusterId:
+    Type: String
+    Description: The EKS cluster id
+  pProductName:
+    Type: String
+    Description: The name of the product
+  pServiceAccountName:
+    Type: String
+    Description: The name of the service account
 
 Conditions:
 
@@ -117,12 +126,12 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service:
-                - eks.amazonaws.com
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
-                eks.amazonaws.com:aud: "sts.amazonaws.com"
+                - !Sub oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}:sub: "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                - eks.amazonaws.com:aud: "sts.amazonaws.com"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
