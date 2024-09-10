@@ -121,17 +121,41 @@ Resources:
       RoleName: !Sub
                   - userdetails-role-${ResourceName}
                   - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}
-            Action: sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                !Sub "oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
-                eks.amazonaws.com:aud: "sts.amazonaws.com"
+#      AssumeRolePolicyDocument:
+#        Version: '2012-10-17'
+#        Statement:
+#          - Effect: Allow
+#            Principal:
+#              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}
+#            Action: sts:AssumeRoleWithWebIdentity
+#            Condition:
+#              StringEquals:
+#                !Sub "oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+#                eks.amazonaws.com:aud: "sts.amazonaws.com"
+      AssumeRolePolicyDocument: !Sub
+        - |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "arn:aws:iam::${AWS::AccountId}:oidc-provider/oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            "${OidcProviderEndpoint}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                        }
+                    }
+                }
+            ]
+          }
+        -
+          pEksClusterId: !Ref pEksClusterId
+          OidcProviderEndpoint: !Sub oidc.eks.${AWS::Region}.amazonaws.com/id/${pEksClusterId}
+          pProductName: !Ref pProductName
+          pServiceAccountName: !Ref pServiceAccountName
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
