@@ -41,6 +41,12 @@ Parameters:
     AllowedValues:
          - true 
          - false
+  pEksClusterId:
+    Type: String
+    Description: The EKS cluster id
+  pServiceAccountName:
+    Type: String
+    Description: The name of the service account
 
 Conditions:
 
@@ -174,7 +180,10 @@ Resources:
                    { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
                    { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
                    { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
-                   { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
+                   { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" },
+                   { "name":"SERVICE_ACCOUNT_NAME", "value":"${pServiceAccountName}" },
+                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                   { "name":"EKS_CLUSTER_ID", "value":"${pEksClusterId}" }
                  ]
             Namespace: ExportConfigNS
             InputArtifacts:
