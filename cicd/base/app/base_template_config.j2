@@ -2,7 +2,9 @@
   "Parameters" : {
     "pBuild"                : "{{ codebuild_build_number }}",
     "pCleanBranch"          : "{{ clean_branch }}",
-    "pEnvironment"          : "{{ environment }}"
+    "pEnvironment"          : "{{ environment }}",
+    "pOidcConnectProvider"  : "{{ oidc_connect_provider }}"
+    "pServiceAccountName"   : "{{ service_account_name }}"
   },
   "Tags" : {
     "product"     : "{{ product_name }}",
