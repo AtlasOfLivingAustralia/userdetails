@@ -9,6 +9,9 @@ Parameters:
   pCleanBranch:
     Type: String
     Description: The clean branch, can be used in resource names
+  pClusterOidcIssuerUrl:
+    Type: String
+    Description: The OIDC issuer URL for the cluster
   pEnvironment:
     Type: String
     Description: The AWS environment this belongs to
@@ -129,9 +132,9 @@ Resources:
               Federated: !Ref pOidcConnectProvider 
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
-              StringEquals:
-                !Sub '"${pClusterOidcIssuerUrl}:sub:" "system:serviceaccount:${pProductName}:${pServiceAccountName}"'
-                !Sub '"${pClusterOidcIssuerUrl}:aud:" "sts.amazonaws.com"'
+              StringEquals: !Sub |
+                "${pClusterOidcIssuerUrl}:sub:" "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                "${pClusterOidcIssuerUrl}:aud:" "sts.amazonaws.com"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
