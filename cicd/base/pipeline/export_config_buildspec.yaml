@@ -61,6 +61,8 @@ phases:
       - OIDC_ID=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
       - OIDC_CONNECT_PROVIDER=$(aws iam list-open-id-connect-providers --output text | grep $oidc_id | cut -f2)
       - echo OIDC_CONNECT_PROVIDER = $OIDC_CONNECT_PROVIDER
+      - CLUSTER_OIDC_ISSUER_URL=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterOidcIssuerUrl'].Value" --output text)
+      - echo CLUSTER_OIDC_ISSUER_URL=$CLUSTER_OIDC_ISSUER_URL
     finally:
       - #echo This always runs
 
