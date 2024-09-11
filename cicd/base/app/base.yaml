@@ -132,7 +132,7 @@ Resources:
               Federated: !Ref pOidcConnectProvider 
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
-              StringEquals: !Sub |
+              StringEquals: !Sub >
                 "${pClusterOidcIssuerUrl}:sub:" "system:serviceaccount:${pProductName}:${pServiceAccountName}"
                 "${pClusterOidcIssuerUrl}:aud:" "sts.amazonaws.com"
       ManagedPolicyArns:
