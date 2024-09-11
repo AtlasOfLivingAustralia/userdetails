@@ -133,11 +133,13 @@ Resources:
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
-                !Sub 
-                  - |
-                    "${ClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
-                    "${ClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
-                  - ClusterOidcIssuerUrl: !Ref pClusterOidcIssuerUrl
+                oidc.eks.ap-southeast-2.amazonaws.com/id/E2B4E818912ED7B145C9B4AA0B8D83A8:sub: "system:serviceaccount:userdetails:userdetails-service-account"
+                oidc.eks.ap-southeast-2.amazonaws.com/id/E2B4E818912ED7B145C9B4AA0B8D83A8:aud: "sts.amazonaws.com"
+                #!Sub 
+                #  - |
+                #    "${ClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                #    "${ClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
+                #  - ClusterOidcIssuerUrl: !Ref pClusterOidcIssuerUrl
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
