@@ -135,7 +135,6 @@ Resources:
               StringEquals:
                 !Sub |
                   "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
-                  "${pClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
