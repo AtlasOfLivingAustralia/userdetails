@@ -133,8 +133,11 @@ Resources:
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
-                !Sub |
-                  "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                !Sub 
+                  - |
+                    "${ClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
+                    "${ClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
+                  - ClusterOidcIssuerUrl: !Ref pClusterOidcIssuerUrl
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
