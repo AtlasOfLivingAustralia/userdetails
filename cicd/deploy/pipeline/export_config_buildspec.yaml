@@ -13,19 +13,19 @@ env:
     - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
     - ECR_REPO
+    - EKS_CLUSTER_NAME
     - HOSTED_ZONE
     - IMAGE_NAME
     - IMAGE_TAG
     - PRODUCT_COMPONENT
     - PRODUCT_NAME
+    - SERVICE_ACCOUNT_NAME
     - SLACK_CHANNEL
     - SLACK_DEPLOY_NOTIFICATION
+    - SSL_CERTIFICATE
     - SUB_DOMAIN
     - USERDETAILS_ROLE_ARN
     - USERDETAILS_SECRET_NAME
-    - SSL_CERTIFICATE
-    - SERVICE_ACCOUNT_NAME
-    - EKS_CLUSTER_NAME
 
 phases:
 
@@ -72,6 +72,9 @@ phases:
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
       - echo ECR_REPO=$ECR_REPO
       - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
+      - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
+      - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
+      - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
     finally:
       - #echo This always runs
 
