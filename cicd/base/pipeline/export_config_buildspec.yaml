@@ -7,7 +7,7 @@ env:
   shell: bash
   git-credential-helper: yes
   variables:
-    DEBIAN_FRONTEND: "noninteractive"
+    DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - CODEBUILD_BUILD_NUMBER
     - BASE_STACK_FILE_PFIX
@@ -56,6 +56,11 @@ phases:
       - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
       - echo loading config..
       - set -a ; source env.txt ; set +a
+      - EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
+      - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - OIDC_ID=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+      - OIDC_CONNECT_PROVIDER=$(aws iam list-open-id-connect-providers --output text | grep $oidc_id | cut -f2)
+      - echo OIDC_CONNECT_PROVIDER = $OIDC_CONNECT_PROVIDER
     finally:
       - #echo This always runs
 
