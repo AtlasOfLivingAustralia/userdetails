@@ -142,25 +142,25 @@ Resources:
 Outputs:
 
   UserdetailsRepositoryArn:
-    Description: !Sub The ECR repository ARN for the ${pProductName} service
+    Description: The ECR repository ARN for the userdetails service
     Value: !GetAtt UserdetailsRepository.Arn
 
   UserdetailsRepositoryName:
-    Description: !Sub The ECR repository ARN for the ${pProductName} service
+    Description: The ECR repository ARN for the userdetails service
     Value: !Ref UserdetailsRepository
 
   UserdetailsRepositoryUri:
-    Description: !Sub The ECR repository ARN for the ${pProductName} service
+    Description: The ECR repository ARN for the userdetails service
     Value: !GetAtt UserdetailsRepository.RepositoryUri
     Export:
       Name: !Sub ${AWS::StackName}-UserdetailsRepositoryUri
 
   UserdetailsSecret:
-    Description: !Sub The Secrets name for ${pProductName}
+    Description: The Secrets name for userdetails
     Value: !Ref UserdetailsSecret
 
   UserdetailsRoleArn:
-    Description: !Sub The name of the ${pProductName} role
+    Description: The name of the userdetails role
     Value: !GetAtt UserdetailsRole.Arn
     Export:
       Name: !Sub ${AWS::StackName}-UserdetailsRoleArn
