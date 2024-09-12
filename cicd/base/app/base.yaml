@@ -124,22 +124,25 @@ Resources:
       RoleName: !Sub
                   - ${pProductName}-role-${ResourceName}
                   - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: !Ref pOidcConnectProvider 
-            Action: sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                oidc.eks.ap-southeast-2.amazonaws.com/id/E2B4E818912ED7B145C9B4AA0B8D83A8:sub: "system:serviceaccount:userdetails:userdetails-service-account"
-                oidc.eks.ap-southeast-2.amazonaws.com/id/E2B4E818912ED7B145C9B4AA0B8D83A8:aud: "sts.amazonaws.com"
-                #!Sub 
-                #  - |
-                #    "${ClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}"
-                #    "${ClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
-                #  - ClusterOidcIssuerUrl: !Ref pClusterOidcIssuerUrl
+      AssumeRolePolicyDocument: !Sub |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "${pOidcConnectProvider}"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                                          "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}",
+                                          "${pClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
+                        }
+                    }
+                }
+            ]
+          }
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
