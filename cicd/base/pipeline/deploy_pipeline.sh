@@ -141,7 +141,6 @@ aws cloudformation deploy \
         pBootstrapStackName=$BOOTSTRAP_STACK_NAME \
         pBucketsStackName=$BUCKETS_STACK_NAME \
         pCleanBranch=$clean_branch \
-        pEksClusterName=$EKS_CLUSTER_NAME \
         pEnvironment=$environment \
         pGitHubBranch=$branch \
         pGitHubOwner=$GITHUB_OWNER \
@@ -150,4 +149,5 @@ aws cloudformation deploy \
         pProductComponent=$PRODUCT_COMPONENT \
         pProductName=$PRODUCT_NAME \
         pRestartExecutionOnUpdate=$RESTART_PIPELINE_ON_UPDATE \
+        pServiceAccountName=$SERVICE_ACCOUNT_NAME \
 

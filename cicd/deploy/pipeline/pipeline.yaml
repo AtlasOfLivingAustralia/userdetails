@@ -14,9 +14,6 @@ Parameters:
   pCleanBranch:
     Type: String
     Description: The clean branch, can be used in resource names
-  pEksClusterName:
-    Type: String
-    Description: The name of the EKS cluster
   pEnvironment:
     Type: String
     Description: The AWS environment this belongs to
@@ -219,12 +216,13 @@ Resources:
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
-                  { "name":"EKS_CLUSTER_NAME", "value":"${pEksClusterName}" },
+                  { "name":"EKS_CLUSTER_NAME", "value":"#{ExportConfigNS.EKS_CLUSTER_NAME}" },
                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
                   { "name":"HOSTED_ZONE", "value":"#{ExportConfigNS.HOSTED_ZONE}" },
                   { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
                   { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" },
                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                  { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" },
                   { "name":"SSL_CERTIFICATE", "value":"#{ExportConfigNS.SSL_CERTIFICATE}" },
                   { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },

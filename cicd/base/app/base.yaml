@@ -9,9 +9,21 @@ Parameters:
   pCleanBranch:
     Type: String
     Description: The clean branch, can be used in resource names
+  pClusterOidcIssuerUrl:
+    Type: String
+    Description: The OIDC issuer URL for the cluster
   pEnvironment:
     Type: String
     Description: The AWS environment this belongs to
+  pProductName:
+    Type: String
+    Description: The name of the product
+  pOidcConnectProvider:
+    Type: String
+    Description: The OIDC connect provider
+  pServiceAccountName:
+    Type: String
+    Description: The name of the service account
 
 Conditions:
 
@@ -34,7 +46,7 @@ Resources:
       ImageScanningConfiguration:
         ScanOnPush: true
       RepositoryName: !Sub
-                         - userdetails-${ResourceName}
+                         - ${pProductName}-${ResourceName}
                          - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       RepositoryPolicyText:
         Version: 2012-10-17
@@ -56,16 +68,16 @@ Resources:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
       Name: !Sub 
-              - userdetails-${ResourceName}
+              - ${pProductName}-${ResourceName}
               - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       Description: !Sub Userdetails app ${pEnvironment} secrets
 
   UserdetailsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: Permissions to deploy userdetails
+      Description: !Sub Permissions to deploy ${pProductName}
       ManagedPolicyName: !Sub 
-                           - userdetails-policy-${ResourceName}
+                           - ${pProductName}-policy-${ResourceName}
                            - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       PolicyDocument:
         Version: "2012-10-17"
@@ -110,19 +122,27 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub
-                  - userdetails-role-${ResourceName}
+                  - ${pProductName}-role-${ResourceName}
                   - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - eks.amazonaws.com
-            Action: sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                eks.amazonaws.com:aud: "sts.amazonaws.com"
+      AssumeRolePolicyDocument: !Sub |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "${pOidcConnectProvider}"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                                          "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}",
+                                          "${pClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
+                        }
+                    }
+                }
+            ]
+          }
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
 
