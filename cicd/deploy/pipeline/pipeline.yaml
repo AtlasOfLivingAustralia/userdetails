@@ -100,6 +100,27 @@ Resources:
         BuildSpec: !Sub cicd/${pProductComponent}/pipeline/deploy_userdetails_buildspec.yaml
       TimeoutInMinutes: 20
 
+  TeardownUserdetails:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub
+              - ${pProductName}-${pProductComponent}-teardown-userdetails-${ResourceName}
+              - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      Description: Teardown userdetails
+      ServiceRole:
+               Fn::ImportValue:
+                 Fn::Sub: ${pBootstrapStackName}-CodeBuildServiceRoleArn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub cicd/${pProductComponent}/pipeline/teardown_userdetails_buildspec.yaml
+      TimeoutInMinutes: 20
+
   DeployNotification:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -267,6 +288,26 @@ Resources:
             Configuration:
               CustomData: Approval required to tear down this stack
             RunOrder: 1
+          - Name: TeardownUserdetails
+            ActionTypeId:
+              Owner: AWS
+              Category: Build
+              Version: 1
+              Provider: CodeBuild
+            Configuration:
+              ProjectName: !Ref DeployUserdetails
+              EnvironmentVariables: !Sub |
+                [
+                  { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
+                  { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                  { "name":"EKS_CLUSTER_NAME", "value":"#{ExportConfigNS.EKS_CLUSTER_NAME}" },
+                  { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
+                  { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                  { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" }
+                ]
+            InputArtifacts:
+              - Name: 'SourceArtifact'
+            RunOrder: 2
           - Name: TeardownCodePipeline
             ActionTypeId:
               Owner: AWS
@@ -279,7 +320,7 @@ Resources:
               RoleArn:
                    Fn::ImportValue:
                      Fn::Sub: '${pBootstrapStackName}-CloudFormationServiceRoleArn'
-            RunOrder: 2
+            RunOrder: 3
 
   DeployUserdetailsCodeBuildLogGroup:
     Type: AWS::Logs::LogGroup
