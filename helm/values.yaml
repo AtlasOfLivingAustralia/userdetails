@@ -28,7 +28,7 @@ securityContext: {}
 
 service:
   port: 80
-  targetPort: 8000
+  targetPort: 9001
 
 ingress:
   enabled: true
