@@ -279,14 +279,14 @@ Resources:
             RunOrder: 3
       - Name: Teardown
         Actions:
-          - Name: ApprovalForPipelineTeardown
+          - Name: ApprovalForApplicationTeardown
             ActionTypeId:
               Owner: AWS
               Category: Approval
               Version: 1
               Provider: Manual
             Configuration:
-              CustomData: Approval required to tear down this stack
+              CustomData: Approval required to tear down the application
             RunOrder: 1
           - Name: TeardownUserdetails
             ActionTypeId:
@@ -309,6 +309,15 @@ Resources:
             InputArtifacts:
               - Name: 'SourceArtifact'
             RunOrder: 2
+          - Name: ApprovalForPipelineTeardown
+            ActionTypeId:
+              Owner: AWS
+              Category: Approval
+              Version: 1
+              Provider: Manual
+            Configuration:
+              CustomData: Approval required to tear down this stack
+            RunOrder: 3
           - Name: TeardownCodePipeline
             ActionTypeId:
               Owner: AWS
@@ -321,13 +330,23 @@ Resources:
               RoleArn:
                    Fn::ImportValue:
                      Fn::Sub: '${pBootstrapStackName}-CloudFormationServiceRoleArn'
-            RunOrder: 3
+            RunOrder: 4
 
   DeployUserdetailsCodeBuildLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/codebuild/${DeployUserdetails}
+      RetentionInDays: 30
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+
+  TeardownUserdetailsCodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${TeardownUserdetails}
       RetentionInDays: 30
       Tags:
         - Key: Name
