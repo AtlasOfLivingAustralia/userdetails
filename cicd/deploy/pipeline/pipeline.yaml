@@ -302,6 +302,7 @@ Resources:
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"EKS_CLUSTER_NAME", "value":"#{ExportConfigNS.EKS_CLUSTER_NAME}" },
                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
+                  { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
                   { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" }
                 ]
