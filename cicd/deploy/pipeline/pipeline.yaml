@@ -266,12 +266,14 @@ Resources:
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
                   { "name":"COMMIT_ID", "value":"#{CheckoutSrcNS.CommitId}" },
                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
+                  { "name":"HOSTED_ZONE", "value":"#{ExportConfigNS.HOSTED_ZONE}" },
                   { "name":"PRODUCT_COMPONENT", "value":"#{ExportConfigNS.PRODUCT_COMPONENT}" },
                   { "name":"PRODUCT_NAME", "value":"#{ExportConfigNS.PRODUCT_NAME}" },
                   { "name":"REPO", "value":"#{CheckoutSrcNS.FullRepositoryName}" },
                   { "name":"SLACK_CHANNEL", "value":"#{ExportConfigNS.SLACK_CHANNEL}" },
                   { "name":"SLACK_DEPLOY_NOTIFICATION", "value":"#{ExportConfigNS.SLACK_DEPLOY_NOTIFICATION}" },
                   { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
+                  { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
                 ]
             Namespace: DeployNotificationNS
             InputArtifacts:
