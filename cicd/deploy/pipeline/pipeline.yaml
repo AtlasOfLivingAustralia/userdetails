@@ -272,8 +272,8 @@ Resources:
                   { "name":"REPO", "value":"#{CheckoutSrcNS.FullRepositoryName}" },
                   { "name":"SLACK_CHANNEL", "value":"#{ExportConfigNS.SLACK_CHANNEL}" },
                   { "name":"SLACK_DEPLOY_NOTIFICATION", "value":"#{ExportConfigNS.SLACK_DEPLOY_NOTIFICATION}" },
-                  { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
-                  { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
+                  { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" },
+                  { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" }
                 ]
             Namespace: DeployNotificationNS
             InputArtifacts:
