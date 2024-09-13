@@ -295,7 +295,7 @@ Resources:
               Version: 1
               Provider: CodeBuild
             Configuration:
-              ProjectName: !Ref DeployUserdetails
+              ProjectName: !Ref TeardownUserdetails
               EnvironmentVariables: !Sub |
                 [
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
