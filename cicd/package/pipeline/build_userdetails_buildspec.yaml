@@ -9,6 +9,7 @@ phases:
   install:
     commands:
       - echo Installing dependencies...
+      - apt-get update -y
       #  && curl -s "https://get.sdkman.io" | bash
       #  && chmod a+x /root/.sdkman/bin/sdkman-init.sh
       #  && source /root/.sdkman/bin/sdkman-init.sh && sdk install grails 6.0.0 /root/.sdkman/candidates/grails/6.0.0
