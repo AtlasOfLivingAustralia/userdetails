@@ -9,20 +9,15 @@ phases:
   install:
     commands:
       - echo Installing dependencies...
-      - apt update -y
-        && cat /etc/lsb-release
-        && apt-get -q -y install openjdk-11-jdk
-        && apt-get -q -y install unzip
-        && apt-get -q -y install zip
-        && apt-get -q -y install curl
-        && curl -s "https://get.sdkman.io" | bash
-        && chmod a+x /root/.sdkman/bin/sdkman-init.sh
-        && source /root/.sdkman/bin/sdkman-init.sh && sdk install grails 6.0.0 /root/.sdkman/candidates/grails/6.0.0
-        && apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-        && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-        && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-        && apt-get update
-        && apt-get install -y docker-ce
+      #  && curl -s "https://get.sdkman.io" | bash
+      #  && chmod a+x /root/.sdkman/bin/sdkman-init.sh
+      #  && source /root/.sdkman/bin/sdkman-init.sh && sdk install grails 6.0.0 /root/.sdkman/candidates/grails/6.0.0
+      #  && apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      #  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      #  && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      #  && apt-get update
+      #  && apt-get install -y docker-ce
+      - apt-get install -y gradle
       - ./gradlew clean
       - ./gradlew assemble -Dorg.gradle.parallel=false
 
