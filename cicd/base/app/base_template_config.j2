@@ -2,7 +2,11 @@
   "Parameters" : {
     "pBuild"                : "{{ codebuild_build_number }}",
     "pCleanBranch"          : "{{ clean_branch }}",
-    "pEnvironment"          : "{{ environment }}"
+    "pClusterOidcIssuerUrl" : "{{ cluster_oidc_issuer_url }}",
+    "pEnvironment"          : "{{ environment }}",
+    "pOidcConnectProvider"  : "{{ oidc_connect_provider }}",
+    "pProductName"          : "{{ product_name }}",
+    "pServiceAccountName"   : "{{ service_account_name }}"
   },
   "Tags" : {
     "product"     : "{{ product_name }}",

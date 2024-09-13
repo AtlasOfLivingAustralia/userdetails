@@ -41,6 +41,9 @@ Parameters:
     AllowedValues:
          - true 
          - false
+  pServiceAccountName:
+    Type: String
+    Description: The name of the service account
 
 Conditions:
 
@@ -174,6 +177,8 @@ Resources:
                    { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
                    { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
                    { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
+                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                   { "name":"SERVICE_ACCOUNT_NAME", "value":"${pServiceAccountName}" },
                    { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
                  ]
             Namespace: ExportConfigNS
