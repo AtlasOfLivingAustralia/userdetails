@@ -22,7 +22,7 @@ phases:
                   --cluster $EKS_CLUSTER_NAME
       - cd helm
       - helm uninstall $IMAGE_NAME
-               --timeout 900
+               --timeout 900s
                --wait
 
 
