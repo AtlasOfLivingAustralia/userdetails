@@ -23,7 +23,7 @@ phases:
                                         --attach-role-arn $USERDETAILS_ROLE_ARN
                                         --approve 
                                         --override-existing-serviceaccounts 
-                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=${CLEAN_BRANCH}"
+                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
@@ -31,8 +31,9 @@ phases:
                      --set image.tag=$IMAGE_TAG 
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
                      --set ingress.certificateArn=$SSL_CERTIFICATE
-                     --set labels.product=userdetails
-                     --set labels.environment=development
+                     --set labels.product=$PRODUCT_NAME
+                     --set labels.environment=$ENVIRONMENT
+                     --set labels.branch=$CLEAN_BRANCH
 
   post_build:
     commands:
