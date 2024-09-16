@@ -171,7 +171,7 @@ Resources:
                 FilePaths:
                   Includes:
                     - !Sub cicd/${pProductComponent}/**
-                    - heml/**
+                    - helm/**
             SourceActionName: CheckoutSrc
       Variables:
         - Name: SRC_BRANCH
