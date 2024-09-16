@@ -5,7 +5,9 @@ metadata:
   labels:
     {{- include "ala-userdetails.labels" . | nindent 4 }}
   annotations:
-    deployedby: joedeploy
+    environment: {{ .Values.aws.resourceTags.environment }}
+    product: {{ .Values.aws.resourceTags.product }}
+    branch: {{ .Values.aws.resourceTags.branch }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:

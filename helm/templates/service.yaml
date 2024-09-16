@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "ala-userdetails.labels" . | nindent 4 }}
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment={{ .Values.aws.resourceTags.environment }},product={{ .Values.aws.resourceTags.product }}"
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment={{ .Values.aws.resourceTags.environment }},product={{ .Values.aws.resourceTags.product }},branch={{ .Values.aws.resourceTags.branch }},component={{ .Values.aws.resourceTags.component }}"
 spec:
   type: LoadBalancer
   ports:

@@ -16,12 +16,10 @@ fullnameOverride: ""
 serviceAccount:
   create: true
   automount: true
-  annotations: 
-    deployedby: joe-v
+  annotations: {}
   name: ""
 
-podAnnotations:
-    deployedby: joe-v
+podAnnotations: {}
 podLabels: {}
 
 podSecurityContext: {}
