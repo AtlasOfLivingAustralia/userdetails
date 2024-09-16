@@ -4,6 +4,7 @@ kind: Ingress
 metadata:
   name: ingress-{{ include "ala-userdetails.fullname" . }}
   annotations:
+    deployedby: joe
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip

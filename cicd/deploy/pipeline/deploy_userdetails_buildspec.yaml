@@ -31,9 +31,8 @@ phases:
                      --set image.tag=$IMAGE_TAG 
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
                      --set ingress.certificateArn=$SSL_CERTIFICATE
-                     --set labels.product=$PRODUCT_NAME
-                     --set labels.environment=$ENVIRONMENT
-                     --set labels.branch=$CLEAN_BRANCH
+                     --set aws.resourceTags="environment=$ENVIRONMENT,product=$PRODUCT_NAME,branch=$CLEAN_BRANCH,component=helm"
+
 
   post_build:
     commands:
