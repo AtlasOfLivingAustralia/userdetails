@@ -4,8 +4,7 @@ kind: Ingress
 metadata:
   name: ingress-{{ include "ala-userdetails.fullname" . }}
   annotations:
-    deployedby: joeig
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "key1=value1,key2=value2,{{ .Values.aws.resourceTags }}"
+    alb.ingress.kubernetes.io/tags: "envronmenty={{ .Values.aws.resourceTags.environment }}"
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
