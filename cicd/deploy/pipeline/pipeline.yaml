@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Code pipeline for the userdetails service
+Description: Code pipeline for the userdetails service test
 
 Parameters:
   pAutoDeploy:
