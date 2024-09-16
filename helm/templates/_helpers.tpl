@@ -40,6 +40,7 @@ helm.sh/chart: {{ include "ala-userdetails.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/tested-by: joe
 {{- end }}
 
 {{/*
