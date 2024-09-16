@@ -4,8 +4,6 @@ metadata:
   labels:
     {{- include "ala-userdetails.labels" . | nindent 4 }}
   name: mysql-rds
-  annotations:
-    deployedby: joe
 spec:
   type: ExternalName
   externalName: {{ .Values.rds.externalName }}

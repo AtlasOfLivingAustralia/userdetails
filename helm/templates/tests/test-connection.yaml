@@ -6,7 +6,7 @@ metadata:
     {{- include "ala-userdetails.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
-    deployedby: joe
+    deployedby: joepod
 spec:
   containers:
     - name: wget
