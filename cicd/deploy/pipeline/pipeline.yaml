@@ -253,6 +253,7 @@ Resources:
             InputArtifacts:
               - Name: SourceArtifact
               - Name: ExportConfigArtifact
+            PrimarySource: SourceArtifact
             RunOrder: 2
           - Name: DeployNotification
             ActionTypeId:
