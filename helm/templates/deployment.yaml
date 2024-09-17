@@ -27,6 +27,9 @@ spec:
             - containerPort: 8000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: userdetails-config
           volumeMounts:
             - name: config-volume
               mountPath: /data/userdetails/config/userdetails-config.yml
