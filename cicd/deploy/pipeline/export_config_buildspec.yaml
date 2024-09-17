@@ -75,6 +75,12 @@ phases:
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - echo creating the configmap for the userdetails deployment...
+      - |
+          for var in $(printenv | awk -F= '{print $1}'); do
+            echo "  $var: \"$(printenv $var)\"" >> helm/templates/configmap.yaml
+          done
+      - cat helm/templates/configmap.yaml
     finally:
       - #echo This always runs
 
@@ -84,7 +90,12 @@ phases:
     finally:
       - #echo This always runs
 
-
   post_build:
     commands:
       - #echo Entered the post_build phase...
+
+artifacts:
+  files:
+    - helm/templates/configmap.yaml
+  name: DeployConfigArtifact
+  discard-paths: no

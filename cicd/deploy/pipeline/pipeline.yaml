@@ -251,7 +251,8 @@ Resources:
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" }
                 ]
             InputArtifacts:
-              - Name: 'SourceArtifact'
+              - Name: SourceArtifact
+              - Name: ExportConfigArtifact
             RunOrder: 2
           - Name: DeployNotification
             ActionTypeId:
