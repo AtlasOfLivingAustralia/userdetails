@@ -11,7 +11,7 @@ phases:
       - chmod 700 get_helm.sh
       - ./get_helm.sh
       - env
-      - cp $CODEBUILD_SRC_DIR_DeployConfigArtifact/helm/templates/configmap.yaml helm/templates/
+      - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm/templates/configmap.yaml helm/templates/
 
 
 
