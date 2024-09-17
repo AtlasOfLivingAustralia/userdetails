@@ -4,6 +4,7 @@ kind: Ingress
 metadata:
   name: ingress-{{ include "ala-userdetails.fullname" . }}
   annotations:
+    alb.ingress.kubernetes.io/tags: "envronment={{ .Values.aws.resourceTags.environment }},product={{ .Values.aws.resourceTags.product }},branch={{ .Values.aws.resourceTags.branch }},component={{ .Values.aws.resourceTags.component }}"
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
