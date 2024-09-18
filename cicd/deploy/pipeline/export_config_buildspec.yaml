@@ -77,7 +77,7 @@ phases:
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
       - echo creating the configmap for the userdetails deployment...
-      - cicd/unset_codebuild_env_vars.sh
+      - source cicd/unset_codebuild_env_vars.sh
       - |
           for var in $(printenv | awk -F= '{print $1}'); do
             echo "  $var: \"$(printenv $var)\"" >> helm/templates/configmap.yaml
