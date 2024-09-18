@@ -1,0 +1,2 @@
+###
+# codebuild specific env vars that we dont need in the application environment

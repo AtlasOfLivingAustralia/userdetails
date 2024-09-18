@@ -65,6 +65,7 @@ phases:
       - echo generating environment vars...
       - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
       - echo loading config..
+      - env
       - set -a ; source env.txt ; set +a
       - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecret'].OutputValue" --output text)
       - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
