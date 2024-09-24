@@ -7,7 +7,7 @@ env:
   shell: bash
   git-credential-helper: yes
   variables:
-    DEBIAN_FRONTEND: "noninteractive"
+    DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME
@@ -66,7 +66,7 @@ phases:
       - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
       - echo loading config..
       - set -a ; source env.txt ; set +a
-      - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsSecret'].OutputValue" --output text)
+      - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-SecretArn'].Value" --output text)
       - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
@@ -79,9 +79,9 @@ phases:
       - |
           source cicd/unset_codebuild_env_vars.sh
           for var in $(printenv | awk -F= '{print $1}'); do
-            echo "  $var: \"$(printenv $var)\"" >> helm/templates/configmap.yaml
+            echo "$var=\"$(printenv $var)\"" >> app.env
           done
-      - cat helm/templates/configmap.yaml
+      - cat app.env
     finally:
       - #echo This always runs
 
@@ -97,6 +97,6 @@ phases:
 
 artifacts:
   files:
-    - helm/templates/configmap.yaml
+    - app.env
   name: DeployConfigArtifact
   discard-paths: no
