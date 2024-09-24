@@ -210,15 +210,19 @@ Resources:
               Provider: CodeBuild
             Configuration:
               ProjectName: !Ref ExportConfig
-              EnvironmentVariables: !Sub |
-                 [
-                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
-                   { "name":"COMMIT_ID", "value":"#{CheckoutSrcNS.CommitId}" },
-                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
-                   { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
-                   { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
-                   { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
-                 ]
+              EnvironmentVariables: !Sub 
+                - |
+                    [
+                      { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                      { "name":"COMMIT_ID", "value":"#{CheckoutSrcNS.CommitId}" },
+                      { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
+                      { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
+                      { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
+                      { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                      { "name":"RESOURCE_NAME", "value":"${ResourceName}" },
+                      { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
+                    ]
+                - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
             Namespace: ExportConfigNS
             InputArtifacts:
               - Name: 'SourceArtifact'
@@ -250,8 +254,10 @@ Resources:
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" }
                 ]
+              PrimarySource: SourceArtifact
             InputArtifacts:
-              - Name: 'SourceArtifact'
+              - Name: SourceArtifact
+              - Name: ExportConfigArtifact
             RunOrder: 2
           - Name: DeployNotification
             ActionTypeId:
