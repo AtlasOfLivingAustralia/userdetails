@@ -2,6 +2,9 @@ version: 0.2
 
 env:
   shell: bash
+  secrets-manager:
+    USERDETAILS_OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
+    USERDETAILS_ENDPOINT_PASSWORD: $USERDETAILS_SECRET_NAME:userdetails_endpoint_password
 
 phases:
   install:
@@ -11,7 +14,7 @@ phases:
       - chmod 700 get_helm.sh
       - ./get_helm.sh
       - echo copying configmap.yaml to helm/templates
-      - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm/templates/configmap.yaml helm/templates/
+      - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/app.env app.env
 
 
 
@@ -28,6 +31,7 @@ phases:
                                         --approve 
                                         --override-existing-serviceaccounts 
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
+      - kubectl create configmap $PRODUCT_NAME-config --from-env-file=app.env
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
