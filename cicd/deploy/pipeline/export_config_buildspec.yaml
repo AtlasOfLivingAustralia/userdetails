@@ -84,7 +84,6 @@ phases:
           for var in $(printenv | awk -F= '{print $1}'); do
             echo "$var=\"$(printenv $var)\"" >> app.env
           done
-      - cat app.env
     finally:
       - #echo This always runs
 

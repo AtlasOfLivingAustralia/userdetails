@@ -28,9 +28,9 @@ phases:
                                         --approve 
                                         --override-existing-serviceaccounts 
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
+      # cant update the configmap so we delete it first
       - kubectl delete configmap $PRODUCT_NAME-config || true
       - kubectl create configmap $PRODUCT_NAME-config --from-env-file=app.env
-      - kubectl describe configmaps $PRODUCT_NAME-config
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
