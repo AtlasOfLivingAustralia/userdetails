@@ -10,7 +10,7 @@ phases:
       - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
       - chmod 700 get_helm.sh
       - ./get_helm.sh
-      - echo copying configmap.yaml to helm/templates
+      - echo copying configmap artifact
       - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/app.env app.env
 
 
@@ -18,7 +18,7 @@ phases:
   build:
     commands:
       - echo Build started on $(date)
-      - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
       - eksctl create iamserviceaccount --name $SERVICE_ACCOUNT_NAME 
@@ -30,6 +30,7 @@ phases:
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
       - kubectl delete configmap $PRODUCT_NAME-config
       - kubectl create configmap $PRODUCT_NAME-config --from-env-file=app.env
+      - kubectl describe configmaps $PRODUCT_NAME-config
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
