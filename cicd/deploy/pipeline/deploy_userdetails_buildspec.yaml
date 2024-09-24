@@ -2,9 +2,6 @@ version: 0.2
 
 env:
   shell: bash
-  secrets-manager:
-    USERDETAILS_OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
-    USERDETAILS_ENDPOINT_PASSWORD: $USERDETAILS_SECRET_NAME:userdetails_endpoint_password
 
 phases:
   install:
