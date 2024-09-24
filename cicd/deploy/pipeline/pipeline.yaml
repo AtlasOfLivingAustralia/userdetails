@@ -210,16 +210,19 @@ Resources:
               Provider: CodeBuild
             Configuration:
               ProjectName: !Ref ExportConfig
-              EnvironmentVariables: !Sub |
-                 [
-                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
-                   { "name":"COMMIT_ID", "value":"#{CheckoutSrcNS.CommitId}" },
-                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
-                   { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
-                   { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
-                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
-                   { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
-                 ]
+              EnvironmentVariables: !Sub 
+                - |
+                    [
+                      { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                      { "name":"COMMIT_ID", "value":"#{CheckoutSrcNS.CommitId}" },
+                      { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
+                      { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
+                      { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
+                      { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                      { "name":"RESOURCE_NAME", "value":"${ResourceName}" },
+                      { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
+                    ]
+                - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
             Namespace: ExportConfigNS
             InputArtifacts:
               - Name: 'SourceArtifact'
