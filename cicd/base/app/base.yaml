@@ -179,7 +179,7 @@ Outputs:
     Description: The Secrets name for userdetails
     Value: !Ref UserdetailsSecret
     Export:
-      Name: !Sub ${AWS::StackName}-SecretArn
+      Name: !Sub ${AWS::StackName}-UserdetailsSecretArn
 
   UserdetailsRoleArn:
     Description: The name of the userdetails role
