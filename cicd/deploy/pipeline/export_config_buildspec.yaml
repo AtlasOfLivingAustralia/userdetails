@@ -8,6 +8,9 @@ env:
   git-credential-helper: yes
   variables:
     DEBIAN_FRONTEND: noninteractive
+  secrets-manager:
+    DD_API_KEY: ala-secrets-production:datadog-api-key
+    SLACK_OAUTH_TOKEN: ala-secrets-production:slack-oauth-token
   exported-variables:
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME

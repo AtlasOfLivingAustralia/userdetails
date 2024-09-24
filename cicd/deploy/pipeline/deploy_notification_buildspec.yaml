@@ -8,9 +8,6 @@ env:
     DEBIAN_FRONTEND: noninteractive
   exported-variables:
     - CODEBUILD_BUILD_NUMBER
-  secrets-manager:
-    DD_API_KEY: ala-secrets-production:datadog-api-key
-    SLACK_OAUTH_TOKEN: ala-secrets-production:slack-oauth-token
 
 phases:
 
