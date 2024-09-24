@@ -9,8 +9,8 @@ env:
   variables:
     DEBIAN_FRONTEND: noninteractive
   secrets-manager:
-    DD_API_KEY: ala-secrets-production:datadog-api-key
-    SLACK_OAUTH_TOKEN: ala-secrets-production:slack-oauth-token
+    USERDETAILS_OIDC_SECRET: $PRODUCT_NAME-$CLEAN_BRANCH:userdetails_oidc_secret
+    USERDETAILS_ENDPOINT_PASSWORD: $PRODUCT_NAME-$CLEAN_BRANCH:userdetails_endpoint_password
   exported-variables:
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME
@@ -69,7 +69,7 @@ phases:
       - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
       - echo loading config..
       - set -a ; source env.txt ; set +a
-      - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-SecretArn'].Value" --output text)
+      - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsSecretArn'].Value" --output text)
       - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
