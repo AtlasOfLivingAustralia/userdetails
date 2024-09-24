@@ -217,6 +217,7 @@ Resources:
                    { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
                    { "name":"PIPELINE_FINGERPRINT", "value":"#{variables.PIPELINE_FINGERPRINT}" },
                    { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
+                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
                    { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
                  ]
             Namespace: ExportConfigNS
