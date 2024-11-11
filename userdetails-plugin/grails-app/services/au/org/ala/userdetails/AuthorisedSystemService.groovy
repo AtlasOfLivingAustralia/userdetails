@@ -16,16 +16,17 @@
 package au.org.ala.userdetails
 
 import au.org.ala.ws.security.JwtProperties
+import org.pac4j.core.adapter.FrameworkAdapter
 import org.pac4j.core.config.Config
+import org.pac4j.core.context.CallContext
+import org.pac4j.core.context.FrameworkParameters
 import org.pac4j.core.context.WebContext
 import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.credentials.Credentials
 import org.pac4j.core.profile.ProfileManager
 import org.pac4j.core.profile.UserProfile
-import org.pac4j.core.util.FindBest
 import au.org.ala.ws.security.client.AlaAuthClient
-import org.pac4j.jee.context.JEEContextFactory
-import org.pac4j.jee.context.session.JEESessionStoreFactory
+import org.pac4j.jee.context.JEEFrameworkParameters
 import org.pac4j.oidc.credentials.OidcCredentials
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -65,11 +66,11 @@ class AuthorisedSystemService {
 
         if (jwtProperties.enabled) {
             def context = context(request, response)
-            def sessionStore = sessionStore()
+            def sessionStore = sessionStore(request, response)
             ProfileManager profileManager = new ProfileManager(context, sessionStore)
             profileManager.setConfig(config)
 
-            result = alaAuthClient.getCredentials(context, sessionStore)
+            result = alaAuthClient.getCredentials(new CallContext(context, sessionStore))
                     .map { credentials -> checkCredentials(scope, credentials, role, context, profileManager) }
                     .orElseGet { jwtProperties.fallbackToLegacyBehaviour && isAuthorisedSystem(request) }
         } else {
@@ -164,12 +165,16 @@ class AuthorisedSystemService {
     }
 
     private WebContext context(request, response) {
-        final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
+        FrameworkAdapter.INSTANCE.applyDefaultSettingsIfUndefined(config)
+        final FrameworkParameters frameworkParameters = new JEEFrameworkParameters(request, response)
+        final WebContext context = config.getWebContextFactory().newContext(frameworkParameters)
         return context
     }
 
-    private SessionStore sessionStore() {
-        final SessionStore sessionStore = FindBest.sessionStoreFactory(null, config, JEESessionStoreFactory.INSTANCE).newSessionStore()
+    private SessionStore sessionStore(request, response ) {
+        FrameworkAdapter.INSTANCE.applyDefaultSettingsIfUndefined(config)
+        final FrameworkParameters frameworkParameters = new JEEFrameworkParameters(request, response)
+        final SessionStore sessionStore =  config.sessionStoreFactory.newSessionStore(frameworkParameters)
         return sessionStore
     }
 }

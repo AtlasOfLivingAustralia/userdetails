@@ -62,7 +62,7 @@ class AuthorisedSystemServiceSpec extends Specification implements ServiceUnitTe
         def request = new MockHttpServletRequest("GET", "/userdetails/getUserDetails")
         request.remoteAddr = remoteAddr
         request.remoteHost = 'example.org'
-        client.getCredentials(_, _) >> Optional.empty()
+        client.getCredentials(_) >> Optional.empty()
         def response = new MockHttpServletResponse()
         when:
         def authorised = service.isAuthorisedRequest(request, response, null, null)
@@ -84,7 +84,7 @@ class AuthorisedSystemServiceSpec extends Specification implements ServiceUnitTe
                 new Scope(*tokenScopes)
         )
         def credentials = new OidcCredentials().tap { accessToken = token}
-        client.getCredentials(_, _) >> Optional.of(credentials)
+        client.getCredentials(_) >> Optional.of(credentials)
         if (hasProfile) {
             def profile = new AlaOidcUserProfile("text@example.org").tap { roles = profileRoles }
             client.getUserProfile(_, _, _) >> Optional.of(profile)
