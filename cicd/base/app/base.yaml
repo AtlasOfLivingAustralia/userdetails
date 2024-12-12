@@ -34,6 +34,7 @@ Conditions:
     - !Equals
       - !Ref pEnvironment
       - production
+  IsFirstBuild: !Equals [!Ref pBuild, "1"]
 
 Resources:
 
@@ -71,6 +72,17 @@ Resources:
               - ${pProductName}-${ResourceName}
               - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       Description: !Sub Userdetails app ${pEnvironment} secrets
+      SecretString: !If
+              - IsFirstBuild
+              - |
+                {
+                   "userdetails_oidc_secret" : "",
+                   "userdetails_endpoint_password" : "",
+                   "oauth_providers_flickr_secret" : "",
+                   "oauth_providers_inaturalist_secret" : "",
+                   "userdetails_jwt_secret" : ""
+                }
+              - !Ref "AWS::NoValue"
 
   UserdetailsPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -303,9 +315,11 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-UserdetailsRepositoryUri
 
-  UserdetailsSecret:
+  UserdetailsSecretArn:
     Description: The Secrets name for userdetails
     Value: !Ref UserdetailsSecret
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsSecretArn
 
   UserdetailsRoleArn:
     Description: The name of the userdetails role

@@ -10,6 +10,10 @@ phases:
       - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
       - chmod 700 get_helm.sh
       - ./get_helm.sh
+      - echo copying configmap artifact
+      - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/app.env app.env
+
+
 
   build:
     commands:
@@ -40,6 +44,9 @@ phases:
                                         --approve 
                                         --override-existing-serviceaccounts 
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
+      # cant update the configmap so we delete it first
+      - kubectl delete configmap $PRODUCT_NAME-config || true
+      - kubectl create configmap $PRODUCT_NAME-config --from-env-file=app.env
       - cd helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
