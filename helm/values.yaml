@@ -9,6 +9,9 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
+secret:
+  baseName: "userdetails-config-secret-"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

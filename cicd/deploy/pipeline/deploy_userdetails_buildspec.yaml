@@ -14,9 +14,25 @@ phases:
   build:
     commands:
       - echo Build started on $(date)
+      - wget https://raw.githubusercontent.com/AtlasOfLivingAustralia/ala-install/refs/heads/master/ansible/roles/userdetails/templates/userdetails-config.yml
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - USER_POOL_ID=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue" --output text)
+      - CLIENT_ID=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsAppClient'].OutputValue" --output text)
+      - CLIENT_SECRET=$(aws cognito-idp describe-user-pool-client --user-pool-id $USER_POOL_ID --client-id $CLIENT_ID --query "UserPoolClient.ClientSecret" --output text)
+      - SERVER_TO_SERVER_CLIENT_ID=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='UserdetailsServerToServerAppClient'].OutputValue" --output text)
+      - SERVER_TO_SERVER_CLIENT_SECRET=$(aws cognito-idp describe-user-pool-client --user-pool-id $USER_POOL_ID --client-id $SERVER_TO_SERVER_CLIENT_ID --query "UserPoolClient.ClientSecret" --output text)
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
+      - cat $CODEBUILD_SRC_DIR_AnsibleInventoriesSourceArtifact/userdetails/userdetails-feature-branch
+      - python3 cicd/gen_app_config.py -t userdetails-config.yml -v $CODEBUILD_SRC_DIR_AnsibleInventoriesSourceArtifact/userdetails/userdetails-feature-branch -b $CLEAN_BRANCH
+      - sed -i "s/security.oidc.clientId=/security.oidc.clientId=$CLIENT_ID/" userdetails-config.yml
+      - sed -i "s/security.oidc.secret=/security.oidc.secret=$CLIENT_SECRET/" userdetails-config.yml
+      - sed -i "s/webservice.client-id=/webservice.client-id=$SERVER_TO_SERVER_CLIENT_ID/" userdetails-config.yml
+      - sed -i "s/webservice.client-secret=/webservice.client-secret=$SERVER_TO_SERVER_CLIENT_SECRET/" userdetails-config.yml
+      - sed -i '1i server.port=8000' userdetails-config.yml
+      - cat userdetails-config.yml
+      - kubectl delete secret userdetails-config-secret-$CLEAN_BRANCH || true
+      - kubectl create secret generic userdetails-config-secret-$CLEAN_BRANCH --from-file=userdetails-config.yml
       - eksctl create iamserviceaccount --name $SERVICE_ACCOUNT_NAME 
                                         --namespace $PRODUCT_NAME
                                         --cluster $EKS_CLUSTER_NAME 
@@ -41,3 +57,13 @@ phases:
     commands:
       - echo Post-build phase...
       - echo Build completed on $(date)
+
+artifacts:
+  base-directory: $CODEBUILD_SRC_DIR
+  files:
+    - '**/*'
+  secondary-artifacts:
+    AnsibleInventoriesSourceArtifact:
+      base-directory: $CODEBUILD_SRC_DIR_AnsibleInventoriesSourceArtifact
+      files:
+        - '**/*'
