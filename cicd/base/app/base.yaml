@@ -226,7 +226,7 @@ Resources:
         - "custom:inaturalistUsername"
       AuthSessionValidity: 3
       CallbackURLs:
-        - !Sub "https://${pAppClientDomain/userdetails/callback?client_name=OidcClient"
+        - !Sub "https://${pAppClientDomain}/userdetails/callback?client_name=OidcClient"
       ClientName: !Sub
         - ${pProductName}-${ResourceName}
         - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
