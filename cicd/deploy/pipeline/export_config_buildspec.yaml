@@ -8,9 +8,6 @@ env:
   git-credential-helper: yes
   variables:
     DEBIAN_FRONTEND: noninteractive
-  secrets-manager:
-    USERDETAILS_OIDC_SECRET: "$PRODUCT_NAME-$RESOURCE_NAME:userdetails_oidc_secret"
-    USERDETAILS_ENDPOINT_PASSWORD: "$PRODUCT_NAME-$RESOURCE_NAME:userdetails_endpoint_password"
   exported-variables:
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME
