@@ -260,6 +260,7 @@ Resources:
                 [
                   { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
                   { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                  { "name":"BASE_STACK_NAME", "value":"#{ExportConfigNS.BASE_STACK_NAME}" },
                   { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
                   { "name":"EKS_CLUSTER_NAME", "value":"#{ExportConfigNS.EKS_CLUSTER_NAME}" },
                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
