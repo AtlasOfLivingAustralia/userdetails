@@ -83,7 +83,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub
-        - ${pProductName}-${pProductComponent}-build-lists-${ResourceName}
+        - ${pProductName}-${pProductComponent}-build-userdetails-${ResourceName}
         - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
       Description: Build the userdetails project
       ServiceRole:
