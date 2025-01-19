@@ -74,3 +74,102 @@ affinity: {}
 
 rds:
   externalName: "mysql-rds"
+
+app:
+  url: "https://userdetails.ala.org.au"
+authCookieName: "ALA-Auth"
+defaultLogoutRedirectUri: "https://www.ala.org.au"
+affiliation:
+  enabled: true
+cookie:
+  enabled: true
+  domain: ".ala.org.au"
+oauth2:
+  baseUrl: ""
+oidc:
+  enabled: true
+  clientId: ""
+  secret: ""
+  discoveryUri: ""
+  logoutUrl: ""
+jwt:
+  enabled: true
+  legacy:
+    enabled: true
+webservices:
+  enabled: true
+  clientId: ""
+  secret: ""
+apikey:
+  enabled: true
+  auth:
+    serviceUrl: "https://auth.ala.org.au/apikey/ws/check/"
+  check:
+    serviceUrl: "https://auth.ala.org.au/apikey/ws/check?apikey="
+  userdetails:
+    serviceUrl: "https://auth.ala.org.au/userdetails/userDetails/"
+security:
+  user:
+    password: ""
+aws:
+  region: "ap-southeast-2"
+  poolId: ""
+  usagePlanId: ""
+tokenApp:
+  url: "https://tokens.ala.org.au/token"
+  callbackURLs: ["https://tokens.ala.org.au/login"]
+docsPortal:
+  url: "https://docs.ala.org.au/#introduction"
+dynamoDBTableName: "UserApplications"
+userdetails:
+  api:
+    url: "https://api.ala.org.au/userdetails/"
+delegatedGroupNames: []
+
+flickr:
+  key: ""
+  secret: ""
+inat:
+  key: ""
+  secret: ""
+recaptcha:
+  key: ""
+  secret: ""
+
+sightings:
+  url: "https://biocollect.ala.org.au/spotter"
+spatial:
+  url: "https://spatial.ala.org.au?tool=log"
+volunteer:
+  url: "https://volunteer.ala.org.au/user/myStats"
+lists:
+  url: "https://lists.ala.org.au/speciesList/list"
+biocache:
+  search:
+    baseUrl: "https://biocache.ala.org.au/occurrences/search"
+    url: "https://biocache.ala.org.au/occurrences/search/?q=*%3A*&fq=assertion_user_id%3A"
+  myDownloads:
+    url: "https://biocache.ala.org.au/download/myDownloads/"
+myData:
+  url: "https://sandbox.ala.org.au/tempDataResource/myData"
+alerts:
+  url: "https://alerts.ala.org.au"
+ala:
+  baseURL: "https://www.ala.org.au"
+bie:
+  baseURL: "https://bie.ala.org.au"
+
+authorisedSystems:
+  enabled: true
+bulkCreate:
+  enabled: false
+exportUsers:
+  enabled: false
+myProfile:
+  useDigiVol: true
+  useSandbox: true
+  useBiocollect: true
+
+headerAndFooter:
+  baseURL: "https://www.ala.org.au/commonui-bs3-2019"
+  version: "2"

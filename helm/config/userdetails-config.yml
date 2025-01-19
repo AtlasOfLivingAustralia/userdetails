@@ -1,0 +1,217 @@
+# CAS Config
+security:
+  core:
+    authCookieName: {{ .Values.authCookieName }}
+    defaultLogoutRedirectUri: {{ .Values.defaultLogoutRedirectUri }}
+    roleAttribute: ala:role
+    affiliation-survey:
+      enabled: {{ .Values.affiliation.enabled }}
+  cookie:
+    enabled: {{ .Values.cookie.enabled }}
+    domain: {{ .Values.cookie.domain }}
+  cas:
+    enabled: False
+    authenticateOnlyIfLoggedInFilterPattern : 
+  oidc:
+    enabled: {{ .Values.oidc.enabled }}
+    client-id: {{ .Values.oidc.clientId }}
+    secret: {{ .Values.oidc.secret }}
+    discovery-uri: {{ .Values.oidc.discoveryUri }}
+    logoutUrl: {{ .Values.oidc.logoutUrl }}
+    logoutAction: cognito
+  jwt:
+    enabled: {{ .Values.jwt.enabled }}
+    fallback-to-legacy-behaviour: {{ .Values.jwt.legacy.enabled }}
+    discovery-uri: {{ .Values.oidc.discoveryUri }}
+    roleAttributes: cognito:groups
+    rolesFromAccessToken: True
+    userIdClaim: username
+    roleClaims: cognito:groups
+  user:
+    name: admin
+    password: {{ .Values.security.user.password }}
+    role:
+      - ACTUATOR
+  basic:
+    enabled: true
+    authorizeMode: role
+    realm: ALA CAS
+    path:
+      - /status/**
+  apikey:
+    enabled: {{ .Values.apikey.enabled }}
+    auth:
+      serviceUrl: {{ .Values.apikey.auth.serviceUrl }}
+    check:
+      serviceUrl: {{ .Values.apikey.check.serviceUrl }}
+    userdetails:
+      serviceUrl: {{ .Values.apikey.userdetails.serviceUrl }}
+endpoints:
+  enabled: true
+  health:
+    sensitive: false
+management:
+  security:
+    enabled: true
+    roles: ACTUATOR
+
+serverURL: {{ .Values.app.url }}
+serverName: {{ .Values.app.url }}
+grails:
+  serverURL: {{ .Values.app.url }}/userdetails
+server:
+  port: 9001
+  servlet:
+    contextPath: /userdetails
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+      remote-ip-header: x-forwarded-for
+      protocol-header-https-value: https
+
+redirectAfterFirstLogin: ${grails.serverURL}/myprofile
+
+cognito:
+  region: {{ .Values.aws.region }}
+  poolId: {{ .Values.aws.poolId }}
+oauth:
+  providers:
+    flickr:
+      enabled: true
+      key: {{ .Values.flickr.key }}
+      secret: {{ .Values.flickr.secret }}
+      callback: ${grails.serverURL}/profile/flickrCallback
+    inaturalist:
+      enabled: true
+      key: {{ .Values.inat.key }}
+      secret: {{ .Values.inat.secret }}
+      callback: ${grails.serverURL}/profile/inaturalistCallback
+inaturalist:
+  name: iNaturalist Australia
+  baseUrl: https://inaturalist.ala.org.au/
+password:
+  encoder: bcrypt
+bcrypt:
+  strength: 10
+#encoding:
+#  algorithm: MD5
+#  salt: nXg798dr60987Hgb
+
+registration:
+  showAlaMessage: True
+  resetPasswordArticle: https://support.ala.org.au/support/solutions/articles/6000194958-my-username-password-isn-t-working-or-i-can-t-remember-my-username-password
+  alertArticle: https://support.ala.org.au/support/solutions/articles/6000195858-how-do-i-manage-email-alerts-from-the-ala
+  activationArticle: https://support.ala.org.au/support/solutions/articles/6000195196-i-created-an-account-but-did-not-receive-the-account-activation-email
+
+recaptcha:
+  baseUrl: https://www.google.com/recaptcha/api/
+  siteKey: {{ .Values.recaptcha.key }}
+  secretKey: {{ .Values.recaptcha.secret }}
+
+ala:
+  baseURL: https://www.ala.org.au
+
+supportEmail: support@ala.org.au
+homeUrl: https://www.ala.org.au
+homeLogoUrl: https://www.ala.org.au/app/uploads/2020/06/ALA_Logo_Inline_RGB-300x63.png
+mainTitle: Atlas of Living Australia
+emailSenderTitle: Atlas of Living Australia
+emailSender: support@ala.org.au
+
+sightings.url: {{ .Values.sightings.url }}
+spatial.url: {{ .Values.spatial.url }}
+volunteer.url: {{ .Values.volunteer.url }}
+lists.url: {{ .Values.lists.url }}
+biocache.search.baseUrl: {{ .Values.biocache.search.baseUrl }}
+biocache.search.url: {{ .Values.biocache.search.url }}
+biocache.myDownloads.url: {{ .Values.biocache.myDownloads.url }}
+myData.url: {{ .Values.myData.url }}
+alerts.url: {{ .Values.alerts.url }}
+
+# this property is read/used by ala-auth-plugin (included by userdetails)
+userDetails:
+  url: {{ .Values.app.url }}/userdetails
+userdetails:
+  features:
+    authorisedSystems: {{ .Values.authorisedSystems.enabled }}
+    bulkCreate: {{ .Values.bulkCreate.enabled }}
+    exportUsers: {{ .Values.exportUsers.enabled }}
+
+# Header and footer
+headerAndFooter:
+  baseURL: {{ .Values.headerAndFooter.baseURL }}
+  version: {{ .Values.headerAndFooter.version }}
+ala.baseURL: {{ .Values.ala.baseURL }}
+bie.baseURL: {{ .Values.bie.baseURL }}
+bie.searchPath: /search
+
+# Skin options
+skin.layout: ala-main
+skin.fluidLayout: True
+skin.orgNameLong: Atlas of Living Australia
+skin.orgNameShort: ALA
+skin.favicon: https://www.ala.org.au/wp-content/themes/ala-wordpress-theme/img/favicon/favicon-16x16.png
+skin.homeUrl: http://www.ala.org.au
+
+attributes:
+    affiliations:
+      enabled: {{ .Values.affiliation.enabled }}
+
+# API key for external apps
+webservice:
+  jwt: {{ .Values.webservice.enabled }}
+  jwt-scopes: users/read
+  client-id: {{ .Values.webservice.clientId }}
+  client-secret: {{ .Values.webservice.secret }}
+
+# Default primary fields for Export to CSV functionality
+admin.export.csv.primary.fields: id,userName,firstName,lastName,email,activated,locked,created
+
+spring:
+  session:
+    enabled: false
+    store-type: none
+    
+# Allow to disable some tools for non-ALA Portals
+myProfile:
+  useDigiVol: {{ .Values.myProfile.useDigiVol }}
+  useSandbox: {{ .Values.myProfile.useSandbox }}
+  useBiocollect: {{ .Values.myProfile.useBiocollect }}
+
+privacyPolicy: https://www.ala.org.au/about/terms-of-use/privacy-policy/
+termsOfUse: https://www.ala.org.au/terms-of-use/
+
+openapi:
+  terms: https://www.ala.org.au/terms-of-use/
+  components:
+    security:
+      oauth2:
+        baseUrl: {{ .Values.oauth2.baseUrl }}
+  server-urls:
+    - {{ .Values.userdetails.api.url }}
+
+ala.admin.systemMessage.path: /data/userdetails/config
+users:
+  delegated-group-names: {{ .Values.delegatedGroupNames }}
+
+apigateway:
+  region: {{ .Values.aws.region }}
+  galah:
+    usagePlanId: {{ .Values.aws.usagePlanId }}
+tokenApp:
+  url: {{ .Values.tokenApp.url }}
+docsPortal.url: {{ .Values.docsPortal.url }}
+apikey:
+  type: aws
+oauth.support.dynamic.client.dynamoDBTableName: {{ .Values.dynamoDBTableName }}
+oauth.support.dynamic.client.dynamoDBTable.dynamoDBPK: userId
+oauth.support.dynamic.client.dynamoDBTable.dynamoDBSK: clientId
+oauth.support.dynamic.client.tokens.callbackURLs: {{ .Values.tokenApp.callbackURLs }}
+userdetails.url: {{ .Values.app.url }}/userdetails
+userdetails.web.url: {{ .Values.app.url }}/userdetails/
+userdetails.api.url: {{ .Values.userdetails.api.url }}
+
+userdetails.api.useGatewayAPI: True
+

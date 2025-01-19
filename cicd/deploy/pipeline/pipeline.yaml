@@ -79,6 +79,27 @@ Resources:
         BuildSpec: !Sub cicd/${pProductComponent}/pipeline/export_config_buildspec.yaml
       TimeoutInMinutes: 5
 
+  BuildUserdetails:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub
+        - ${pProductName}-${pProductComponent}-build-lists-${ResourceName}
+        - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      Description: Build the userdetails project
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${pBootstrapStackName}-CodeBuildServiceRoleArn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub cicd/${pProductComponent}/pipeline/build_userdetails_buildspec.yaml
+      TimeoutInMinutes: 30
+
   DeployUserdetails:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -200,25 +221,6 @@ Resources:
             Namespace: CheckoutSrcNS
             OutputArtifacts:
               - Name: 'SourceArtifact'
-            RunOrder: 1
-          - Name: CheckoutAnsibleRepo
-            ActionTypeId:
-              Category: Source
-              Owner: AWS
-              Provider: CodeStarSourceConnection
-              Version: 1
-            Configuration:
-              ConnectionArn:
-                Fn::ImportValue:
-                  Fn::Sub: ${pBootstrapStackName}-CodestarConnectionArn
-              FullRepositoryId: !Sub ${pGitHubOwner}/ansible-inventories
-              BranchName: master
-              OutputArtifactFormat: CODEBUILD_CLONE_REF
-              DetectChanges: !Ref pAutoDeploy
-            Namespace: CheckoutAdditionalRepoNS
-            OutputArtifacts:
-              - Name: 'AnsibleInventoriesSourceArtifact'
-            RunOrder: 2
       - Name: Deploy_Infrastructure_Build
         Actions:
           - Name: ExportConfig
@@ -272,13 +274,14 @@ Resources:
                   { "name":"SSL_CERTIFICATE", "value":"#{ExportConfigNS.SSL_CERTIFICATE}" },
                   { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
-                  { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" }
+                  { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" },
+                  { "name":"OIDC_CLIENT_ID", "value":"${UserdetailsAppClient.ClientId}" },
+                  { "name":"WEBSERVICE_CLIENT_ID", "value":"${UserdetailsServerToServerAppClient.ClientId}" },
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
               - Name: SourceArtifact
               - Name: ExportConfigArtifact
-              - Name: 'AnsibleInventoriesSourceArtifact'
             RunOrder: 2
           - Name: DeployNotification
             ActionTypeId:

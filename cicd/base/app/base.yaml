@@ -83,10 +83,11 @@ Resources:
               - |
                 {
                    "userdetails_oidc_secret" : "",
-                   "userdetails_endpoint_password" : "",
-                   "oauth_providers_flickr_secret" : "",
-                   "oauth_providers_inaturalist_secret" : "",
-                   "userdetails_jwt_secret" : ""
+                   "userdetails_webservice_secret": "",
+                   "security_admin_password" : "",
+                   "flickr_secret" : "",
+                   "inaturalist_secret" : "",
+                   "recaptcha_secret": ""
                 }
               - !Ref "AWS::NoValue"
 
