@@ -123,9 +123,9 @@ phases:
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
       - echo ECR_REPO=$ECR_REPO
-      - export OIDC_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='UserdetailsAppClient'].Value" --output text)
+      - export OIDC_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsAppClient'].Value" --output text)
       - echo OIDC_CLIENT_ID=$OIDC_CLIENT_ID
-      - export WEBSERVICE_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='UserdetailsServerToServerAppClient'].Value" --output text)
+      - export WEBSERVICE_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsServerToServerAppClient'].Value" --output text)
       - echo WEBSERVICE_CLIENT_ID=$WEBSERVICE_CLIENT_ID
       - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN

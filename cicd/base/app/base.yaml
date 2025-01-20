@@ -342,7 +342,11 @@ Outputs:
   UserdetailsAppClient:
     Description: The app client for the Userdetails service
     Value: !Ref AppClient
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsAppClient
 
   UserdetailsServerToServerAppClient:
     Description: The app client for the Userdetails service
     Value: !Ref AppClientServerToServer
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsServerToServerAppClient
