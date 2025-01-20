@@ -9,6 +9,8 @@ env:
   variables:
     DEBIAN_FRONTEND: noninteractive
   exported-variables:
+    - OIDC_CLIENT_ID
+    - WEBSERVICE_CLIENT_ID
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
@@ -121,6 +123,8 @@ phases:
       - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
       - echo ECR_REPO=$ECR_REPO
+      - export OIDC_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='UserdetailsAppClient'].Value" --output text)
+      - echo OIDC_CLIENT_ID=$OIDC_CLIENT_ID
       - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
