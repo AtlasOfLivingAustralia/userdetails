@@ -285,15 +285,7 @@ Resources:
                   { "name":"OPENAPI_OAUTH_URL", "value":"#{ExportConfigNS.OPENAPI_OAUTH_URL}" },
                   { "name":"OIDC_ENABLED", "value":"#{ExportConfigNS.OIDC_ENABLED}" },
                   { "name":"OIDC_DISCOVERY_URI", "value":"#{ExportConfigNS.OIDC_DISCOVERY_URI}" },
-                  { "name":"USERDETAILS_OIDC_LOGOUTURL", "value":"#{ExportConfigNS.USERDETAILS_OIDC_LOGOUTURL}" },
-                  { "name":"USERDETAILS_JWT_ENABLED", "value":"#{ExportConfigNS.USERDETAILS_JWT_ENABLED}" },
-                  { "name":"USERDETAILS_JWT_FALLBACK_TO_LEGACY", "value":"#{ExportConfigNS.USERDETAILS_JWT_FALLBACK_TO_LEGACY}" },
-                  { "name":"WEB_SERVICE_ENABLED", "value":"#{ExportConfigNS.WEB_SERVICE_ENABLED}" },
-                  { "name":"APIKEY_ENABLED", "value":"#{ExportConfigNS.APIKEY_ENABLED}" },
-                  { "name":"APIKEY_AUTH_URL", "value":"#{ExportConfigNS.APIKEY_AUTH_URL}" },
-                  { "name":"APIKEY_CHECK_URL", "value":"#{ExportConfigNS.APIKEY_CHECK_URL}" },
-                  { "name":"APIKEY_USERDETAILS_URL", "value":"#{ExportConfigNS.APIKEY_USERDETAILS_URL}" },
-                  { "name":"COGNITO_REGION", "value":"#{ExportConfigNS.COGNITO_REGION}" }
+                  { "name":"USERDETAILS_OIDC_LOGOUTURL", "value":"#{ExportConfigNS.USERDETAILS_OIDC_LOGOUTURL}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
