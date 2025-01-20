@@ -293,19 +293,7 @@ Resources:
                   { "name":"APIKEY_AUTH_URL", "value":"#{ExportConfigNS.APIKEY_AUTH_URL}" },
                   { "name":"APIKEY_CHECK_URL", "value":"#{ExportConfigNS.APIKEY_CHECK_URL}" },
                   { "name":"APIKEY_USERDETAILS_URL", "value":"#{ExportConfigNS.APIKEY_USERDETAILS_URL}" },
-                  { "name":"COGNITO_REGION", "value":"#{ExportConfigNS.COGNITO_REGION}" },
-                  { "name":"COGNITO_POOLID", "value":"#{ExportConfigNS.COGNITO_POOLID}" },
-                  { "name":"GATEWAY_USAGEPLANID", "value":"#{ExportConfigNS.GATEWAY_USAGEPLANID}" },
-                  { "name":"TOKENAPP_URL", "value":"#{ExportConfigNS.TOKENAPP_URL}" },
-                  { "name":"DOCSPORTAL_URL", "value":"#{ExportConfigNS.DOCSPORTAL_URL}" },
-                  { "name":"DYNAMODBTABLENAME", "value":"#{ExportConfigNS.DYNAMODBTABLENAME}" },
-                  { "name":"OPENAPI_SERVER_URLS", "value":"#{ExportConfigNS.OPENAPI_SERVER_URLS}" },
-                  { "name":"FLICKR_KEY", "value":"#{ExportConfigNS.FLICKR_KEY}" },
-                  { "name":"INATURALIST_KEY", "value":"#{ExportConfigNS.INATURALIST_KEY}" },
-                  { "name":"RECAPTCHA_SITE_KEY", "value":"#{ExportConfigNS.RECAPTCHA_SITE_KEY}" },
-                  { "name":"ENABLED_AUTHORISED_SYSTEMS", "value":"#{ExportConfigNS.ENABLED_AUTHORISED_SYSTEMS}" },
-                  { "name":"ENABLED_BULKCREATE", "value":"#{ExportConfigNS.ENABLED_BULKCREATE}" },
-                  { "name":"ENABLED_EXPORTUSERS", "value":"#{ExportConfigNS.ENABLED_EXPORTUSERS}" }
+                  { "name":"COGNITO_REGION", "value":"#{ExportConfigNS.COGNITO_REGION}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
