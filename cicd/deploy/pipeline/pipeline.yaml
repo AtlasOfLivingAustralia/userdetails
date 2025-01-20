@@ -275,8 +275,8 @@ Resources:
                   { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" },
-                  { "name":"OIDC_CLIENT_ID", "value":"${UserdetailsAppClient.ClientId}" },
-                  { "name":"WEBSERVICE_CLIENT_ID", "value":"${UserdetailsServerToServerAppClient.ClientId}" },
+                  { "name":"OIDC_CLIENT_ID", "value":"${UserdetailsAppClient}" },
+                  { "name":"WEBSERVICE_CLIENT_ID", "value":"${UserdetailsServerToServerAppClient}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
