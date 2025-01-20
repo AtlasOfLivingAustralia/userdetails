@@ -26,6 +26,7 @@ phases:
     commands:
       - echo Build started on $(date)
       - echo $OIDC_SECRET
+      - echo \"$OIDC_SECRET\"
       - echo $FLICKR_SECRET
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
@@ -56,7 +57,7 @@ phases:
           discoveryUri: $OIDC_DISCOVERY_URI
           clientId: $OIDC_CLIENT_ID
           logoutUrl: $USERDETAILS_OIDC_LOGOUTURL
-          secret: $OIDC_SECRET
+          secret: \"$OIDC_SECRET\"
         jwt:
           enabled: $USERDETAILS_JWT_ENABLED
           legacy:
