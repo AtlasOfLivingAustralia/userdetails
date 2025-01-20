@@ -285,8 +285,7 @@ Resources:
                   { "name":"OPENAPI_OAUTH_URL", "value":"#{ExportConfigNS.OPENAPI_OAUTH_URL}" },
                   { "name":"OIDC_ENABLED", "value":"#{ExportConfigNS.OIDC_ENABLED}" },
                   { "name":"OIDC_DISCOVERY_URI", "value":"#{ExportConfigNS.OIDC_DISCOVERY_URI}" },
-                  { "name":"USERDETAILS_OIDC_LOGOUTURL", "value":"#{ExportConfigNS.USERDETAILS_OIDC_LOGOUTURL}" },
-                  { "name":"USERDETAILS_JWT_ENABLED", "value":"#{ExportConfigNS.USERDETAILS_JWT_ENABLED}" }
+                  { "name":"USERDETAILS_OIDC_LOGOUTURL", "value":"#{ExportConfigNS.USERDETAILS_OIDC_LOGOUTURL}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
