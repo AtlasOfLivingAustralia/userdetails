@@ -277,8 +277,7 @@ Resources:
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" },
                   { "name":"OIDC_CLIENT_ID", "value":"#{ExportConfigNS.OIDC_CLIENT_ID}" },
                   { "name":"WEBSERVICE_CLIENT_ID", "value":"#{ExportConfigNS.WEBSERVICE_CLIENT_ID}" },
-                  { "name":"AUTH_COOKIE_NAME", "value":"#{ExportConfigNS.AUTH_COOKIE_NAME}" },
-                  
+                  { "name":"AUTH_COOKIE_NAME", "value":"#{ExportConfigNS.AUTH_COOKIE_NAME}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
