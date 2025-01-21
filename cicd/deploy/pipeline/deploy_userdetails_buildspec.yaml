@@ -145,7 +145,7 @@ phases:
                      --set ingress.certificateArn=$SSL_CERTIFICATE
                      --set aws.resourceTags.environment=$ENVIRONMENT
                      --set aws.resourceTags.product=$PRODUCT_NAME
-                     --set aws.resourceTags.branch==$CLEAN_BRANCH
+                     --set aws.resourceTags.branch=$CLEAN_BRANCH
                      --set aws.resourceTags.component=helm
                      -f helm_values.yaml
                      --set deploymentAnnotations.checksum/configs="$(md5sum helm_values.yaml | awk '{print $1}')"
