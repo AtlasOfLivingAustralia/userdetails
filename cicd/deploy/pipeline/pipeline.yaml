@@ -250,6 +250,25 @@ Resources:
             OutputArtifacts:
               - Name: ExportConfigArtifact
             RunOrder: 1
+          - Name: BuildUserdetails
+            ActionTypeId:
+              Owner: AWS
+              Category: Build
+              Version: 1
+              Provider: CodeBuild
+            Configuration:
+              ProjectName: !Ref BuildUserdetails
+              EnvironmentVariables: !Sub |
+                [
+                  { "name":"AWS_ACCOUNT_ID", "value":"${AWS::AccountId}" },
+                  { "name":"CLEAN_BRANCH", "value":"${pCleanBranch}" },
+                  { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
+                  { "name":"ECR_REPO", "value":"#{ExportConfigNS.ECR_REPO}" },
+                  { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" }
+                ]
+            InputArtifacts:
+              - Name: 'SourceArtifact'
+            RunOrder: 2
           - Name: DeployUserdetails
             ActionTypeId:
               Owner: AWS
@@ -291,7 +310,7 @@ Resources:
             InputArtifacts:
               - Name: SourceArtifact
               - Name: ExportConfigArtifact
-            RunOrder: 2
+            RunOrder: 3
           - Name: DeployNotification
             ActionTypeId:
               Owner: AWS
@@ -318,7 +337,7 @@ Resources:
             Namespace: DeployNotificationNS
             InputArtifacts:
               - Name: 'SourceArtifact'
-            RunOrder: 3
+            RunOrder: 4
       - Name: Teardown
         Actions:
           - Name: ApprovalForApplicationTeardown
