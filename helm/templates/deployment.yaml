@@ -43,7 +43,7 @@ spec:
       volumes:
         - name: config-volume
           secret:
-            secretName: {{ .Values.secret.baseName }}{{ .Values.aws.resourceTags.branch }}
+            secretName: userdetails-config-secret
         - name: logback-volume
           configMap:
             name: logback-config
