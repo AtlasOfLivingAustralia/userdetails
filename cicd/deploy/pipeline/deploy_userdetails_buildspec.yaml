@@ -57,7 +57,7 @@ phases:
           discoveryUri: $OIDC_DISCOVERY_URI
           clientId: $OIDC_CLIENT_ID
           logoutUrl: $USERDETAILS_OIDC_LOGOUTURL
-          secret: \"$OIDC_SECRET\"
+          secret: $OIDC_SECRET
         jwt:
           enabled: $USERDETAILS_JWT_ENABLED
           legacy:
