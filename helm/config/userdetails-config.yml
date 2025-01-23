@@ -19,6 +19,8 @@ security:
     discovery-uri: {{ .Values.oidc.discoveryUri }}
     logoutUrl: {{ .Values.oidc.logoutUrl }}
     logoutAction: cognito
+    alaUseridClaim: username
+    userNameClaim: email
   jwt:
     enabled: {{ .Values.jwt.enabled }}
     fallback-to-legacy-behaviour: {{ .Values.jwt.legacy.enabled }}

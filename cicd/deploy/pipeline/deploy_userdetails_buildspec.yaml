@@ -137,6 +137,7 @@ phases:
           baseURL: $BIE_BASE_URL" > helm_values.yaml
       - echo helm values
       - cat helm_values.yaml
+      - helm template -f helm_values.yaml
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
                      --set image.repository=$ECR_REPO 
