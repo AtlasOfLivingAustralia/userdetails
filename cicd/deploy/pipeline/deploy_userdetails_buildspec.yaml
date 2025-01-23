@@ -138,6 +138,15 @@ phases:
       - echo helm values
       - cat helm_values.yaml
       - helm template . -f helm_values.yaml
+          -n $PRODUCT_NAME
+          --set image.repository=$ECR_REPO
+          --set image.tag=$IMAGE_TAG
+          --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
+          --set ingress.certificateArn=$SSL_CERTIFICATE
+          --set aws.resourceTags.environment=$ENVIRONMENT
+          --set aws.resourceTags.product=$PRODUCT_NAME
+          --set aws.resourceTags.branch=$CLEAN_BRANCH
+          --set aws.resourceTags.component=helm
       - helm upgrade --install $IMAGE_NAME . 
                      -n $PRODUCT_NAME
                      --set image.repository=$ECR_REPO 
