@@ -131,6 +131,102 @@ phases:
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - |
+        echo "
+        app:
+          url: https://$SUB_DOMAIN.$HOSTED_ZONE
+        authCookieName: $AUTH_COOKIE_NAME
+        defaultLogoutRedirectUri: $DEFAULT_LOGOUT_REDIRECT_URL
+        affiliation:
+          enabled: $AFFILIATION_SURVEY
+        cookie:
+          enabled: $AUTH_COOKIE_ENABLED
+          domain: $AUTH_COOKIE_DOMAIN
+        oauth2:
+          baseUrl: $OPENAPI_OAUTH_URL
+        oidc:
+          enabled: $OIDC_ENABLED
+          discoveryUri: $OIDC_DISCOVERY_URI
+          clientId: $OIDC_CLIENT_ID
+          logoutUrl: $USERDETAILS_OIDC_LOGOUTURL
+          secret: $OIDC_SECRET
+        jwt:
+          enabled: $USERDETAILS_JWT_ENABLED
+          legacy:
+            enabled: $USERDETAILS_JWT_FALLBACK_TO_LEGACY
+        webservice:
+          enabled: $WEB_SERVICE_ENABLED
+          clientId: $WEBSERVICE_CLIENT_ID
+          clientSecret: $WEBSERVICE_SECRET
+        apikey:
+          enabled: $APIKEY_ENABLED
+          auth:
+            serviceUrl: $APIKEY_AUTH_URL
+          check:
+            serviceUrl: $APIKEY_CHECK_URL
+          userdetails:
+            serviceUrl: $APIKEY_USERDETAILS_URL
+        security:
+          user:
+            password: $SECURITY_USER_PASSWORD
+        aws:
+          region: $COGNITO_REGION
+          poolId: $COGNITO_POOLID
+          usagePlanId: $GATEWAY_USAGEPLANID
+        tokenApp:
+          url: $TOKENAPP_URL
+          callbackURLs: $DYNAMIC_CLIENT_TOKENS_CALLBACKURLS
+        docsPortal:
+          url: $DOCSPORTAL_URL
+        dynamoDBTableName: $DYNAMODBTABLENAME
+        userdetails:
+          api:
+            url: $OPENAPI_SERVER_URLS
+        delegatedGroupNames: $USERS_DELEGATED_GROUP_NAMES
+        flickr:
+          key: $FLICKR_KEY
+          secret: $FLICKR_SECRET
+        inat:
+          key: $INATURALIST_KEY
+          secret: $INATURALIST_SECRET
+        recaptcha:
+          key: $RECAPTCHA_SITE_KEY
+          secret: $RECAPTCHA_SITE_SECRET
+        authorisedSystems:
+          enabled: $ENABLED_AUTHORISED_SYSTEMS
+        bulkCreate:
+          enabled: $ENABLED_BULKCREATE
+        exportUsers:
+          enabled: $ENABLED_EXPORTUSERS
+        myProfile:
+          useDigiVol: $DIGIVOL_ENABLED
+          useSandbox: $SANDBOX_ENABLED
+          useBiocollect: $BIOCOLLECT_ENABLED
+        headerAndFooter:
+          baseURL: $HEADER_AND_FOOTER_BASEURL
+          version: $HEADER_AND_FOOTER_VERSION
+        sightings:
+          url: $SIGHTINGS_URL
+        spatial:
+          url: $SPATIAL_URL
+        volunteer:
+          url: $VOLUNTEER_URL
+        lists:
+          url: $LISTS_URL
+        biocache:
+          search:
+            baseUrl: $BIOCACHE_SEARCH_BASE_URL
+            url: $BIOCACHE_SEARCH_URL
+          myDownloads:
+            url: $BIOCACHE_DOWNLOAD_URL
+        myData:
+          url: $MYDATA_URL
+        alerts:
+          url: $ALERTS_URL
+        ala:
+          baseURL: $ALA_BASE_URL
+        bie:
+          baseURL: $BIE_BASE_URL" > helm_values.yaml
       - echo creating the configmap for the userdetails deployment...
       - |
           source cicd/unset_codebuild_env_vars.sh
@@ -152,6 +248,6 @@ phases:
 
 artifacts:
   files:
-    - app.env
+    - '**/*'
   name: DeployConfigArtifact
   discard-paths: no
