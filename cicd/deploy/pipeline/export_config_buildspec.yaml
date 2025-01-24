@@ -131,6 +131,18 @@ phases:
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - echo creating the configmap for the userdetails deployment...
+      - |
+          source cicd/unset_codebuild_env_vars.sh
+          for var in $(printenv | awk -F= '{print $1}'); do
+            echo "$var=\"$(printenv $var)\"" >> app.env
+          done
+    finally:
+      - #echo This always runs
+
+  build:
+    commands:
+      - echo Entered the build phase...
       - |
         echo "
         app:
@@ -227,18 +239,6 @@ phases:
           baseURL: $ALA_BASE_URL
         bie:
           baseURL: $BIE_BASE_URL" > helm_values.yaml
-      - echo creating the configmap for the userdetails deployment...
-      - |
-          source cicd/unset_codebuild_env_vars.sh
-          for var in $(printenv | awk -F= '{print $1}'); do
-            echo "$var=\"$(printenv $var)\"" >> app.env
-          done
-    finally:
-      - #echo This always runs
-
-  build:
-    commands:
-      - echo Entered the build phase...
     finally:
       - #echo This always runs
 
@@ -249,5 +249,3 @@ phases:
 artifacts:
   files:
     - '**/*'
-  name: DeployConfigArtifact
-  discard-paths: no
