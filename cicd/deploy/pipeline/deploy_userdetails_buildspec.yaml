@@ -39,7 +39,7 @@ phases:
                                         --override-existing-serviceaccounts 
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
       - cd helm
-      - cat $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm-values.yaml
+#      - cat $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm-values.yaml
       - helm template . -f $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm-values.yaml
           -n $PRODUCT_NAME
           --set image.repository=$ECR_REPO
