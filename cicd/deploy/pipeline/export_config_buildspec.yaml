@@ -8,8 +8,16 @@ env:
   git-credential-helper: yes
   variables:
     DEBIAN_FRONTEND: noninteractive
+  secrets-manager:
+    OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
+    WEBSERVICE_SECRET: $USERDETAILS_SECRET_NAME:userdetails_webservice_secret
+    $SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
+    $FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
+    $INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
+    $RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
   exported-variables:
     - OIDC_CLIENT_ID
+    - OIDC_SECRET
     - WEBSERVICE_CLIENT_ID
     - BASE_STACK_FILE_PFIX
     - BASE_STACK_NAME

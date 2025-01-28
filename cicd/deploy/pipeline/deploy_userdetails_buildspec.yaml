@@ -4,13 +4,6 @@ env:
   shell: bash
   variables:
     JAVA_TOOL_OPTIONS: -Dhttps.protocols=TLSv1.2
-  secrets-manager:
-    OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
-    WEBSERVICE_SECRET: $USERDETAILS_SECRET_NAME:userdetails_webservice_secret
-    $SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
-    $FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
-    $INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
-    $RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
 
 phases:
   install:
@@ -25,9 +18,6 @@ phases:
   build:
     commands:
       - echo Build started on $(date)
-      - echo $OIDC_SECRET
-      - echo \"$OIDC_SECRET\"
-      - echo $FLICKR_SECRET
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - kubectl config set-context --current --namespace=$PRODUCT_NAME
       - printf "$(kubectl config current-context)\n"
