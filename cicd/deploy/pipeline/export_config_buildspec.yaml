@@ -11,10 +11,10 @@ env:
   secrets-manager:
     OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
     WEBSERVICE_SECRET: $USERDETAILS_SECRET_NAME:userdetails_webservice_secret
-    $SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
-    $FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
-    $INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
-    $RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
+    SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
+    FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
+    INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
+    RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
   exported-variables:
     - OIDC_CLIENT_ID
     - OIDC_SECRET
