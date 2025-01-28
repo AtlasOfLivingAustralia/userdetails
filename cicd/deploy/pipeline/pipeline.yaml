@@ -295,10 +295,7 @@ Resources:
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
                   { "name":"USERDETAILS_SECRET_NAME", "value":"#{ExportConfigNS.USERDETAILS_SECRET_NAME}" },
                   { "name":"OIDC_CLIENT_ID", "value":"#{ExportConfigNS.OIDC_CLIENT_ID}" },
-                  { "name":"WEBSERVICE_CLIENT_ID", "value":"#{ExportConfigNS.WEBSERVICE_CLIENT_ID}" },
-                  { "name":"AUTH_COOKIE_NAME", "value":"#{ExportConfigNS.AUTH_COOKIE_NAME}" },
-                  { "name":"DEFAULT_LOGOUT_REDIRECT_URL", "value":"#{ExportConfigNS.DEFAULT_LOGOUT_REDIRECT_URL}" },
-                  { "name":"AFFILIATION_SURVEY", "value":"#{ExportConfigNS.AFFILIATION_SURVEY}" }
+                  { "name":"WEBSERVICE_CLIENT_ID", "value":"#{ExportConfigNS.WEBSERVICE_CLIENT_ID}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
@@ -386,6 +383,16 @@ Resources:
                    Fn::ImportValue:
                      Fn::Sub: '${pBootstrapStackName}-CloudFormationServiceRoleArn'
             RunOrder: 4
+
+  BuildUserdetailsCodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${BuildUserdetails}
+      RetentionInDays: 30
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
 
   DeployUserdetailsCodeBuildLogGroup:
     Type: AWS::Logs::LogGroup
