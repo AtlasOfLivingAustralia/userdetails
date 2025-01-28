@@ -150,4 +150,5 @@ aws cloudformation deploy \
         pProductName=$PRODUCT_NAME \
         pRestartExecutionOnUpdate=$RESTART_PIPELINE_ON_UPDATE \
         pServiceAccountName=$SERVICE_ACCOUNT_NAME \
+        pSecretName=$SECRET_NAME \
 

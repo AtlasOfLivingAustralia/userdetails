@@ -30,6 +30,9 @@ Parameters:
   pAppClientDomain:
     Type: String
     Description: The domain for the app client
+  pSecretName:
+    Type: String
+    Description: The name of the secret
 
 Conditions:
 
@@ -74,9 +77,7 @@ Resources:
   UserdetailsSecret:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
-      Name: !Sub 
-              - ${pProductName}-${ResourceName}
-              - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      Name: !Sub ${pSecretName}
       Description: !Sub Userdetails app ${pEnvironment} secrets
       SecretString: !If
               - IsFirstBuild

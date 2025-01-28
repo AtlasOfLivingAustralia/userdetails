@@ -126,9 +126,6 @@ phases:
       - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
       - echo loading config..
       - set -a ; source env.txt ; set +a
-      - USERDETAILS_SECRET_NAME_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsSecretArn'].Value" --output text)
-      - USERDETAILS_SECRET_NAME=$(echo $USERDETAILS_SECRET_NAME_ARN | cut -d':' -f7 | rev | cut -d'-' -f2- | rev)
-      - echo USERDETAILS_SECRET_NAME=$USERDETAILS_SECRET_NAME
       - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
       - echo ECR_REPO=$ECR_REPO
       - export OIDC_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsAppClient'].Value" --output text)

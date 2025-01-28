@@ -41,6 +41,9 @@ Parameters:
     AllowedValues:
          - true 
          - false
+  pSecretName:
+    Type: String
+    Description: The name of the secret
 
 Conditions:
 
@@ -241,7 +244,8 @@ Resources:
                       { "name":"PRODUCT_COMPONENT", "value":"${pProductComponent}" },
                       { "name":"PRODUCT_NAME", "value":"${pProductName}" },
                       { "name":"RESOURCE_NAME", "value":"${ResourceName}" },
-                      { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" }
+                      { "name":"SRC_BRANCH", "value":"${pGitHubBranch}" },
+                      { "name":"USERDETAILS_SECRET_NAME", "value":"${pSecretName}" }
                     ]
                 - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
             Namespace: ExportConfigNS
