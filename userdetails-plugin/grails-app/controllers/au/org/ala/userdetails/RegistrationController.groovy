@@ -233,6 +233,7 @@ class RegistrationController {
 
     def update() {
 
+        def hasEmailChanged =  false
         def user = userService.currentUser
 
         log.debug("Updating account for " + user)
@@ -241,10 +242,11 @@ class RegistrationController {
             if (params.email != user.email) {
                 // email address has changed
                 if (userService.isEmailInUse(params.email)) {
-                    def msg = message(code: "update.account.failure.msg", default: "Failed to update user profile - A user is already registered with the email address.")
-                    render(view: "accountError", model: [msg: msg])
+                    def msg = message(code: "update.account.failure.msg", default: "Failed to update email - A user is already registered with the email address.")
+                    render([success: false, error: msg] as JSON)
                     return
                 }
+                hasEmailChanged = true
             }
 
             if (requirePasswordForUserUpdate) {
@@ -260,6 +262,16 @@ class RegistrationController {
             def success = userService.updateUser(user.userId, params, request.locale)
 
             if (success) {
+                //when email is changed, cannot access my profile until user activate the account
+                if(hasEmailChanged) {
+                    def isCodeRequiredForChange = params.getBoolean("isCodeRequiredForChange") ?: false
+                    //if code is required for the change, account deactivation should happen after the code verification.
+                    if(!isCodeRequiredForChange) {
+                        redirect(action: 'deactivateAccountAndSendActivationEmail', params: params)
+                    }
+                    render([success: true] as JSON)
+                    return
+                }
                 redirect(controller: 'profile')
                 log.info("Account details updated for user: " + user.id + " username: " + user.userName)
             } else {
@@ -500,5 +512,39 @@ class RegistrationController {
                 MFAUnsupportedRoles.contains(userRoleRecord.role.role))
 
         return isMFAEnabled && !hasMFAUnsupportedRoles
+    }
+
+    def verifyAttributeChangeWithCode(String attribute, String code) {
+        try  {
+            def success = userService.verifyUserAttribute(attribute, code)
+            if (success) {
+                render([success: true] as JSON)
+            }
+            else {
+                render([success: false] as JSON)
+            }
+        } catch (e) {
+            def result = [success: false, error: e.message]
+            render result as JSON
+        }
+
+    }
+
+    def deactivateAccountAndSendActivationEmail() {
+        def user = userService.getUserById(params.email)
+
+        log.debug("Disabling account for " + user)
+        if (user) {
+            def success = userService.disableUser(user)
+
+            if (success) {
+                userService.sendAccountActivation(user)
+                render([success: true] as JSON)
+            } else {
+                render([success: false, error: "Failed to disable user profile - unknown error"] as JSON)
+            }
+        } else {
+            render([success: false, error: "The current user details could not be found"] as JSON)
+        }
     }
 }

@@ -23,6 +23,7 @@ import au.org.ala.userdetails.PasswordService
 import au.org.ala.userdetails.RegistrationController
 import au.org.ala.users.IUser
 import au.org.ala.ws.security.JwtProperties
+import grails.converters.JSON
 import grails.testing.gorm.DataTest
 import grails.testing.web.controllers.ControllerUnitTest
 import org.grails.web.servlet.mvc.SynchronizerTokensHolder
@@ -386,7 +387,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         IUser<Long> user = createUser(1, authKey)
 
         when:
-        params.email = 'test@example.org'
+        params.email = user.email
         params.firstName = 'Test'
         params.lastName = 'Test'
         params['organisation'] = 'Org'
@@ -400,7 +401,6 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
 
         then:
         1 * userService.currentUser >> user
-        1 * userService.isEmailInUse('test@example.org')
         1 * passwordService.checkUserPassword(user, password) >> true
         1 * userService.updateUser(user.userId, params, _) >> true
         0 * _ // no other interactions
@@ -503,8 +503,9 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
 
         then:
         1 * userService.isEmailInUse(params.email) >> true
-        model.msg.indexOf("A user is already registered") != -1
-        view == '/registration/accountError'
+        def jsonMap = JSON.parse(response.getContentAsString())
+        jsonMap.success == false
+        jsonMap.error == "Failed to update email - A user is already registered with the email address."
     }
 
     void "Account is updated when a valid new email address is supplied"() {
@@ -530,7 +531,9 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         1 * passwordService.checkUserPassword(currentUser, 'password') >> true
         1 * userService.updateUser(_, _, _) >> true
         1 * userService.isEmailInUse(params.email) >> false
-        response.redirectedUrl == '/profile'
+        //when email is changed, cannot access my profile until user activate the account
+        def jsonMap = JSON.parse(response.getContentAsString())
+        jsonMap.success == true
     }
 
 }

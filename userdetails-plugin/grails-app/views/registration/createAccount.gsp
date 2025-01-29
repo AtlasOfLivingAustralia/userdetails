@@ -159,6 +159,26 @@
                         </div>
                     </div>
                 </g:if>
+                <g:if test="${edit}">
+                    <h2><g:message code="update.email" /></h2>
+                    <p>
+                        <g:message code="update.email.desc" />
+                    </p>
+                    <div id="newEmailDiv">
+                        <p id="newEmailMessage" hidden></p>
+                        <input id="newEmail" name="newEmail" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                        <g:if test="${!grailsApplication.config.getProperty('userdetails.users.reactivation-allowed', boolean, true)}">
+                            <button class="btn btn-default" id="updateEmail">Request Code</button>
+                            <div id="emailCodeDiv" hidden="hidden">
+                                <input id="emailCode" name="emailCode" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                                <button class="btn btn-primary" id="verifyCode">Verify Code</button>
+                            </div>
+                        </g:if>
+                        <g:else>
+                            <button class="btn btn-primary" id="updateEmail">Update Email</button>
+                        </g:else>
+                    </div>
+                </g:if>
             </div>
         </div>
         <div class="col-md-4 col-md-pull-8">
@@ -179,7 +199,6 @@
                            data-errormessage-value-missing="${message(code:'create.account.email.is.required')}"
                     />
                 </div>
-                %{--TODO: Should come up with a way to verify the new email address before changing it--}%
                 <g:if test="${!edit}">
                     <div class="form-group">
                         <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
@@ -370,7 +389,7 @@
 
          $("#setupMFA").click(function(e) {
              $.ajax({
-             url: "${createLink(action:'getSecretForMfa', controller: 'Registration')}",
+             url: "${createLink(action:'getSecretForMfa', controller: 'registration')}",
              type: "GET",
              success: function(result){
                  if(result.success){
@@ -397,8 +416,9 @@
              }
              else {
                  $.ajax({
-                 url: "${createLink(action:'verifyAndActivateMfa', controller: 'Registration')}?userCode=" + code + "&userId=${raw(user?.email)}",
-                 type: "GET",
+                 url: "${createLink(action:'verifyAndActivateMfa', controller: 'registration')}",
+                 data: {userCode: code, userId: "${raw(user?.email)}"},
+                 type: "POST",
                  success: function(result){
                      if(result.success){
                         document.getElementById("message").textContent = "${message(code: 'success', default: 'Success')}"
@@ -420,6 +440,70 @@
              document.getElementById("message").textContent = ""
              document.getElementById("message").hidden = true
              document.getElementById("mfa").hidden = true
+         });
+
+         $("#verifyCode").click(function(e) {
+            var emailCode = $("#emailCode").val();
+             if(emailCode == null || emailCode === "") {
+                 document.getElementById("newEmailMessage").textContent = "${message(code: 'Invalid email', default: 'Invalid email')}"
+                 document.getElementById("newEmailMessage").style.color = "red"
+                 document.getElementById("newEmailMessage").hidden = false
+                 document.getElementById("emailCodeDiv").hidden = false
+             }
+             else {
+                 $.ajax({
+                 url: "${createLink(action:'verifyAttributeChangeWithCode', controller: 'registration')}",
+                 data: { attribute: 'email',code: emailCode },
+                 type: "POST",
+                 success: function(result){
+                     if(result.success){
+                        window.location = "${createLink(uri:'/logout')}?url=/"
+                    }
+                     else{
+                         document.getElementById("newEmailMessage").textContent = result.error
+                         document.getElementById("newEmailMessage").style.color = "red"
+                         document.getElementById("newEmailMessage").hidden = false
+                         document.getElementById("emailCodeDiv").hidden = false
+                     }
+                }});
+             }
+         });
+
+         $("#updateEmail").click(function(e) {
+             var newEmail = $("#newEmail").val();
+             if(newEmail == null || newEmail === "") {
+                 document.getElementById("newEmailMessage").textContent = "${message(code: 'invalid.email', default: 'Invalid email')}"
+                 document.getElementById("newEmailMessage").style.color = "red"
+                 document.getElementById("newEmailMessage").hidden = false
+             }
+             else {
+                 const clickedButton = e.target.textContent;
+                 const isCodeRequiredForChange = clickedButton === "Request Code" ?? false;
+
+                 $.ajax({
+                 url: "${createLink(action:'update', controller: 'registration')}",
+                 data: { email: newEmail, isCodeRequiredForChange: isCodeRequiredForChange },
+                 type: "POST",
+                 success: function(result){
+                     if(result.success) {
+                         if(clickedButton === "Request Code") {
+                             document.getElementById("newEmailMessage").textContent = "${message(code: 'enter.email.code', default: 'Please enter the code received in your new email')}"
+                             document.getElementById("newEmailMessage").style.color = "green"
+                             document.getElementById("newEmailMessage").hidden = false
+                             document.getElementById("emailCodeDiv").hidden = false
+                         }
+                         else {
+                            window.location = "${createLink(uri:'/logout')}?url=/"
+                         }
+                     }
+                     else {
+                         document.getElementById("newEmailMessage").textContent = result.error
+                         document.getElementById("newEmailMessage").style.color = "red"
+                         document.getElementById("newEmailMessage").hidden = false
+                         document.getElementById("emailCodeDiv").hidden = true
+                    }
+                }});
+             }
          });
 
     });
