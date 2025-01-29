@@ -80,7 +80,7 @@ class UserDetailsController {
                         ]
                     )
             ],
-            security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
+            security = [@SecurityRequirement(name = "jwt"), @SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path("search")
     @Produces("application/json")

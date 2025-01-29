@@ -174,7 +174,7 @@ phases:
         webservice:
           enabled: $WEB_SERVICE_ENABLED
           clientId: $WEBSERVICE_CLIENT_ID
-          clientSecret: $WEBSERVICE_SECRET
+          secret: $WEBSERVICE_SECRET
         apikey:
           enabled: $APIKEY_ENABLED
           auth:
