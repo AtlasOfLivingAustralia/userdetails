@@ -16,21 +16,28 @@
 package au.org.ala.userdetails
 
 import au.org.ala.ws.security.JwtProperties
+import au.org.ala.ws.security.credentials.JwtCredentials
+import org.pac4j.core.adapter.FrameworkAdapter
+import org.pac4j.core.client.DirectClient
 import org.pac4j.core.config.Config
+import org.pac4j.core.context.CallContext
+import org.pac4j.core.context.FrameworkParameters
 import org.pac4j.core.context.WebContext
 import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.credentials.Credentials
 import org.pac4j.core.profile.ProfileManager
 import org.pac4j.core.profile.UserProfile
-import org.pac4j.core.util.FindBest
 import au.org.ala.ws.security.client.AlaAuthClient
-import org.pac4j.jee.context.JEEContextFactory
-import org.pac4j.jee.context.session.JEESessionStoreFactory
+import org.pac4j.core.profile.factory.ProfileManagerFactory
+import org.pac4j.jee.context.JEEFrameworkParameters
 import org.pac4j.oidc.credentials.OidcCredentials
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import java.util.regex.Pattern
+import java.util.stream.Collectors
 
 class AuthorisedSystemService {
 
@@ -42,6 +49,9 @@ class AuthorisedSystemService {
     AlaAuthClient alaAuthClient
     @Autowired
     IAuthorisedSystemRepository authorisedSystemRepository
+    @Autowired(required = false)
+    @Qualifier('alaClient')
+    List<DirectClient> clientList
 
     def isAuthorisedSystem(HttpServletRequest request){
         def host = request.getRemoteAddr()
@@ -65,12 +75,27 @@ class AuthorisedSystemService {
 
         if (jwtProperties.enabled) {
             def context = context(request, response)
-            def sessionStore = sessionStore()
+            def sessionStore = sessionStore(request, response)
             ProfileManager profileManager = new ProfileManager(context, sessionStore)
             profileManager.setConfig(config)
 
-            result = alaAuthClient.getCredentials(context, sessionStore)
-                    .map { credentials -> checkCredentials(scope, credentials, role, context, profileManager) }
+            ProfileManagerFactory profileManagerFactory = config.getProfileManagerFactory();
+            CallContext callContext = new CallContext(context, sessionStore, profileManagerFactory);
+
+            Optional<Credentials> cred = Optional.empty()
+            def directClient = null
+
+            for (DirectClient client : clientList) {
+                Credentials credentials = client.getCredentials(callContext).orElse(null)
+                credentials = (Credentials)client.validateCredentials(callContext, credentials).orElse(null)
+                if (credentials != null && credentials.isForAuthentication()) {
+                    cred =  Optional.of(credentials)
+                    directClient = client
+                    break
+                }
+            }
+
+            result = cred.map { credentials -> checkCredentials(scope, credentials, directClient, role, callContext, context, profileManager) }
                     .orElseGet { jwtProperties.fallbackToLegacyBehaviour && isAuthorisedSystem(request) }
         } else {
             result = isAuthorisedSystem(request)
@@ -83,12 +108,14 @@ class AuthorisedSystemService {
      *
      * @param requiredScope The required scope for the access token, if any
      * @param credentials The credentials, should be an OidcCredentials instance
+     * @param directClient The directClient
      * @param requiredRole The required role for the user, if any
+     * @param callContext The call context
      * @param context The web context (request, response)
      * @param profileManager The profile manager, the user profile if available, will be saved into this profile manager
      * @return true if the credentials match both the requiredScope and requiredRole
      */
-    private boolean checkCredentials(String requiredScope, Credentials credentials, String requiredRole, WebContext context, ProfileManager profileManager) {
+    private boolean checkCredentials(String requiredScope, Credentials credentials, DirectClient directClient, String requiredRole, CallContext callContext, WebContext context, ProfileManager profileManager) {
         boolean matchesScope
         if (requiredScope) {
 
@@ -101,6 +128,24 @@ class AuthorisedSystemService {
                 if (!matchesScope) {
                     log.debug "access_token scopes '${oidcCredentials.accessToken.scope}' is missing required scopes ${requiredScope}"
                 }
+            } else if (credentials instanceof JwtCredentials) {
+
+                def jwtToken = ((JwtCredentials) credentials).getJwtAccessToken()
+                var scopeClaim = jwtToken.getJWTClaimsSet().getClaim("scope")
+                def tokenScopes = []
+                if (scopeClaim instanceof List) {
+                    tokenScopes = (List<String>) scopeClaim;
+                } else if (scopeClaim instanceof String) {
+                    tokenScopes = Arrays.stream(((String) scopeClaim).split(Pattern.quote(" "))).filter(s -> !s.isEmpty()).collect(Collectors.toList());
+                } else {
+                    log.debug("Couldn't parse scope claim value: ${scopeClaim}")
+                }
+                matchesScope = tokenScopes.contains(requiredScope)
+
+                if (!matchesScope) {
+                    log.debug "access_token scopes '${tokenScopes}' is missing required scopes ${requiredScope}"
+                }
+
             } else {
                 matchesScope = false
                 log.debug("$credentials are not OidcCredentials, so can't get access_token")
@@ -110,12 +155,12 @@ class AuthorisedSystemService {
         }
 
         boolean matchesRole
-        Optional<UserProfile> userProfile = alaAuthClient.getUserProfile(credentials, context, config.sessionStore)
+        Optional<UserProfile> userProfile = directClient.getUserProfile(callContext, credentials)
                 .map { userProfile -> // save profile into profile manager to match pac4j filter
                     profileManager.save(
-                            alaAuthClient.getSaveProfileInSession(context, userProfile),
+                            directClient.getSaveProfileInSession(context, userProfile),
                             userProfile,
-                            alaAuthClient.isMultiProfile(context, userProfile)
+                            directClient.isMultiProfile(context, userProfile)
                     )
                     userProfile
                 }
@@ -164,12 +209,16 @@ class AuthorisedSystemService {
     }
 
     private WebContext context(request, response) {
-        final WebContext context = FindBest.webContextFactory(null, config, JEEContextFactory.INSTANCE).newContext(request, response)
+        FrameworkAdapter.INSTANCE.applyDefaultSettingsIfUndefined(config)
+        final FrameworkParameters frameworkParameters = new JEEFrameworkParameters(request, response)
+        final WebContext context = config.getWebContextFactory().newContext(frameworkParameters)
         return context
     }
 
-    private SessionStore sessionStore() {
-        final SessionStore sessionStore = FindBest.sessionStoreFactory(null, config, JEESessionStoreFactory.INSTANCE).newSessionStore()
+    private SessionStore sessionStore(request, response ) {
+        FrameworkAdapter.INSTANCE.applyDefaultSettingsIfUndefined(config)
+        final FrameworkParameters frameworkParameters = new JEEFrameworkParameters(request, response)
+        final SessionStore sessionStore =  config.sessionStoreFactory.newSessionStore(frameworkParameters)
         return sessionStore
     }
 }
