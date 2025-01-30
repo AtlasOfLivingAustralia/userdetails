@@ -60,7 +60,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.boot:spring-boot-starter-tomcat")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.grails.plugins:mail:4.0.0")
     implementation("au.org.ala:ala-mail:1.0.0-SNAPSHOT")
     compileOnly("io.micronaut:micronaut-inject-groovy")
     console("org.grails:grails-console")
