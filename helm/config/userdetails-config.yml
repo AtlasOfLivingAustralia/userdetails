@@ -60,11 +60,9 @@ management:
 serverURL: {{ .Values.app.url }}
 serverName: {{ .Values.app.url }}
 grails:
-  serverURL: {{ .Values.app.url }}/userdetails
+  serverURL: {{ .Values.app.url }}
 server:
   port: 9001
-  servlet:
-    contextPath: /userdetails
   forward-headers-strategy: native
   tomcat:
     remoteip:
@@ -134,7 +132,7 @@ alerts.url: {{ .Values.alerts.url }}
 
 # this property is read/used by ala-auth-plugin (included by userdetails)
 userDetails:
-  url: {{ .Values.app.url }}/userdetails
+  url: {{ .Values.app.url }}
 userdetails:
   features:
     authorisedSystems: {{ .Values.authorisedSystems.enabled }}
@@ -211,8 +209,8 @@ oauth.support.dynamic.client.dynamoDBTableName: {{ .Values.dynamoDBTableName }}
 oauth.support.dynamic.client.dynamoDBTable.dynamoDBPK: userId
 oauth.support.dynamic.client.dynamoDBTable.dynamoDBSK: clientId
 oauth.support.dynamic.client.tokens.callbackURLs: {{ .Values.tokenApp.callbackURLs }}
-userdetails.url: {{ .Values.app.url }}/userdetails
-userdetails.web.url: {{ .Values.app.url }}/userdetails/
+userdetails.url: {{ .Values.app.url }}
+userdetails.web.url: {{ .Values.app.url }}/
 userdetails.api.url: {{ .Values.userdetails.api.url }}
 
 userdetails.api.useGatewayAPI: True

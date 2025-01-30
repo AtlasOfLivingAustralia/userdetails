@@ -228,11 +228,11 @@ Resources:
         - "custom:inaturalistUsername"
       AuthSessionValidity: 3
       CallbackURLs:
-        - !Sub "https://${pAppClientDomain}/userdetails/callback?client_name=OidcClient"
+        - !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
       ClientName: !Sub
         - ${pProductName}-${ResourceName}
         - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/userdetails/callback?client_name=OidcClient"
+      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
       EnablePropagateAdditionalUserContextData: True
       EnableTokenRevocation: True
       ExplicitAuthFlows:
@@ -243,10 +243,11 @@ Resources:
       GenerateSecret: True
       IdTokenValidity: 60
       LogoutURLs:
-        - !Sub "https://${pAppClientDomain}/userdetails"
-        - !Sub "https://${pAppClientDomain}/userdetails/"
-        - !Sub "https://${pAppClientDomain}/userdetails/registration/accountDisabled"
-        - !Sub "https://${pAppClientDomain}/userdetails/registration/passwordResetSuccess"
+        - !Sub "https://${pAppClientDomain}"
+        - !Sub "https://${pAppClientDomain}/"
+        - !Sub "https://${pAppClientDomain}/registration/accountDisabled"
+        - !Sub "https://${pAppClientDomain}/registration/passwordResetSuccess"
+        - !Sub ${pDefaultLogoutUrl}
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 30
       SupportedIdentityProviders:
@@ -275,11 +276,11 @@ Resources:
         - users/read
       AuthSessionValidity: 3
       CallbackURLs:
-        - !Sub "https://${pAppClientDomain}/userdetails/callback?client_name=OidcClient"
+        - !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
       ClientName: !Sub
         - ${pProductName}-${ResourceName}-server-to-server
         - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
-      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/userdetails/callback?client_name=OidcClient"
+      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
       EnablePropagateAdditionalUserContextData: True
       EnableTokenRevocation: True
       ExplicitAuthFlows:
@@ -290,7 +291,7 @@ Resources:
       GenerateSecret: True
       IdTokenValidity: 60
       LogoutURLs:
-        - !Sub "https://${pAppClientDomain}/userdetails"
+        - !Sub "https://${pAppClientDomain}"
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 30
       SupportedIdentityProviders:

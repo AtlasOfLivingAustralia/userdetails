@@ -151,4 +151,5 @@ aws cloudformation deploy \
         pRestartExecutionOnUpdate=$RESTART_PIPELINE_ON_UPDATE \
         pServiceAccountName=$SERVICE_ACCOUNT_NAME \
         pSecretName=$SECRET_NAME \
+        pDefaultLogoutUrl=$DEFAULT_LOGOUT_REDIRECT_URL \
 

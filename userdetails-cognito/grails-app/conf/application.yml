@@ -221,5 +221,6 @@ userdetails:
     reactivation-allowed: false
 
 mail:
+  enabled: true
   ses:
     enabled: true
