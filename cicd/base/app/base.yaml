@@ -33,6 +33,9 @@ Parameters:
   pSecretName:
     Type: String
     Description: The name of the secret
+  pDefaultLogoutUrl:
+    Type: String
+    Description: The name of the default logout url
 
 Conditions:
 
