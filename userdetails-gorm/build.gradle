@@ -69,6 +69,7 @@ dependencies {
     compileOnly("io.micronaut:micronaut-inject-groovy")
     console("org.grails:grails-console")
     runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
+    implementation("org.grails.plugins:mail:4.0.0")
 //    runtimeOnly("com.h2database:h2")
 //    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
     runtimeOnly("org.fusesource.jansi:jansi:1.18")
