@@ -41,6 +41,7 @@ phases:
                      --set aws.resourceTags.branch=$CLEAN_BRANCH
                      --set aws.resourceTags.component=helm
                      -f $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
+      - kubectl rollout restart deployment
 
 
   post_build:
