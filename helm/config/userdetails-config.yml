@@ -194,7 +194,7 @@ openapi:
 
 ala.admin.systemMessage.path: /data/userdetails/config
 users:
-  delegated-group-names: {{ .Values.delegatedGroupNames }}
+  delegated-group-names: {{ .Values.delegatedGroupNames | toYaml | nindent 2 }}
 
 apigateway:
   region: {{ .Values.aws.region }}
