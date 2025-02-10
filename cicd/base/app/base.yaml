@@ -341,8 +341,6 @@ Outputs:
 
   UserPoolId:
     Description: The Cognito User Pool ID
-    Value: !ImportValue
-      Fn::Sub: ${pCognitoStackName}-UserPoolId
 
   UserdetailsAppClient:
     Description: The app client for the Userdetails service

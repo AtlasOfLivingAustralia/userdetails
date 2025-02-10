@@ -72,9 +72,6 @@ tolerations: []
 
 affinity: {}
 
-rds:
-  externalName: "mysql-rds"
-
 app:
   url: "https://userdetails.ala.org.au"
 authCookieName: "ALA-Auth"
