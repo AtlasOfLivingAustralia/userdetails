@@ -339,9 +339,6 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-UserdetailsRoleArn
 
-  UserPoolId:
-    Description: The Cognito User Pool ID
-
   UserdetailsAppClient:
     Description: The app client for the Userdetails service
     Value: !Ref AppClient
