@@ -110,7 +110,7 @@ phases:
           baseUrl: $OPENAPI_OAUTH_URL
         oidc:
           enabled: $OIDC_ENABLED
-          discoveryUri: $OIDC_DISCOVERY_URI
+          discoveryUri: https://cognito-idp.ap-southeast-2.amazonaws.com/${COGNITO_POOLID}/.well-known/openid-configuration
           clientId: $OIDC_CLIENT_ID
           logoutUrl: $USERDETAILS_OIDC_LOGOUTURL
           secret: $OIDC_SECRET
@@ -146,7 +146,7 @@ phases:
         userdetails:
           api:
             url: $OPENAPI_SERVER_URLS
-        delegatedGroupNames: $USERS_DELEGATED_GROUP_NAMES
+        delegatedGroupNames: ${COGNITO_POOLID}_AAF,${COGNITO_POOLID}_Facebook,${COGNITO_POOLID}_Google,${COGNITO_POOLID}_SignInWithApple
         flickr:
           key: $FLICKR_KEY
           secret: $FLICKR_SECRET
