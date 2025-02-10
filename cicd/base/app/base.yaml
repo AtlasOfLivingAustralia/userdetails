@@ -98,7 +98,7 @@ Resources:
   UserdetailsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: !Sub Permissions to deploy ${pProductName}
+      Description: !Sub Permissions need for ${pProductName}
       ManagedPolicyName: !Sub 
                            - ${pProductName}-policy-${ResourceName}
                            - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]

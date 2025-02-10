@@ -136,6 +136,8 @@ phases:
       - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
       - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - export USER_POOL_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$COGNITO_STACK_NAME-UserPoolId'].Value" --output text)
+      - echo USER_POOL_ID=$USER_POOL_ID
       - echo creating the configmap for the userdetails deployment...
       - |
           source cicd/unset_codebuild_env_vars.sh
