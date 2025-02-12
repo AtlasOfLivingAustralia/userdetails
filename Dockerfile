@@ -4,8 +4,8 @@ FROM --platform=linux/arm64 ubuntu:24.04
 # Set non-interactive mode for apt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install OpenJDK 17 and required dependencies
-RUN apt update && apt install -y \
+# Add a retry mechanism for apt update
+RUN apt-get clean && apt-get update -o Acquire::Retries=3 && apt-get install -y \
     openjdk-17-jdk \
     curl \
     && rm -rf /var/lib/apt/lists/*
