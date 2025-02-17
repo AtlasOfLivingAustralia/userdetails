@@ -97,7 +97,7 @@ class PropertyController extends BaseController {
     @Path("getProperty")
     @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
-    @PreAuthorise(requiredScope = 'users/read', requiredRole = '')
+    @PreAuthorise(requiredScope = 'users/read', allowedRoles = [])
     def getProperty() {
         String name = params.name
         String alaId = params.alaId
@@ -174,7 +174,7 @@ class PropertyController extends BaseController {
     @Path("saveProperty")
     @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
-    @PreAuthorise(requiredScope = 'users/write', requiredRole = '')
+    @PreAuthorise(requiredScope = 'users/write', allowedRoles = [])
     def saveProperty(){
         String name = params.name;
         String value = params.value;

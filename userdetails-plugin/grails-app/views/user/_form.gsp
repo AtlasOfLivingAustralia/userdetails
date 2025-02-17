@@ -105,7 +105,7 @@
 
 <hr/>
 
-<g:if test="${edit}">
+<g:if test="${edit & !isBiosecurityAdmin}">
     <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'userRoles', 'error')} ">
     <label for="userRoles">
         <g:message code="user.userRoles.label" default=" Roles"/>

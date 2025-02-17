@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED
+
 @PreAuthorise
 class AdminController {
 
@@ -41,7 +43,19 @@ class AdminController {
     @Qualifier('userService')
     IUserService userService
 
-    def index() {}
+
+    @PreAuthorise(allowedRoles = ["ROLE_ADMIN", "ROLE_USER_CREATOR"])
+    def index() {
+        def user = userService.currentUser
+
+        if (user) {
+            def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
+            [isBiosecurityAdmin: isBiosecurityAdmin]
+        } else {
+            log.info('my-profile without a user?')
+            render(status: SC_UNAUTHORIZED)
+        }
+    }
 
     def resetPasswordForUser(){
     }

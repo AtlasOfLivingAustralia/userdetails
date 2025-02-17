@@ -5,6 +5,7 @@ sudo: false
 branches:
   only:
     - dev
+    - develop
     - master
     - /^hotfix.*$/
     - grails3

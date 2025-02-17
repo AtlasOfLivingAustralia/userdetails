@@ -58,7 +58,8 @@ class ProfileController {
         if (user) {
             def props = user.propsAsMap()
             def isAdmin = request.isUserInRole("ROLE_ADMIN")
-            render(view: "myprofile", model: [user: user, props: props, isAdmin: isAdmin])
+            def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
+            render(view: "myprofile", model: [user: user, props: props, isAdmin: isAdmin, isBiosecurityAdmin: isBiosecurityAdmin])
         } else {
             log.info('my-profile without a user?')
             render(status: SC_UNAUTHORIZED)

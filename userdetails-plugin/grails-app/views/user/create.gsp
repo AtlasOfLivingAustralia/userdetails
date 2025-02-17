@@ -46,7 +46,7 @@
             </g:hasErrors>
             <g:form action="save">
                 <fieldset class="form">
-                    <g:render template="form" model="[edit: false]"/>
+                    <g:render template="form" model="[edit: false, isBiosecurityAdmin: isBiosecurityAdmin]"/>
                 </fieldset>
                 <fieldset class="buttons">
                     <g:submitButton name="create" class="btn btn-primary"

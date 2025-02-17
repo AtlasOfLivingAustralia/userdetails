@@ -45,9 +45,13 @@ class UserController {
             [ userInstanceList: result.list, userInstanceTotal: result.count, nextToken: result.nextPageToken ]
     }
 
+    @PreAuthorise(allowedRoles = ["ROLE_ADMIN", "ROLE_USER_CREATOR"])
     def create() {
-        [userInstance: userService.newUser(params), visibleMFA: false]
+        def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
+        [userInstance: userService.newUser(params), isBiosecurityAdmin: isBiosecurityAdmin, visibleMFA: false]
     }
+
+    @PreAuthorise(allowedRoles = ["ROLE_ADMIN", "ROLE_USER_CREATOR"])
 
     def save() {
         if(!params.email){
@@ -64,11 +68,20 @@ class UserController {
             render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false])
             return
         }
-        passwordService.resetPassword(user, passwordService.generatePassword(user), true, null)
-        userService.sendAccountActivation(user)
 
-        flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), user.id])
-        redirect(action: "show", id: user.id)
+        def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
+
+        flash.message = message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
+        if(!isBiosecurityAdmin) {
+            passwordService.resetPassword(user, passwordService.generatePassword(user), true, null)
+            userService.sendAccountActivation(user)
+
+            redirect(action: "show", id: userInstance.id)
+        }
+        else{
+            //ROLE_USER_CREATOR role does not have permission to show(id) action
+            redirect(controller: "user", action: 'create')
+        }
     }
 
     def show(String id) {

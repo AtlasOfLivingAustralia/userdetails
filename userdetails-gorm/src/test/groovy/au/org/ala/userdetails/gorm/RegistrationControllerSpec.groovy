@@ -401,6 +401,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
 
         then:
         1 * userService.currentUser >> user
+        1 * userService.isEmailInUse('test@example.org', user) >> false
         1 * passwordService.checkUserPassword(user, password) >> true
         1 * userService.updateUser(user.userId, params, _) >> true
         0 * _ // no other interactions

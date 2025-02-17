@@ -30,7 +30,11 @@ import java.lang.annotation.Target
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface PreAuthorise {
-    String requiredRole() default "ROLE_ADMIN"
+    /***
+     *  A list of roles that is allowed to access the method. The user must have at least one role to access the method.
+     * @return
+     */
+    String[] allowedRoles() default ["ROLE_ADMIN"]
     String redirectController() default "userdetails"
     String redirectAction() default "index"
     String requiredScope() default "users/read"

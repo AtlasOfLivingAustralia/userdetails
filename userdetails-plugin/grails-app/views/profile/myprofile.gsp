@@ -60,7 +60,7 @@
                         </div>
                     </div>
 
-                    <g:if test="${isAdmin}">
+                    <g:if test="${isAdmin || isBiosecurityAdmin}">
                         <div class="d-flex">
                             <div class="image">
                                 <i class="glyphicon glyphicon-cog"></i>

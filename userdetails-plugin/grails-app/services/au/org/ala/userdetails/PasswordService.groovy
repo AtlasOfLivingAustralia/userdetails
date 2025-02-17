@@ -54,6 +54,8 @@ class PasswordService {
     static final String BCRYPT_ENCODER_TYPE = 'bcrypt'
     static final String LEGACY_ENCODER_TYPE = 'legacy'
 
+    static final String STATUS_CURRENT = 'CURRENT'
+    static final String STATUS_PREVIOUS = 'PREVIOUS'
     private PasswordValidator builtPasswordValidator = null
     private PasswordPolicy builtPasswordPolicy = null
     private List<Rule> builtPasswordGeneralRules = null
@@ -286,6 +288,7 @@ class PasswordService {
                 rules.add(new IllegalSequenceRule(EnglishSequenceData.USQwerty))
             }
 
+            log.info("Excluding common passwords?" + policy.excludeCommonPasswords)
             // password must not be in the list of common passwords
             if (policy.excludeCommonPasswords) {
                 // source https://raw.githubusercontent.com/danielmiessler/SecLists/5e1dc9cc79aac54b373349e2a97bbb22f1b63bb3/Passwords/Common-Credentials/10-million-password-list-top-100000.txt
