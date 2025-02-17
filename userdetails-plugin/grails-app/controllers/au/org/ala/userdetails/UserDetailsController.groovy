@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
@@ -83,6 +84,7 @@ class UserDetailsController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path("search")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     def search() {
         def q = params['q']
@@ -134,6 +136,7 @@ class UserDetailsController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path("byRole")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     def byRole() {
         def roleName = params.get('role', 'ROLE_USER')
@@ -185,6 +188,7 @@ class UserDetailsController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path('getUserDetails')
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces('application/json')
     def getUserDetails() {
 
@@ -240,6 +244,7 @@ class UserDetailsController {
     )
     @Deprecated
     @Path("getUserList")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     def getUserList() {
         def users = userService.listNamesAndEmails() // UserRecord.findNameAndEmailWhereEmailIsNotNull()
@@ -269,6 +274,7 @@ class UserDetailsController {
     )
     @Deprecated
     @Path("getUserListWithIds")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     def getUserListWithIds() {
         def users = userService.listIdsAndNames() // UserRecord.findIdFirstAndLastName()
@@ -336,6 +342,7 @@ class UserDetailsController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path("getUserDetailsFromIdList")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Consumes("application/json")
     @Produces("application/json")
     def getUserDetailsFromIdList() {

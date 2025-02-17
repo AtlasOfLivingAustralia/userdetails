@@ -60,6 +60,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.boot:spring-boot-starter-tomcat")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.grails.plugins:mail:4.0.0")
     compileOnly("io.micronaut:micronaut-inject-groovy")
     console("org.grails:grails-console")
     runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
@@ -71,6 +72,7 @@ dependencies {
     testImplementation("org.grails:grails-web-testing-support")
     testImplementation("org.spockframework:spock-core")
     testImplementation("io.micronaut:micronaut-http-client")
+
 
     // TODO Leftover from Grails 5 to 6 upgrade: Are these required??
 //    implementation "org.grails.plugins:events"
@@ -94,7 +96,6 @@ dependencies {
     api 'dk.glasius:external-config:4.0.0'
     api 'org.grails.plugins:http-builder-helper:1.1.0'
     api "org.grails.plugins:csv:1.0.1"
-    api 'org.grails.plugins:mail:3.0.0'
 
     api "org.grails.plugins:oauth:4.0.0"
     // transitive oauth plugin deps used in code

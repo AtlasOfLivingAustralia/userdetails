@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-{{ include "ala-userdetails.fullname" . }}
+  labels:
+    {{- include "ala-userdetails.labels" . | nindent 4 }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment={{ .Values.aws.resourceTags.environment }},product={{ .Values.aws.resourceTags.product }},branch={{ .Values.aws.resourceTags.branch }},component={{ .Values.aws.resourceTags.component }}"
+spec:
+  type: LoadBalancer
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort}}
+      protocol: TCP
+  selector:
+    {{- include "ala-userdetails.selectorLabels" . | nindent 4 }}

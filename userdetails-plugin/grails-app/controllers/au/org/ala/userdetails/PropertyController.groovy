@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityRequirements
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
@@ -94,6 +95,7 @@ class PropertyController extends BaseController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/read'])]
     )
     @Path("getProperty")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     @PreAuthorise(requiredScope = 'users/read', requiredRole = '')
     def getProperty() {
@@ -170,6 +172,7 @@ class PropertyController extends BaseController {
             security = [@SecurityRequirement(name = 'openIdConnect', scopes = ['users/write'])]
     )
     @Path("saveProperty")
+    @SecurityRequirements([@SecurityRequirement(name = "jwt")])
     @Produces("application/json")
     @PreAuthorise(requiredScope = 'users/write', requiredRole = '')
     def saveProperty(){
