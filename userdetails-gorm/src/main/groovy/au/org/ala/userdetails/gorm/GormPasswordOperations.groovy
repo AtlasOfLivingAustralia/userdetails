@@ -19,7 +19,7 @@ class GormPasswordOperations implements IPasswordOperations {
     static final String LEGACY_ENCODER_TYPE = 'legacy'
 
     static final String STATUS_CURRENT = 'CURRENT'
-
+    static final String STATUS_PREVIOUS = 'PREVIOUS'
 
     @Value('${password.encoder}')
     String passwordEncoderType = 'bcrypt'
@@ -36,23 +36,26 @@ class GormPasswordOperations implements IPasswordOperations {
     @Override
     boolean resetPassword(IUser<?> user, String newPassword, boolean isPermanent, String confirmationCode) {
         assert user instanceof User
-        Password.findAllByUser(user).each {
-            it.delete()
+        if (!newPassword || newPassword.length() < 1) {
+            throw new IllegalArgumentException("The new password must not be empty.")
         }
 
-        boolean isBcrypt = passwordEncoderType.equalsIgnoreCase(BCRYPT_ENCODER_TYPE)
+        // set all existing passwords to expired
+        // TODO: previous passwords are saved for future use in the password policy (not yet implemented)
+        Password.findAllByUser(user).each { password ->
+            password.expiry = new Date().toTimestamp()
+            password.status = STATUS_PREVIOUS
+            password.save(failOnError: true)
+        }
 
-        def encoder = isBcrypt ? new BcryptPasswordEncoder(bcryptStrength) : new LegacyPasswordEncoder(legacySalt, legacyAlgorithm, true)
-        def encodedPassword = encoder.encode(newPassword)
-
-        //reuse object if old password
+        // save the new password
         def password = new Password()
         password.user = user
-        password.password = encodedPassword
-        password.type = isBcrypt ? BCRYPT_ENCODER_TYPE : LEGACY_ENCODER_TYPE
+        password.password = encodePassword(newPassword)
+        password.type =  getPasswordType()
         password.created = new Date().toTimestamp()
         password.expiry = null
-        password.status = "CURRENT"
+        password.status = STATUS_CURRENT
         password.save(failOnError: true)
         return true
     }
@@ -128,6 +131,21 @@ class GormPasswordOperations implements IPasswordOperations {
 
         def encoder = getEncoder()
         def encodedPassword = encoder.matches(plainPassword, hashedPassword)
+        return encodedPassword
+    }
+
+    /**
+     * Encode a password ready to store it.
+     * @param password The password to encode.
+     * @return The encoded password.
+     */
+    String encodePassword(String password) {
+        if (!password || password.length() < 1) {
+            throw new IllegalArgumentException("Must supply a password to be encoded.")
+        }
+
+        def encoder = getEncoder()
+        def encodedPassword = encoder.encode(password)
         return encodedPassword
     }
 

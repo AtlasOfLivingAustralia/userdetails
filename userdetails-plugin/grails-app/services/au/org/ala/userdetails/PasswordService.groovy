@@ -54,8 +54,6 @@ class PasswordService {
     static final String BCRYPT_ENCODER_TYPE = 'bcrypt'
     static final String LEGACY_ENCODER_TYPE = 'legacy'
 
-    static final String STATUS_CURRENT = 'CURRENT'
-    static final String STATUS_PREVIOUS = 'PREVIOUS'
     private PasswordValidator builtPasswordValidator = null
     private PasswordPolicy builtPasswordPolicy = null
     private List<Rule> builtPasswordGeneralRules = null
