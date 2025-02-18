@@ -1,0 +1,196 @@
+//import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
+plugins {
+    id "groovy"
+    id "org.grails.grails-gsp"
+    id "org.grails.grails-web"
+    id "war"
+    id "idea"
+    id "com.bertramlabs.asset-pipeline"
+    id "org.grails.grails-plugin"
+    id "application"
+    id "eclipse"
+
+    id "com.github.erdi.webdriver-binaries"
+    id "maven-publish"
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id "java-library"
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://nexus.ala.org.au/content/groups/public/" }
+    maven { url "https://repo.grails.org/grails/core" }
+    mavenCentral()
+}
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+//grails {
+//    plugins {
+//        compile project(':openapi-plugin')
+//    }
+//}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    exclude group: 'org.grails', module: 'grails-shell'
+}
+
+dependencies {
+    implementation("org.grails:grails-core")
+    implementation("org.grails:grails-logging")
+    implementation("org.grails:grails-plugin-databinding")
+    implementation("org.grails:grails-plugin-i18n")
+    implementation("org.grails:grails-plugin-interceptors")
+    implementation("org.grails:grails-plugin-rest")
+    implementation("org.grails:grails-plugin-services")
+    implementation("org.grails:grails-plugin-url-mappings")
+    implementation("org.grails:grails-web-boot")
+    implementation("org.grails.plugins:gsp")
+//    implementation("org.grails.plugins:hibernate5")
+    implementation("org.grails.plugins:scaffolding")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.grails.plugins:mail:4.0.0")
+    compileOnly("io.micronaut:micronaut-inject-groovy")
+    console("org.grails:grails-console")
+    runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
+//    runtimeOnly("com.h2database:h2")
+//    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
+    runtimeOnly("org.fusesource.jansi:jansi:1.18")
+    testImplementation("io.micronaut:micronaut-inject-groovy")
+    testImplementation("org.grails:grails-gorm-testing-support")
+    testImplementation("org.grails:grails-web-testing-support")
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("io.micronaut:micronaut-http-client")
+
+
+    // TODO Leftover from Grails 5 to 6 upgrade: Are these required??
+//    implementation "org.grails.plugins:events"
+//    runtimeOnly 'org.ehcache:ehcache'
+//    runtimeOnly "javax.xml.bind:jaxb-api:2.3.1"
+
+    // TODO: Grails backwards compat?  Still required?  Update?
+//    api 'org.grails.plugins:converters:4.0.1'
+
+    // Groovy backwards compat
+    runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
+
+    // Grails plugin dependencies
+
+    api "org.grails.plugins:ala-bootstrap3:4.4.0"
+    api "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
+    api "org.grails.plugins:ala-admin-plugin:2.3.0"
+
+    api 'dk.glasius:external-config:4.0.0'
+    api 'org.grails.plugins:http-builder-helper:1.1.0'
+    api "org.grails.plugins:csv:1.0.1"
+
+    api "org.grails.plugins:oauth:4.0.0"
+    // transitive oauth plugin deps used in code
+    api "com.github.scribejava:scribejava-core:4.0.0"
+    api "com.github.scribejava:scribejava-apis:4.0.0"
+
+    api "domurtag.plugins:grails-simple-captcha:1.0.0-grails3"
+    api "org.grails.plugins:export:2.0.0"
+    api 'org.grails.plugins:grails-markdown:3.0.0'
+
+    // regular JAR dependencies
+
+//    implementation 'com.zaxxer:HikariCP:5.0.1'
+//    implementation 'mysql:mysql-connector-java:8.0.29'
+//    testRuntimeOnly "com.h2database:h2"
+    api 'com.google.guava:guava:21.0'
+//    implementation 'org.apache.httpcomponents:httpcore:4.5.13'
+    api 'org.apache.httpcomponents:httpclient:4.5.13'
+    api 'org.apache.httpcomponents:httpmime:4.5.13'
+    api 'org.apache.commons:commons-lang3:3.12.0'
+    api 'commons-io:commons-io:2.6'
+    api 'commons-beanutils:commons-beanutils:1.8.3'
+    api 'org.mindrot:jbcrypt:0.4'
+    api 'com.opencsv:opencsv:5.5.2'
+
+    api 'org.springframework.session:spring-session-data-mongodb'
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api 'org.grails.plugins:spring-session-helper:2.0.1'
+    api 'org.mongodb:mongodb-driver-sync:4.6.0' // versions mismatch as transitive deps for
+    api 'org.mongodb:mongodb-driver-core:4.6.0'
+    api 'org.mongodb:bson:4.6.0'
+
+    api('org.webjars.bower:chosen:1.8.3')
+    api('org.webjars.bower:chosen-bootstrap:1.1.0') {
+        exclude module: 'jquery' // dependency from skin
+        exclude module: 'bootstrap' // dependency from skin
+    }
+
+    api 'org.passay:passay:1.6.0' // not technically required in api scope but required in some gorm tests
+
+    api('au.org.ala.plugins:openapi:1.3.0')
+
+    testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
+    testImplementation 'io.github.joke:spock-mockable:2.3.0'
+
+    api 'com.amazonaws:aws-java-sdk-api-gateway:1.12.279'
+}
+
+application {
+    mainClass.set("au.org.ala.userdetails.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+assets {
+    packagePlugin = true
+    minifyJs = true
+    minifyCss = true
+}
+
+compileJava.dependsOn(processResources)
+
+springBoot {
+    buildInfo()
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    repositories {
+        maven {
+            name 'Nexus'
+            url "https://nexus.ala.org.au/content/repositories/${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}"
+            credentials {
+                username = System.getenv('TRAVIS_DEPLOY_USERNAME')
+                password = System.getenv('TRAVIS_DEPLOY_PASSWORD')
+            }
+        }
+    }
+    publications {
+        mavenJar(MavenPublication) {
+            from components.java
+            artifact(sourcesJar) {
+                classifier 'sources'
+            }
+        }
+    }
+}
+

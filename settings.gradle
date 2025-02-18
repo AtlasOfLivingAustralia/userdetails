@@ -1,1 +1,20 @@
-rootProject.name='userdetails'
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url "https://nexus.ala.org.au/content/groups/public/" }
+        maven { url "https://repo.grails.org/grails/core" }
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.grails.grails-web" version "6.2.0"
+        id "org.grails.grails-gsp" version "6.2.0"
+        id "com.bertramlabs.asset-pipeline" version "4.3.0"
+        id "com.github.erdi.webdriver-binaries" version "3.2"
+    }
+}
+
+rootProject.name='userdetails-project'
+include 'userdetails-plugin'
+include 'userdetails-cognito'
+include 'userdetails-gorm'

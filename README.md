@@ -4,7 +4,7 @@ userdetails
 
 ## Note
 
-v2.0 of userdetails requires [ALA CAS 5](https://github.com/AtlasOfLivingAustralia/ala-cas-5)
+v4.0 of userdetails requires [ALA CAS 5](https://github.com/AtlasOfLivingAustralia/ala-cas-5) v6.6+ or AWS Cognito
 
 ## About
 The Atlas user management app (userdetails) manages profile information for users.
@@ -13,10 +13,14 @@ This application is the central repository for user information for Atlas system
 
 Userdetails works hand in hand with [ALA CAS 5](https://github.com/AtlasOfLivingAustralia/ala-cas-5) and both share the same underlying database.
 
-CAS manages the local authentication as well as third party auth provider integrtion.
+CAS manages the local authentication as well as third party auth provider integration.
 
 
 ## General Information
+
+### Builds
+
+This project will build 3 artifacts, 2 concrete implementations of the user details app (userdetails-gorm for CAS and userdetails-cognito for AWS Cognito) and the userdetails-plugin that handles all commmon functions.
 
 ### Technologies
   * Grails framework: 3.2.11
