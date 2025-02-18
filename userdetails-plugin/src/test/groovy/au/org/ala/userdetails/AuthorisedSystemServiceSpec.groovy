@@ -88,7 +88,7 @@ class AuthorisedSystemServiceSpec extends Specification implements ServiceUnitTe
         '123.123.123.123' | true
     }
 
-    def "test token isAuthorisedRequest with profile: #hasProfile, requiredScope: #requiredScope, tokenScopes: #tokenScopes, requiredRole: #requiredRole, profileRoles: #profileRoles, result: #result, oidcCredential: #oidcCredential"(boolean hasProfile, String requiredScope, List<String> tokenScopes, String requiredRole, List<String> profileRoles, boolean result, boolean  oidcCredential) {
+    def "test token isAuthorisedRequest with profile: #hasProfile, requiredScope: #requiredScope, tokenScopes: #tokenScopes, requiredRoles: #requiredRoles, profileRoles: #profileRoles, result: #result, oidcCredential: #oidcCredential"(boolean hasProfile, String requiredScope, List<String> tokenScopes, String[] requiredRoles, List<String> profileRoles, boolean result, boolean  oidcCredential) {
         given:
         def token = new BearerAccessToken(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
@@ -121,41 +121,41 @@ class AuthorisedSystemServiceSpec extends Specification implements ServiceUnitTe
         request.remoteHost = 'example.org'
         def response = new MockHttpServletResponse()
         when:
-        def authorised = service.isAuthorisedRequest(request, response, requiredRole, requiredScope)
+        def authorised = service.isAuthorisedRequest(request, response, requiredRoles, requiredScope)
         then:
         0 * service.authorisedSystemRepository.findByHost(_)
         authorised == result
 
         where:
-        hasProfile  | requiredScope | tokenScopes   | requiredRole  | profileRoles  || result || oidcCredential
+        hasProfile  | requiredScope | tokenScopes   | requiredRoles  | profileRoles  || result || oidcCredential
         false       | "scope"       | ["scope"]     | null          | []            || true   || true
         false       | "scope"       | ["no_scope"]  | null          | []            || false  || true
         false       | "scope"       | []            | null          | []            || false  || true
-        true        | null          | []            | "role"        | ["role"]      || true   || true
-        true        | null          | []            | "role"        | ["no_role"]   || false  || true
-        true        | null          | []            | "role"        | []            || false  || true
-        true        | "scope"       | ["scope"]     | "role"        | ["role"]      || true   || true
-        true        | "scope"       | ["no_scope"]  | "role"        | ["role"]      || false  || true
-        true        | "scope"       | []            | "role"        | ["role"]      || false  || true
-        true        | "scope"       | ["scope"]     | "role"        | ["no_role"]   || false  || true
-        true        | "scope"       | ["scope"]     | "role"        | []            || false  || true
-        true        | "scope"       | ["no_scope"]  | "role"        | ["no_role"]   || false  || true
-        true        | "scope"       | []            | "role"        | []            || false  || true
-        false       | "scope"       | ["scope"]     | "role"        | []            || false  || true
+        true        | null          | []            | ["role"]        | ["role"]      || true   || true
+        true        | null          | []            | ["role"]       | ["no_role"]   || false  || true
+        true        | null          | []            | ["role" ]       | []            || false  || true
+        true        | "scope"       | ["scope"]     | ["role" ]       | ["role"]      || true   || true
+        true        | "scope"       | ["no_scope"]  | ["role" ]       | ["role"]      || false  || true
+        true        | "scope"       | []            | ["role" ]       | ["role"]      || false  || true
+        true        | "scope"       | ["scope"]     | ["role" ]       | ["no_role"]   || false  || true
+        true        | "scope"       | ["scope"]     | ["role" ]       | []            || false  || true
+        true        | "scope"       | ["no_scope"]  | ["role" ]       | ["no_role"]   || false  || true
+        true        | "scope"       | []            | ["role" ]       | []            || false  || true
+        false       | "scope"       | ["scope"]     | ["role" ]       | []            || false  || true
         false       | "scope"       | ["scope"]     | null          | []            || true   || false
         false       | "scope"       | ["no_scope"]  | null          | []            || false  || false
         false       | "scope"       | []            | null          | []            || false  || false
-        true        | null          | []            | "role"        | ["role"]      || true   || false
-        true        | null          | []            | "role"        | ["no_role"]   || false  || false
-        true        | null          | []            | "role"        | []            || false  || false
-        true        | "scope"       | ["scope"]     | "role"        | ["role"]      || true   || false
-        true        | "scope"       | ["no_scope"]  | "role"        | ["role"]      || false  || false
-        true        | "scope"       | []            | "role"        | ["role"]      || false  || false
-        true        | "scope"       | ["scope"]     | "role"        | ["no_role"]   || false  || false
-        true        | "scope"       | ["scope"]     | "role"        | []            || false  || false
-        true        | "scope"       | ["no_scope"]  | "role"        | ["no_role"]   || false  || false
-        true        | "scope"       | []            | "role"        | []            || false  || false
-        false       | "scope"       | ["scope"]     | "role"        | []            || false  || false
+        true        | null          | []            | ["role" ]       | ["role"]      || true   || false
+        true        | null          | []            | ["role" ]       | ["no_role"]   || false  || false
+        true        | null          | []            | ["role" ]       | []            || false  || false
+        true        | "scope"       | ["scope"]     | ["role" ]       | ["role"]      || true   || false
+        true        | "scope"       | ["no_scope"]  | ["role" ]       | ["role"]      || false  || false
+        true        | "scope"       | []            | ["role" ]       | ["role"]      || false  || false
+        true        | "scope"       | ["scope"]     | ["role" ]       | ["no_role"]   || false  || false
+        true        | "scope"       | ["scope"]     | ["role" ]       | []            || false  || false
+        true        | "scope"       | ["no_scope"]  | ["role" ]       | ["no_role"]   || false  || false
+        true        | "scope"       | []            | ["role" ]       | []            || false  || false
+        false       | "scope"       | ["scope"]     | ["role" ]       | []            || false  || false
 
     }
 
