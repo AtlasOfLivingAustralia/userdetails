@@ -66,11 +66,11 @@ class AuthorisedSystemService {
     /**
      * Validate a JWT Bearer token instead of the API key.
      * @param fallbackToLegacy Whether to fall back to legacy authorised systems if the JWT is not present.
-     * @param role The user role required to continue
+     * @param roles The user roles required to continue. The user must have at least one role to be authorized.
      * @param scope The JWT scope required for the request to be authorized
      * @return true
      */
-    def isAuthorisedRequest(HttpServletRequest request, HttpServletResponse response, String role, String scope) {
+    def isAuthorisedRequest(HttpServletRequest request, HttpServletResponse response, String[] roles, String scope) {
         def result = false
 
         if (jwtProperties.enabled) {
@@ -95,7 +95,7 @@ class AuthorisedSystemService {
                 }
             }
 
-            result = cred.map { credentials -> checkCredentials(scope, credentials, directClient, role, callContext, context, profileManager) }
+            result = cred.map { credentials -> checkCredentials(scope, credentials, directClient, roles, callContext, context, profileManager) }
                     .orElseGet { jwtProperties.fallbackToLegacyBehaviour && isAuthorisedSystem(request) }
         } else {
             result = isAuthorisedSystem(request)
@@ -109,13 +109,13 @@ class AuthorisedSystemService {
      * @param requiredScope The required scope for the access token, if any
      * @param credentials The credentials, should be an OidcCredentials instance
      * @param directClient The directClient
-     * @param requiredRole The required role for the user, if any
+     * @param roles The required roles for the user, if any
      * @param callContext The call context
      * @param context The web context (request, response)
      * @param profileManager The profile manager, the user profile if available, will be saved into this profile manager
      * @return true if the credentials match both the requiredScope and requiredRole
      */
-    private boolean checkCredentials(String requiredScope, Credentials credentials, DirectClient directClient, String requiredRole, CallContext callContext, WebContext context, ProfileManager profileManager) {
+    private boolean checkCredentials(String requiredScope, Credentials credentials, DirectClient directClient, String[] roles, CallContext callContext, WebContext context, ProfileManager profileManager) {
         boolean matchesScope
         if (requiredScope) {
 
@@ -164,11 +164,11 @@ class AuthorisedSystemService {
                     )
                     userProfile
                 }
-        if (requiredRole) {
+        if (roles) {
             matchesRole = userProfile
-                    .map {profile -> checkProfileRole(profile, requiredRole) }
+                    .map {profile -> checkProfileRole(profile, roles) }
                     .orElseGet {
-                        log.debug "rejecting request because role $requiredRole is required but no user profile is available"
+                        log.debug "rejecting request because roles ${roles} are required but no user profile is available"
                         false
                     }
         } else {
@@ -184,11 +184,11 @@ class AuthorisedSystemService {
      * @param requiredRole
      * @return true if the profile has the role, false otherwise
      */
-    private boolean checkProfileRole(UserProfile userProfile, String requiredRole) {
-        def userProfileContainsRole = userProfile.roles.contains(requiredRole)
+    private boolean checkProfileRole(UserProfile userProfile, String[] requiredRoles) {
+        def userProfileContainsRole = requiredRoles.any { role -> userProfile.roles.contains(role) }
 
         if (!userProfileContainsRole) {
-            log.debug "user profile roles '${userProfile.roles}' is missing required role ${requiredRole}"
+            log.debug "user profile roles '${userProfile.roles}' is missing required roles ${requiredRoles}"
         }
         return userProfileContainsRole
     }

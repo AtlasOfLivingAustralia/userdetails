@@ -561,7 +561,11 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
         def user = getUserById(userId)
         def role = Role.findByRole(roleId)
 
-         new UserRole(user: user, role: role).save()
+        def userRole = UserRole.findByUserAndRole(user, role)
+
+        if(!userRole) {
+            new UserRole(user:user, role:role).save(flush:true, failOnError: true)
+        }
     }
 
     @Override

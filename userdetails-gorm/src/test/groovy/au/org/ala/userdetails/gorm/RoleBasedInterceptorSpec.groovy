@@ -17,6 +17,7 @@ package au.org.ala.userdetails.gorm
 
 import au.org.ala.userdetails.AuthorisedSystemService
 import au.org.ala.userdetails.RoleBasedInterceptor
+import au.org.ala.userdetails.UserController
 import au.org.ala.userdetails.UserRoleController
 import au.org.ala.users.IUser
 import au.org.ala.users.UserRecord
