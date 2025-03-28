@@ -19,10 +19,10 @@ phases:
     commands:
       - echo Build started on $(date)
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-      - kubectl config set-context --current --namespace=$PRODUCT_NAME
+      - kubectl config set-context --current --namespace=$EKS_NAMESPACE
       - printf "$(kubectl config current-context)\n"
       - eksctl create iamserviceaccount --name $SERVICE_ACCOUNT_NAME 
-                                        --namespace $PRODUCT_NAME
+                                        --namespace $EKS_NAMESPACE
                                         --cluster $EKS_CLUSTER_NAME 
                                         --attach-role-arn $USERDETAILS_ROLE_ARN
                                         --approve 
@@ -31,7 +31,7 @@ phases:
       - cd helm
       - cat $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
       - helm upgrade --install $IMAGE_NAME . 
-                     -n $PRODUCT_NAME
+                     -n $EKS_NAMESPACE
                      --set image.repository=$ECR_REPO 
                      --set image.tag=$IMAGE_TAG 
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
@@ -41,7 +41,7 @@ phases:
                      --set aws.resourceTags.branch=$CLEAN_BRANCH
                      --set aws.resourceTags.component=helm
                      -f $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
-      - kubectl rollout restart deployment
+      - kubectl rollout restart deployment -n $EKS_NAMESPACE
 
 
   post_build:

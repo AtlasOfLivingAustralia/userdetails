@@ -296,6 +296,7 @@ Resources:
                   { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" },
                   { "name":"SSL_CERTIFICATE", "value":"#{ExportConfigNS.SSL_CERTIFICATE}" },
                   { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
+                  { "name":"EKS_NAMESPACE", "value":"#{ExportConfigNS.EKS_NAMESPACE}" },
                   { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" }
                 ]
               PrimarySource: SourceArtifact
@@ -357,6 +358,7 @@ Resources:
                   { "name":"ENVIRONMENT", "value":"${pEnvironment}" },
                   { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
+                  { "name":"EKS_NAMESPACE", "value":"#{ExportConfigNS.EKS_NAMESPACE}" },
                   { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" }
                 ]
             InputArtifacts:
