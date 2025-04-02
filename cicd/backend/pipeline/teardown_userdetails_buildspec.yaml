@@ -15,7 +15,7 @@ phases:
     commands:
       - echo Teardown started on $(date)
       - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
-      - kubectl config set-context --current --namespace=$PRODUCT_NAME
+      - kubectl config set-context --current --namespace=$EKS_NAMESPACE
       - printf "$(kubectl config current-context)\n"
       - eksctl delete iamserviceaccount
                   --name $SERVICE_ACCOUNT_NAME

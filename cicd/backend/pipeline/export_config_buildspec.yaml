@@ -31,6 +31,7 @@ env:
     - SSL_CERTIFICATE
     - SUB_DOMAIN
     - USERDETAILS_ROLE_ARN
+    - EKS_NAMESPACE
 
 phases:
 
