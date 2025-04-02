@@ -33,6 +33,9 @@ Parameters:
   pSecretName:
     Type: String
     Description: The name of the secret
+  pEksNamespace:
+    Type: String
+    Description: The namespace for the EKS cluster
   pDefaultLogoutUrl:
     Type: String
     Description: The name of the default logout url
@@ -159,7 +162,7 @@ Resources:
                     "Action": "sts:AssumeRoleWithWebIdentity",
                     "Condition": {
                         "StringEquals": {
-                                          "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pProductName}:${pServiceAccountName}",
+                                          "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pEksNamespace}:${pServiceAccountName}",
                                           "${pClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
                         }
                     }
