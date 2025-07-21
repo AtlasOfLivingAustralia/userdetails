@@ -32,6 +32,7 @@ env:
     - SUB_DOMAIN
     - USERDETAILS_ROLE_ARN
     - EKS_NAMESPACE
+    - ACCESS_LOGS_S3_BUCKET_NAME
 
 phases:
 
@@ -84,6 +85,8 @@ phases:
       - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
       - export COGNITO_POOLID=$(aws cloudformation list-exports --query "Exports[?Name=='$COGNITO_STACK_NAME-UserPoolId'].Value" --output text)
       - echo COGNITO_POOLID=$COGNITO_POOLID
+      - ACCESS_LOGS_S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerAccessLogsBucket'].OutputValue" --output text)
+      - echo ACCESS_LOGS_S3_BUCKET_NAME=$ACCESS_LOGS_S3_BUCKET_NAME
       - echo creating the configmap for the userdetails deployment...
       - |
           source cicd/unset_codebuild_env_vars.sh
@@ -191,7 +194,10 @@ phases:
         ala:
           baseURL: $ALA_BASE_URL
         bie:
-          baseURL: $BIE_BASE_URL" > helm_values.yaml
+          baseURL: $BIE_BASE_URL
+        ingress:
+          accessLogsPrefix: "logs"
+          accessLogsBucket: "${ACCESS_LOGS_S3_BUCKET_NAME}"" > helm_values.yaml
     finally:
       - #echo This always runs
 

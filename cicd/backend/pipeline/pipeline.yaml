@@ -297,7 +297,8 @@ Resources:
                   { "name":"SSL_CERTIFICATE", "value":"#{ExportConfigNS.SSL_CERTIFICATE}" },
                   { "name":"SUB_DOMAIN", "value":"#{ExportConfigNS.SUB_DOMAIN}" },
                   { "name":"EKS_NAMESPACE", "value":"#{ExportConfigNS.EKS_NAMESPACE}" },
-                  { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" }
+                  { "name":"USERDETAILS_ROLE_ARN", "value":"#{ExportConfigNS.USERDETAILS_ROLE_ARN}" },
+                  { "name":"ACCESS_LOGS_S3_BUCKET_NAME", "value":"#{ExportConfigNS.ACCESS_LOGS_S3_BUCKET_NAME}" }
                 ]
               PrimarySource: SourceArtifact
             InputArtifacts:
