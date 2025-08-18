@@ -404,11 +404,16 @@ class UserService {
         jsonMap
     }
 
-    List<String[]> countByProfileAttribute(String s, Date date, Locale locale) {
+    List<String[]> countByProfileAttribute(String s, Date startDate, Date endDate, Locale locale) {
         def results = UserProperty.withCriteria {
-            if (date) {
+            if (startDate) {
                 user {
-                    gt 'lastLogin', date
+                    gt 'lastLogin', startDate
+                }
+            }
+            if (endDate) {
+                user {
+                    lt 'lastLogin', endDate
                 }
             }
             eq 'name', s

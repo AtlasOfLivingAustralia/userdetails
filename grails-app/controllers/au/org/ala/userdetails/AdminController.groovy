@@ -161,7 +161,9 @@ class AdminController {
     }
 
     def surveyResults() {
-        def results = userService.countByProfileAttribute('affiliation', null, request.locale)
+        def startDate = params.date('since', ['yyyy-MM-dd', 'yyyyMMdd'])
+        def endDate = params.date('until', ['yyyy-MM-dd', 'yyyyMMdd'])
+        def results = userService.countByProfileAttribute('affiliation', startDate, endDate, request.locale)
         def csvWriter = new CSVWriterBuilder(response.writer)
                 .withParser(new RFC4180ParserBuilder().build())
                 .build()
