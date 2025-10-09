@@ -197,7 +197,14 @@ phases:
           baseURL: $BIE_BASE_URL
         ingress:
           accessLogsPrefix: "logs"
-          accessLogsBucket: "${ACCESS_LOGS_S3_BUCKET_NAME}"" > helm_values.yaml
+          accessLogsBucket: "${ACCESS_LOGS_S3_BUCKET_NAME}"
+        tags:
+          branch: "${CLEAN_BRANCH}"
+          environment: "${ENVIRONMENT}"
+          product: "${PRODUCT_NAME}"
+          component: "${PRODUCT_COMPONENT}"
+          version: "${COMMIT_ID}"
+          Name: "${HELM_RELEASE_NAME}"" > helm_values.yaml
     finally:
       - #echo This always runs
 
