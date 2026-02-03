@@ -20,8 +20,8 @@ class UserDetailsTagLibSpec extends Specification implements TagLibUnitTest<User
         expect:
         tagLib.paginate(controller: 'user', action: 'list', total: null, nextToken: 'asdf1234', params: new GrailsParameterMap(request)) == '''<nav aria-label='Page navigation'>
   <ul class='pagination'>
-    <li><a href="/user/list?max=20">First</a></li>
-    <li><a href="/user/list?max=20&amp;token=asdf1234">&raquo;</a></li>
+    <li class='page-item'><a href="/user/list?max=20" class="page-link">First</a></li>
+    <li class='page-item'><a href="/user/list?max=20&amp;token=asdf1234" class="page-link">&raquo;</a></li>
   </ul>
 </nav>'''
     }
