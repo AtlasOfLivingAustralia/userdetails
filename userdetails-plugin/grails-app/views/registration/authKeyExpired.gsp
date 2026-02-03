@@ -22,7 +22,9 @@
 </head>
 <body>
 <div class="row">
-    <h1><g:message code="auth.key.expired.header" /></h1>
+    <div class="col-12">
+        <h1><g:message code="auth.key.expired.header" /></h1>
+    </div>
     <div class="row">
         <p>
             <g:message code="auth.key.expired.initial.description" /><br/>

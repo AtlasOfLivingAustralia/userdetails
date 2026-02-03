@@ -87,11 +87,11 @@ dependencies {
 
     // Grails plugin dependencies
 
-    api "org.grails.plugins:ala-bootstrap3:4.4.0"
+    api "org.grails.plugins:ala-bootstrap5:1.0.0-SNAPSHOT"
     api "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
-    api "org.grails.plugins:ala-admin-plugin:2.3.0"
+    api "org.grails.plugins:ala-admin-plugin:2.4.0-SNAPSHOT"
 
     api 'dk.glasius:external-config:4.0.0'
     api 'org.grails.plugins:http-builder-helper:1.1.0'
