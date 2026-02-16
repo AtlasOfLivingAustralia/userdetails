@@ -31,7 +31,7 @@
         <div id="create-user" class="content scaffold-create" role="main">
             <h1><g:message code="default.create.label" args="[entityName]"/></h1>
             <g:if test="${flash.message}">
-                <div class="message" role="status">${flash.message}</div>
+                <div class="alert alert-info" role="status">${flash.message}</div>
             </g:if>
             <g:if test="${error}">
                 <div class="alert alert-danger" role="alert">${error}</div>

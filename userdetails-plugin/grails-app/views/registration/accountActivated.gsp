@@ -22,13 +22,15 @@
 </head>
 <body>
 <div class="row">
-    <h1>
-        <g:message code="account.activated.please.check.your.email" />
-    </h1>
+    <div class="col-12">
+        <h1>
+            <g:message code="account.activated.please.check.your.email" />
+        </h1>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
-            <div class="well well-lg">
+            <div class="alert alert-well">
                 <g:message code="account.activated.thank.you.for.registering" args="[grailsApplication.config.getProperty('skin.orgNameLong')]" />
                 <br/>
                 <g:message code="account.activated.if.you.have.any.problems" args="[grailsApplication.config.getProperty('supportEmail')]" />

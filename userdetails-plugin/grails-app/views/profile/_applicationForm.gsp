@@ -16,21 +16,21 @@
 
 <div id="app-form" class="row">
     <div class="col-md-12">
-        <div class="form-group">
+        <div class="mb-3">
             <label for="name">
-                <g:message code="application.name.label" default="Name"/> <button class="btn btn-link" aria-label="Help for name field" role="button" type="button" data-toggle="popover" title="Name" data-content="This name will be used to identify your application to end users when logging into their ALA account." data-trigger="hover"><i class="fa fa-question"></i></button>
+                <g:message code="application.name.label" default="Name"/> <button class="btn btn-link" aria-label="Help for name field" role="button" type="button" data-bs-toggle="popover" title="Name" data-bs-content="This name will be used to identify your application to end users when logging into their ALA account." data-bs-trigger="hover"><i class="fas fa-question"></i></button>
             </label>
             <g:textField name="name" class="form-control" value="${applicationInstance?.name}" placeholder="Application Name" data-validation-engine="validate[required]"/>
         </div>
 
-        <div class="form-group">
-            <label for="type"><g:message code="application.type.label" default="Type"/>  <button class="btn btn-link" aria-label="Help for type field" role="button" type="button" data-toggle="popover" title="Type" data-html="true" data-trigger="hover" data-content="The type of application you're creating:
+        <div class="mb-3">
+            <label for="type"><g:message code="application.type.label" default="Type"/>  <button class="btn btn-link" aria-label="Help for type field" role="button" type="button" data-bs-toggle="popover" title="Type" data-bs-html="true" data-bs-trigger="hover" data-bs-content="The type of application you're creating:
 <br/><b>Public Client</b>: Your application is distributed to clients, such as a JS app in the browser, mobile app or native application.  This will allow your client to generate tokens with the auth code w/ PKCE grant.
 <br/><b>Confidential Client</b>: You're accessing ALA APIs. This will allow your client to generate tokens with the auth code grant.
 <br/><b>Machine-to-Machine (M2M)</b>: Your application is only doing machine to machine communication and doesn't require end user authentication.  This will allow your client to generate tokens with the client credential grant.
-"><i class="fa fa-question"></i></button></label>
+"><i class="fas fa-question"></i></button></label>
             <g:select id="type" name="type"
-                class="form-control"
+                class="form-select"
                 value="${applicationInstance?.type}"
                 from="${ApplicationType.values() - ApplicationType.UNKNOWN}"
                 valueMessagePrefix="application.type"
@@ -39,27 +39,25 @@
         <g:set var="m2m" value="${!applicationInstance?.type || applicationInstance?.type == ApplicationType.M2M}" />
         <div id="callback-section" style="${m2m ? 'display:none;' : ''}">
 
-            <div class="form-group fieldcontain ${hasErrors(bean: applicationInstance, field: 'callbacks', 'error')} ">
+            <div class="mb-3 fieldcontain ${hasErrors(bean: applicationInstance, field: 'callbacks', 'error')} ">
                 <label for="callbacks">
-                    <g:message code="application.callback.label" default="Callback URLs"/>  <button class="btn btn-link" aria-label="Help for callback field" role="button" type="button" data-toggle="popover" title="Callback" data-content="For applications, provide one or more callback URLs that your application will use to receive the OAuth tokens via callback.  Callback URLs must be https (except for localhost) or a custom app scheme." data-trigger="hover"><i class="fa fa-question"></i></button>
+                    <g:message code="application.callback.label" default="Callback URLs"/>  <button class="btn btn-link" aria-label="Help for callback field" role="button" type="button" data-bs-toggle="popover" title="Callback" data-bs-content="For applications, provide one or more callback URLs that your application will use to receive the OAuth tokens via callback.  Callback URLs must be https (except for localhost) or a custom app scheme." data-bs-trigger="hover"><i class="fas fa-question"></i></button>
                 </label>
                 <div id="callback-list">
                 <g:each in="${applicationInstance?.callbacks}" status="i" var="callback">
-                    <span class="label label-default" data-index="${i}">${callback}</span>
-                    <button type="button" class="btn btn-danger delete" data-index="${i}"><i class="fa fa-trash"></i></button>
+                    <span class="badge bg-secondary" data-index="${i}">${callback}</span>
+                    <button type="button" class="btn btn-danger delete" data-index="${i}"><i class="fas fa-trash"></i></button>
                     <g:hiddenField name="callbacks" data-index="${i}" value="${callback}"/>
                 </g:each>
                 </div>
                 <div class="input-group">
                     <g:textField type="url" name="callbacks" class="form-control" value="" placeholder="https://yourdomain.com/callback"
                                  data-validation-engine="validate[funcCall[validateCallbacksRequired]]"/>
-                    <span class="input-group-btn">
-                        <button type="button" id="btn-add-callback" class="btn btn-primary"><i class="fa fa-plus"></i></button>
-                    </span>
+                    <button type="button" id="btn-add-callback" class="btn btn-primary"><i class="fas fa-plus"></i></button>
                 </div>
 
-                <div class="form-group">
-                    <div class="checkbox">
+                <div class="my-3">
+                    <div class="form-check ps-0">
                         <label>
                             <g:checkBox checked="true" name="needTokenAppAsCallback" id="needTokenAppAsCallback"/> Do you need to add <a href="${grailsApplication.config.getProperty('tokenApp.url')}" target="_blank">tokens app</a> (which can be used to generate JWT tokens) as a callback url?
                         </label>
@@ -67,7 +65,7 @@
                 </div>
 
 %{--            <div class="fieldcontain ${hasErrors(bean: applicationInstance, field: 'allowTokensApp', 'error')} ">--}%
-%{--                <div class="checkbox">--}%
+%{--                <div class="form-check">--}%
 %{--                    <label>--}%
 %{--                        <g:checkBox name="allowTokensApp" value="${applicationInstance?.allowTokensApp}"/> <g:message code="applications.form.allowTokensApp" />--}%
 %{--                    </label>--}%
@@ -125,9 +123,9 @@
             let $callbacks = $('#callback-list');
             let length = $callbacks.children('input').length;
 
-            let span = $('<span></span>', {class: 'tag label label-default', 'data-index': length});
+            let span = $('<span></span>', {class: 'tag badge bg-secondary', 'data-index': length});
             let innerSpan = $('<span></span>', {text: value});
-            let button = $('<a></a>', {'data-index': length, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fa fa-trash"></i>');
+            let button = $('<a></a>', {'data-index': length, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fas fa-trash"></i>');
             let input = $('<input></input>', {value: value, 'data-index': length, type: 'hidden', name: 'callbacks'});
 
             span.append(innerSpan);
@@ -182,6 +180,6 @@
             e.preventDefault();
             removeCallback($(this).data('index'));
         });
-        $('[data-toggle="popover"]').popover()
+        $('[data-bs-toggle="popover"]').popover()
     });
 </asset:script>

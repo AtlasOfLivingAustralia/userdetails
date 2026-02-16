@@ -29,24 +29,26 @@
 <body>
 
 <div class="row">
-    <h1>Reset my password</h1>
+    <div class="col-12">
+        <h1>Reset my password</h1>
+    </div>
     <div class="row">
         <div class="col-md-6">
 
             <g:if test="${captchaInvalid}">
-            <p class="well text-danger">
+            <p class="alert alert-danger">
                 <g:message code="forgotten.password.captcha.fail" />
             </p>
             </g:if>
 
             <g:if test="${emailInvalid}">
-                <p class="well text-danger">
+                <p class="alert alert-danger">
                     <g:message code="forgotten.password.don.t.recognise.email" />
                 </p>
             </g:if>
 
             <g:form action="startPasswordReset" method="POST" onsubmit="submitResetBtn.disabled = true; return true;">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="email"><g:message code="forgotten.password.email" /></label>
                     <input id="email" name="email" type="text" class="form-control" value="${params.email ?: email}"/>
                 </div>
@@ -61,7 +63,7 @@
             </g:form>
         </div>
         <div class="col-md-6">
-            <p class="well">
+            <p class="alert alert-well">
                 <g:message code="forgotten.password.description.send.pass" />
                 <br/>
                 <g:message code="forgotten.password..valid.hours" args="[validHours]" />

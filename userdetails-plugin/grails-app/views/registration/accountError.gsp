@@ -22,7 +22,9 @@
 </head>
 <body>
 <div class="row">
-    <h1>Account Error</h1>
+    <div class="col-12">
+        <h1>Account Error</h1>
+    </div>
     <div class="row">
         <p>
             <g:message code="account.error.there.was.problem" /><br>

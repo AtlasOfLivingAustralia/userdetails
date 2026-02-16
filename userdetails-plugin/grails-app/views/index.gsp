@@ -27,7 +27,7 @@
         <g:if test="${flash.errorMessage || flash.message}">
             <div class="col-md-12">
                 <div class="alert alert-danger">
-                    <button class="close" onclick="$('.alert').fadeOut();" href="#">×</button>
+                    <button class="btn-close" data-bs-dismiss="alert" onclick="$('.alert').fadeOut();" href="#">×</button>
                     ${flash.errorMessage?:flash.message}
                 </div>
             </div>
@@ -35,39 +35,46 @@
 
         <h1><g:message code="userdetails.index.accounts" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></h1>
 
-        <div class="row userdetails-grid">
+        <div class="row g-4 userdetails-grid">
             <div class="col-md-3">
-                <div class="thumbnail">
-                    <div class="image">
-                        <i class="glyphicon glyphicon-plus"></i>
-                    </div>
-                    <div class="caption">
-                        <h3><g:message code="userdetails.index.create.new.account" /></h3>
-                        <g:link controller="registration" action="createAccount" class="btn btn-primary"><g:message code="userdetails.index.create.new.account" /></g:link>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div>
+                            <i class="fas fa-plus-circle fs-1 pb-4"></i>
+                        </div>
+                        <div class="caption">
+                            <h3 class="card-title"><g:message code="userdetails.index.create.new.account" /></h3>
+                            <g:link controller="registration" action="createAccount" class="btn btn-primary"><g:message code="userdetails.index.create.new.account" /></g:link>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="thumbnail">
-                    <div class="image">
-                        <i class="glyphicon glyphicon-lock"></i>
-                    </div>
-                    <div class="caption">
-                        <h3><g:message code="userdetails.index.reset.password" /></h3>
-                        <g:link controller="registration" action="forgottenPassword" class="btn btn-primary"><g:message code="userdetails.index.reset.password" /></g:link>
+                <div class="card">
+                    <div class="card-body">
+                        <div>
+                            <i class="fas fa-lock fs-1 pb-4"></i>
+                        </div>
+                        <div class="caption">
+                            <h3 class="card-title"><g:message code="userdetails.index.reset.password" /></h3>
+                            <g:link controller="registration" action="forgottenPassword" class="btn btn-primary"><g:message code="userdetails.index.reset.password" /></g:link>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="thumbnail">
-                    <div class="image">
-                        <i class="glyphicon glyphicon-user"></i>
-                    </div>
-                    <div class="caption">
-                        <h3><g:message code="userdetails.index.my.profile" /></h3>
-                        <g:link controller="profile" class="btn btn-primary"><g:message code="userdetails.index.my.profile" /></g:link>
+                <div class="card">
+                    <div class="card-body">
+                        <div>
+                            <i class="fas fa-user fs-1 pb-4"></i>
+                        </div>
+                        <div class="caption">
+                            <h3 class="card-title"><g:message code="userdetails.index.my.profile" /></h3>
+                            <g:link controller="profile" class="btn btn-primary"><g:message code="userdetails.index.my.profile" /></g:link>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,8 +82,8 @@
 
     </div>
     <auth:ifAllGranted roles="ROLE_ADMIN">
-        <div style="color:white;" class="pull-right">
-            <g:link style="color:#DDDDDD; font-weight:bold;" controller="admin"><g:message code="userdetails.index.admin.tools" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></g:link>
+        <div class="col-md-12 text-end mt-3">
+            <g:link class="fw-bold text-decoration-none" style="color:#DDDDDD;" controller="admin"><g:message code="userdetails.index.admin.tools" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></g:link>
         </div>
     </auth:ifAllGranted>
 </div>

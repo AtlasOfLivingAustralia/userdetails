@@ -26,10 +26,10 @@
     <h1>User password reset successfully</h1>
     <div class="row">
         <div class="col-md-12">
-            <p class="well">
+            <p class="alert alert-well">
                 The password has been reset for <strong>${email}</strong> and an email has been sent to the user containing the new password.
             </p>
-            <p class="well">
+            <p class="alert alert-well">
                 The new password: <strong>${password}</strong>
             </p>
         </div>

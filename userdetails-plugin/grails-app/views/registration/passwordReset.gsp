@@ -70,18 +70,18 @@
             <input id="userId" type="hidden" name="userId" value="${user.id}"/>
 
             <g:if test="${grailsApplication.config.getProperty('password.requireCodeToResetPassword', Boolean)}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="code">Code sent to your email</label>
                     <input id="code" type="number" class="form-control" name="code" value=""/>
                 </div>
             </g:if>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="password">Your new password</label>
                 <input id="password" type="password" class="form-control" name="password" value=""/>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="reenteredPassword"><g:message code="password.reset.re.enter.password" /></label>
                 <input id="reenteredPassword" type="password" class="form-control" name="reenteredPassword" value=""/>
             </div>

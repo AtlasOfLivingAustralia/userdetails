@@ -28,8 +28,7 @@
 <body>
 
 <div id="my-applications" role="main">
-
-    <div class="page-header">
+    <div class="border-bottom mb-3 pb-2">
         <h1><g:message code="myprofile.myClientAndApikey" /></h1>
         </br>
         <h3><g:message code="myprofile.myClientAndApikey.subheading" /></h3>
@@ -41,20 +40,20 @@
     </div>
 
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#applications" data-toggle="tab"><g:message code="myprofile.applications" default="Applications" /></a></li>
-        <li><a href="#help" data-toggle="tab"><g:message code="help" default="Help" /></a></li>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation"><a class="nav-link active" href="#applications" data-bs-toggle="tab" role="tab" aria-controls="applications" aria-selected="true"><g:message code="myprofile.applications" default="Applications" /></a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link" href="#help" data-bs-toggle="tab"><g:message code="help" default="Help" /></a></li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
-        <div class="tab-pane active" id="applications">
+        <div class="tab-pane active" id="applications" role="tabpanel">
             <div class="row">
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-8">
-                    <div class="pull-right" style="padding: 10px">
-                        <button type="button" id="btn-create-app" class="btn btn-primary"><i class="fa fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></button>
+                    <div class="text-end" style="padding: 10px">
+                        <button type="button" id="btn-create-app" class="btn btn-primary"><i class="fas fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></button>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -67,9 +66,9 @@
                     </g:if>
 
                     <g:if test="${flash.message}">
-                        <div class="message" role="status">${flash.message}</div>
+                        <div class="alert alert-info" role="status">${flash.message}</div>
                     </g:if>
-                    <table id="apps-table" class="table table-bordered table-striped table-condensed" style="${applicationList ? '' : 'display:none;'}">
+                    <table id="apps-table" class="table table-bordered table-striped" style="${applicationList ? '' : 'display:none;'}">
                         <thead>
                         <tr>
                             <g:sortableColumn property="name" title="${message(code: 'application.name.label', default: 'Name')}" />
@@ -89,8 +88,8 @@
 
                                 <td>
 %{--                                    <button class="app-enable" data-id="${application.clientId}">Enable</button>--}%
-                                    <button class="app-edit" aria-label="View/Edit" data-id="${application.clientId}"><i class="fa fa-eye"></i></button>
-                                    <button class="app-delete" aria-label="Delete" data-id="${application.clientId}"><i class="fa fa-trash"></i></button>
+                                    <button class="app-edit" aria-label="View/Edit" data-id="${application.clientId}"><i class="fas fa-eye"></i></button>
+                                    <button class="app-delete" aria-label="Delete" data-id="${application.clientId}"><i class="fas fa-trash"></i></button>
                                     <g:set var="m2m" value="${!application?.type || application?.type == ApplicationType.M2M}" />
                                     <a href="${grailsApplication.config.getProperty('tokenApp.url')}?step=generation&client_id=${application.clientId}&client_secret=${application.secret}" target="_blank" style="${m2m ? 'display:none;' : ''}">Generate JWT</a>
                                 </td>
@@ -100,12 +99,12 @@
                     </table>
                     <p id="newApplication" style="${applicationList ? 'display:none;' : ''}">Click the 'New Application' button to generate your first client ID. Once created, your entries will be displayed here.</p>
 
-                    <div class="text-center">
+                    <div class="d-flex justify-content-center">
                         <ud:paginate action="list" total="${applicationList}" params="${params}"/>
                     </div>
                 </div>
             </div>
-            <div class="well">
+            <div class="alert alert-well">
                 <p>For further configuration information, please refer to <a href="${grailsApplication.config.getProperty('security.oidc.discovery-uri')}" target="_blank" >Discovery endpoint.</a></p>
                 <p>How to access ALA restricted APIs using <a href="https://github.com/AtlasOfLivingAustralia/jwt-usage-examples/blob/main/python/example.py"
                         target="_blank">Python example client</a> and <a href="https://github.com/AtlasOfLivingAustralia/jwt-usage-examples/blob/main/R/example.R"
@@ -113,62 +112,62 @@
                 <p>Further documentation and a full list of available endpoints are available on the <a href="${grailsApplication.config.getProperty('docsPortal.url')}" target="_blank">ALA API Docs Portal</a>. For more information or assistance, please contact us at <a href="mailto:support@ala.org.au">support@ala.org.au</a>.</p>
             </div>
         </div>
-        <div class="tab-pane" id="help">
+        <div class="tab-pane" id="help" role="tabpanel">
             <br/>
             <h4>FAQ</h4>
             <br/>
-            <g:each in="${ (1..13) }" var="c">
-                <div class="panel-group" id="faq" role="tablist" aria-multiselectable="false">
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="q${c}">
-                            <h5 class="panel-title">
-                                <a role="button" data-toggle="collapse" class="accordion-plus-toggle collapsed" data-parent="#faq" href="#a${c}" aria-expanded="false" aria-controls="a${c}"><g:message code="application.q${c}"/></a>
-                            </h5>
-                        </div>
-                        <div id="a${c}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="q${c}">
-                            <div class="panel-body"><g:message code="application.a${c}" args="[grailsApplication.config.getProperty('docsPortal.url')]"/></div>
+            <div class="accordion" id="faq">
+                <g:each in="${ (1..13) }" var="c">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="q${c}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a${c}" aria-expanded="false" aria-controls="a${c}">
+                                <g:message code="application.q${c}"/>
+                            </button>
+                        </h2>
+                        <div id="a${c}" class="accordion-collapse collapse" aria-labelledby="q${c}" data-bs-parent="#faq">
+                            <div class="accordion-body">
+                                <g:message code="application.a${c}" args="[grailsApplication.config.getProperty('docsPortal.url')]"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </g:each>
+                </g:each>
+            </div>
         </div>
     </div>
-    <div id="client-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div id="client-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="heading">Create Application</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <g:form name="modal-save-form" action="generateClient">
                         <fieldset class="form">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="clientId">
                                     <g:message code="application.clientId.label" default="Client ID" />
                                 </label>
                                 <!-- not read by server -->
                                 <input id="clientId" name="clientId" type="text" form="none" readonly class="form-control" />
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="clientSecret">
                                     <g:message code="application.clientSecret.label" default="Client Secret" />
                                 </label>
                                 <div class="input-group">
                                     <input id="clientSecret" name="clientSecret" form="none" type="password" readonly class="form-control" />
-                                    <span class="input-group-btn">
-                                        <button id="show-secret" class="btn btn-default"><span class="fa fa-eye" aria-label="Show secret" aria-label-open="Show Secret" aria-label-closed="Hide Secret"></span></button>
-                                    </span>
+                                    <button id="show-secret" type="button" class="btn btn-outline-dark" aria-label="Show secret" aria-label-open="Show Secret" aria-label-closed="Hide Secret">
+                                        <span class="fas fa-eye"></span>
+                                    </button>
                                 </div><!-- /input-group -->
-
-
                             </div>
                             <g:render template="applicationForm"/>
                         </fieldset>
                     </g:form>
                 </div>
                 <div class="modal-footer">
-                    <button id="btn-close-app" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btn-close-app" type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
                     <button id="btn-save-app" type="submit" form="modal-save-form" class="btn btn-primary">Save changes</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -194,8 +193,8 @@
                     else if(data[i].type.name === "CONFIDENTIAL") type = "Confidential Client (Server-side Application)";
                     $tr.append($('<td></td>', {text: type}));
                     let $buttonsTd = $('<td></td>');
-                    $buttonsTd.append($('<button>', {class: 'app-edit', 'aria-label': 'View/Edit', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fa fa-eye'})));
-                    $buttonsTd.append($('<button>', {class: 'app-delete', 'aria-label': 'Delete', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fa fa-trash'})));
+                    $buttonsTd.append($('<button>', {class: 'app-edit', 'aria-label': 'View/Edit', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-eye'})));
+                    $buttonsTd.append($('<button>', {class: 'app-delete', 'aria-label': 'Delete', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-trash'})));
                     if(data[i].type.name !== "M2M"){
                         var url = "${grailsApplication.config.getProperty('tokenApp.url')}?step=generation&client_id=" + data[i].clientId + (data[i].secret ? "&client_secret=" + data[i].secret : "");
                         var createA = document.createElement('a');
@@ -218,11 +217,11 @@
     }
 
     function showEditModal(data) {
-        $('#client-modal').modal({});
+        clientModal.show();
         $('#heading').text("Update Application");
         $('#name').val(data.name);
         $('#type').val(data.type.name).trigger('change');
-        $('#clientId').val(data.clientId).parents('.form-group').show();
+        $('#clientId').val(data.clientId).parents('.mb-3').show();
         $("#needTokenAppAsCallback").prop("checked", data.needTokenAppAsCallback);
         if(data.needTokenAppAsCallback == true){
             document.getElementById("needTokenAppAsCallback").disabled = true;
@@ -233,9 +232,9 @@
         let $clientSecret = $('#clientSecret');
         $clientSecret.val(data.secret);
         if (data.secret) {
-            $clientSecret.parents('.form-group').show();
+            $clientSecret.parents('.mb-3').show();
         } else {
-            $clientSecret.parents('.form-group').hide();
+            $clientSecret.parents('.mb-3').hide();
         }
 
         let callbacks = data.callbacks ? data.callbacks : [];
@@ -258,7 +257,7 @@
                 let $this = $(this);
                 let $saveButton = $this.find('btn-save-app');
                 let $saveButtonContent = $saveButton.content;
-                $saveButton.html('<i class="fa fa-spinner"></i>');
+                $saveButton.html('<i class="fas fa-spinner"></i>');
                 setModalButtonsDisabled(true);
                 $('#callbacks').val('');
                 $.post(
@@ -266,7 +265,7 @@
                     $(this).serialize()
                 ).done(function(data) {
                     refreshAppTable();
-                    $('#client-modal').modal('hide');
+                    clientModal.hide();
                 }).fail(function(data) {
                     alert( "Error when updating the application ");
                   }).always(function() {
@@ -281,12 +280,12 @@
     }
 
     function showCreateModal() {
-        $('#client-modal').modal({});
+        clientModal.show();
         $('#heading').text("Create Application");
         $('#name').val('');
         $('#type').val('PUBLIC').trigger('change');
-        $('#clientId').val('').parents('.form-group').hide();
-        $('#clientSecret').val('').parents('.form-group').hide();
+        $('#clientId').val('').parents('.mb-3').hide();
+        $('#clientSecret').val('').parents('.mb-3').hide();
         $('#callback-list').find('[data-index').remove()
         $("#needTokenAppAsCallback").prop("checked", true);
         document.getElementById("needTokenAppAsCallback").disabled = false;
@@ -306,7 +305,7 @@
                 let $this = $(this);
                 let $saveButton = $this.find('btn-save-app');
                 let $saveButtonContent = $saveButton.content;
-                $saveButton.html('<i class="fa fa-spinner"></i>');
+                $saveButton.html('<i class="fas fa-spinner"></i>');
                 setModalButtonsDisabled(true);
                 $('#callbacks').val('');
                 $.post(
@@ -335,9 +334,9 @@
 
     function addCallbackToForm($callbacks, callbacks, index, isEdit) {
         let value = callbacks[index];
-        let span = $('<span></span>', {class: 'tag label label-default', 'data-index': index, style: "display: inline-block;"});
+        let span = $('<span></span>', {class: 'tag badge bg-secondary', 'data-index': index, style: "display: inline-block;"});
         let innerSpan = $('<span></span>', {text: value});
-        let button = $('<a></a>', {'data-index': index, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fa fa-trash"></i>');
+        let button = $('<a></a>', {'data-index': index, role: 'button', class: 'btn btn-danger delete'}).append('<i class="fas fa-trash"></i>');
         let input = $('<input></input>', {value: value, 'data-index': index, type: 'hidden', name: 'callbacks'});
 
         span.append(innerSpan);
@@ -360,7 +359,10 @@
       }
     }
 
+    let clientModal;
+
     $(function() {
+        clientModal = new bootstrap.Modal(document.getElementById('client-modal'));
         $('#btn-create-app').on('click', function() {
             let $this = $(this);
             showCreateModal();

@@ -22,7 +22,9 @@
 </head>
 <body>
 <div class="row">
-    <h1><g:message code="duplicate.submit.results" /></h1>
+    <div class="col-12">
+        <h1><g:message code="duplicate.submit.results" /></h1>
+    </div>
     <div class="row">
         <div class="alert alert-warning">
             <g:message code="duplicate.submit.description.new.password" />

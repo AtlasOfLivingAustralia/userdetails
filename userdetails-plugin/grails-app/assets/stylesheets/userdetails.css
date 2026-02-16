@@ -112,22 +112,34 @@ body #main {
     url('../fonts/roboto-v18-latin_latin-ext-700.svg#Roboto') format('svg'); /* Legacy iOS */
 }
 
-.image {
-    min-width: 50px;
-    margin-right: 20px;
-    display: block;
+/* Font Awesome 5 (Solid) */
+@font-face {
+    font-family: 'Font Awesome 5 Free';
+    font-style: normal;
+    font-weight: 900;
+    src: url('../fonts/fa-solid-900.woff2') format('woff2');
 }
 
-.image .glyphicon {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    font-size: 35px;
-    padding-left: 10px;
+/* Font Awesome 5 Free – Regular */
+@font-face {
+    font-family: 'Font Awesome 5 Free';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/fa-regular-400.woff2') format('woff2');
 }
 
-.image img {
-    padding-top: 8px;
-    max-width: 50px;
+/* Font Awesome 5 Brands */
+@font-face {
+    font-family: 'Font Awesome 5 Brands';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/fa-brands-400.woff2') format('woff2');
+}
+
+.fas {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 700;
+    font-style: normal;
 }
 
 .d-flex .content {
@@ -180,7 +192,7 @@ body #main {
 
 /* plus glyph for showing collapsible panels */
 .panel-heading .accordion-plus-toggle:before {
-    font-family: FontAwesome;
+    font-family: 'Font Awesome 5 Free';
     content: "\f068";
     float: right;
 }
@@ -191,7 +203,7 @@ body #main {
 
 /* arrow glyph for showing collapsible panels */
 .panel-heading .accordion-arrow-toggle:before {
-    font-family: FontAwesome;
+    font-family: 'Font Awesome 5 Free';
     content: "\f078";
     float: right;
 }
@@ -203,4 +215,46 @@ body #main {
 /* sets the link to the width of the entire panel title */
 .panel-title > a {
     display: block;
+}
+
+.content
+a {
+    text-decoration: none;
+}
+
+.btn-primary {
+    color: #fff !important;
+}
+
+.custom-card {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+}
+
+.alert-well {
+    background-color: #f5f5f5;   /* BS3 well bg */
+    border: 1px solid #e3e3e3;   /* BS3 well border */
+    color: #333;
+}
+
+label {
+    font-weight: 700;
+}
+
+label:has(input[type="checkbox"]) {
+    font-weight: 400;
+}
+
+code {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: rgb(199, 37, 78);
+    background-color: rgb(249, 242, 244);
+    border-radius: 4px;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: #f2f2f2;
+    opacity: 1;
 }

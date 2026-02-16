@@ -22,13 +22,15 @@
 </head>
 <body>
 <div class="row">
-    <h1>
-        <g:message code="account.activated.successful.congratulations" />
-    </h1>
+    <div class="col-12">
+        <h1>
+            <g:message code="account.activated.successful.congratulations" />
+        </h1>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
-            <div class="well well-lg">
+            <div class="alert alert-well">
                 <g:message code="account.activated.successful.please.login" args="[g.createLink(controller: 'login', params: [path: grailsApplication.config.getProperty('redirectAfterFirstLogin')])]" />
             </div>
         </div>

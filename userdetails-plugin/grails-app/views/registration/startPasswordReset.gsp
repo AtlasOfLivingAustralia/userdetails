@@ -22,10 +22,12 @@
 </head>
 <body>
 <div class="row">
-    <h1><g:message code="start.password.reset.header" /></h1>
+    <div class="col-12">
+        <h1><g:message code="start.password.reset.header" /></h1>
+    </div>
     <div class="row">
         <div class="col-md-12">
-            <p class="well">
+            <p class="alert alert-well">
                 <g:message code="start.password.reset.description" args="[user.email]" />
                 <br/>
                 <g:message code="start.password.reset.description.click" />
