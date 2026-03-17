@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="row">
-    <h1>Flickr success</h1>
+    <h2>Flickr success</h2>
     <table class="table">
         <tr>
             <td>Flickr user ID</td>

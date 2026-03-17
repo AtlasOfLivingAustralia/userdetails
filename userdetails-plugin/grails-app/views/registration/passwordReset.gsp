@@ -48,7 +48,7 @@
 </asset:script>
 
 <div class="row">
-    <h1><g:message code="password.reset.description" /></h1>
+    <h2><g:message code="password.reset.description" /></h2>
 
     <g:render template="passwordPolicy"
           model="[passwordPolicy: passwordPolicy]"/>

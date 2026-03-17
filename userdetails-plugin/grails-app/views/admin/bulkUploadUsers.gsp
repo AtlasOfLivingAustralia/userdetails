@@ -30,7 +30,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Bulk Load Users</h1>
+                <h2>Bulk Load Users</h2>
                 <p>
                 Choose a CSV file to load. The file should be in the following format:
                 </p>

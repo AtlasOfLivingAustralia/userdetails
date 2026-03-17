@@ -29,7 +29,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div id="edit-user" class="content scaffold-edit" role="main">
-            <h1><g:message code="default.edit.label" args="[entityName]"/></h1>
+            <h2><g:message code="default.edit.label" args="[entityName]"/></h2>
 
             <g:if test="${flash.message}">
                 <div class="alert alert-info" role="status">${flash.message}</div>

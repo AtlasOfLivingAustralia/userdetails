@@ -23,7 +23,7 @@
 </head>
 <body>
 <div class="row">
-    <h1>User password reset successfully</h1>
+    <h2>User password reset successfully</h2>
     <div class="row">
         <div class="col-md-12">
             <p class="alert alert-well">

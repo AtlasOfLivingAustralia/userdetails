@@ -27,7 +27,7 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div id="create-userRole" class="content scaffold-create" role="main">
-				<h1>Add role for ${user}</h1>
+				<h2>Add role for ${user}</h2>
 				<g:form action="addRole" >
 					<fieldset class="form">
 						<input type="hidden" id="userId" name="userId" value="${user?.id}"/>

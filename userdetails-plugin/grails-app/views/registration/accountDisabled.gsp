@@ -23,7 +23,7 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h1><g:message code="account.disabled.successfully" /></h1>
+        <h2><g:message code="account.disabled.successfully" /></h2>
     </div>
     <div class="row">
         <div class="col-md-12">

@@ -32,7 +32,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Bulk Load Users Results</h1>
+                <h2>Bulk Load Users Results</h2>
                 <p>
                     <g:if test="${results.success}">
                         Success!

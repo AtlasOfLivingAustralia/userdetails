@@ -27,7 +27,7 @@
         <div>
             <div class="row">
                 <div class="col-lg-12">
-                    <h1><g:message code="myprofile.hello" args="[user.firstName ?: '']"/></h1>
+                    <h2><g:message code="myprofile.hello" args="[user.firstName ?: '']"/></h2>
                 </div>
             </div>
             <div class="row">

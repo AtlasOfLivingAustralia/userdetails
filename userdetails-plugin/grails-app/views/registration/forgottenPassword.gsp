@@ -30,7 +30,7 @@
 
 <div class="row">
     <div class="col-12">
-        <h1>Reset my password</h1>
+        <h2>Reset my password</h2>
     </div>
     <div class="row">
         <div class="col-md-6">

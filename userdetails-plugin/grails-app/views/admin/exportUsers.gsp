@@ -30,7 +30,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Export Users to CSV</h1>
+                <h2>Export Users to CSV</h2>
                 <p>
                 Choose the options for exporting. The output will be in the following format:
                 </p>

@@ -23,9 +23,9 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h1>
+        <h2>
             <g:message code="account.activated.please.check.your.email" />
-        </h1>
+        </h2>
     </div>
 
     <div class="row">

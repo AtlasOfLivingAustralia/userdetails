@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="container">
-    <h1><g:message code="flickr.fail.link.failed" /></h1>
+    <h2><g:message code="flickr.fail.link.failed" /></h2>
     <p class="alert alert-danger">
         <g:message code="flickr.fail.description" args="[grailsApplication.config.getProperty('supportEmail')]" />
     </p>

@@ -3,7 +3,7 @@
  */
 
 body #main {
-    padding-left:60px;padding-right:100px;
+    padding-left:100px;padding-right:100px;
 }
 
 .userdetails-menu {
@@ -217,8 +217,7 @@ body #main {
     display: block;
 }
 
-.content
-a {
+.content a {
     text-decoration: none;
 }
 
