@@ -23,7 +23,7 @@
 </head>
 <body>
 <div class="row">
-    <h2>Reset password for user</h2>
+    <h1>Reset password for user</h1>
 
     <g:if test="${emailNotRecognised}">
     <div class="row">

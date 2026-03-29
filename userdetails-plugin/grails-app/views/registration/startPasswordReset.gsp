@@ -23,7 +23,7 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h2><g:message code="start.password.reset.header" /></h2>
+        <h1><g:message code="start.password.reset.header" /></h1>
     </div>
     <div class="row">
         <div class="col-md-12">

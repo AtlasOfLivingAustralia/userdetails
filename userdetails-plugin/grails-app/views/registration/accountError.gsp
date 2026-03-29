@@ -23,7 +23,7 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h2>Account Error</h2>
+        <h1>Account Error</h1>
     </div>
     <div class="row">
         <p>

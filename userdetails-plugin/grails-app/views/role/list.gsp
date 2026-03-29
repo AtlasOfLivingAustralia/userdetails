@@ -28,7 +28,7 @@
 <div id="list-role" class="content container-fluid content scaffold-list" role="main">
 	<div class="row align-items-center">
 		<div class="col-sm-4">
-			<h2><g:message code="default.list.label" args="[entityName]" /></h2>
+			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 		</div>
 		<div class="col-sm-8">
 			<div class="d-flex justify-content-md-end mt-2 mt-md-0">

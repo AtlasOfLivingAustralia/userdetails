@@ -23,9 +23,9 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h2>
+        <h1>
             <g:message code="account.activated.successful.congratulations" />
-        </h2>
+        </h1>
     </div>
 
     <div class="row">

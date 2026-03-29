@@ -28,7 +28,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div id="show-authorisedSystem" class="content scaffold-show" role="main">
-					<h2><g:message code="default.show.label" args="[entityName]" /></h2>
+					<h1><g:message code="default.show.label" args="[entityName]" /></h1>
 					<g:if test="${flash.message}">
 						<div class="alert alert-info" role="status">${flash.message}</div>
 					</g:if>

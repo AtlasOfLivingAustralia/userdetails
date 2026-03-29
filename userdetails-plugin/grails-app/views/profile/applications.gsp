@@ -29,7 +29,7 @@
 
 <div id="my-applications" role="main">
     <div class="border-bottom mb-3 pb-2">
-        <h2><g:message code="myprofile.myClientAndApikey" /></h2>
+        <h1><g:message code="myprofile.myClientAndApikey" /></h1>
         </br>
         <h3><g:message code="myprofile.myClientAndApikey.subheading" /></h3>
     </div>

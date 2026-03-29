@@ -35,7 +35,7 @@
 <body>
 
 <div class="row">
-    <h2>${title}</h2>
+    <h1>${title}</h1>
     <g:if test="${flash.message}">
         <div class="alert alert-warning">
             ${flash.message}

@@ -23,7 +23,7 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h2><g:message code="duplicate.submit.results" /></h2>
+        <h1><g:message code="duplicate.submit.results" /></h1>
     </div>
     <div class="row">
         <div class="alert alert-warning">

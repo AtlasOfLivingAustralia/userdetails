@@ -7,6 +7,6 @@
     <asset:stylesheet src="userdetails.css" />
 </head>
 <body>
-    <h2><g:message code="userdetails.page.not.found.body" /></h2>
+    <h1><g:message code="userdetails.page.not.found.body" /></h1>
 </body>
 </html>

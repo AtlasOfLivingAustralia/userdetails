@@ -30,7 +30,7 @@
 
     <div class="row">
         <div class="col-md-4">
-            <h2><g:message code="default.list.label" args="[entityName]"/></h2>
+            <h1><g:message code="default.list.label" args="[entityName]"/></h1>
         </div>
         <div class="col-md-8">
             <div class="d-flex justify-content-end mb-3">

@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="container">
-    <h2><g:message code="inaturalist.fail.link" /></h2>
+    <h1><g:message code="inaturalist.fail.link" /></h1>
     <p class="alert alert-danger">
         <g:message code="inaturalist.fail.description" args="[grailsApplication.config.getProperty('supportEmail')]" />
     </p>

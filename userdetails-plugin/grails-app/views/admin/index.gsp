@@ -24,7 +24,7 @@
 <body>
     <div class="row">
         <div class="col-md-12" id="page-body" role="main">
-            <h2>User Administration</h2>
+            <h1>User Administration</h1>
             <div class="row userdetails-grid">
                 <g:if test="${!isBiosecurityAdmin}">
                     <div class="col-12 col-md-3">
