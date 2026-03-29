@@ -473,7 +473,8 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
     }
 
     @Override
-    List<String[]> countByProfileAttribute(String s, Date date, Locale locale) {
+    List<String[]> countByProfileAttribute(String s,  Date startDate, Date endDate, Locale locale) {
+        //TODO Need to find a way to search between dates
         def token
         def counts = [:]
         def results = cognitoIdp.listUsers(new ListUsersRequest().withUserPoolId(poolId))

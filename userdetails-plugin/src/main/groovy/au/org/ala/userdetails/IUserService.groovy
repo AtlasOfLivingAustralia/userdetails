@@ -115,7 +115,7 @@ interface IUserService<U extends IUser<? extends Serializable>, P extends IUserP
      */
     Map getUsersCounts(Locale locale)
 
-    List<String[]> countByProfileAttribute(String s, Date date, Locale locale)
+    List<String[]> countByProfileAttribute(String s, Date startDate, Date endDate, Locale locale)
 
     List<String[]> emailList(Date startDate, Date endDate)
 

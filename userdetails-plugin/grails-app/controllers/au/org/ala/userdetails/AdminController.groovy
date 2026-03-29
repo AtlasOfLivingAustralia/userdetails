@@ -171,7 +171,9 @@ class AdminController {
     }
 
     def surveyResults() {
-        def results = userService.countByProfileAttribute(affiliationAttribute, null, request.locale)
+        def startDate = params.date('since', ['yyyy-MM-dd', 'yyyyMMdd'])
+        def endDate = params.date('until', ['yyyy-MM-dd', 'yyyyMMdd'])
+        def results = userService.countByProfileAttribute('affiliation', startDate, endDate, request.locale)
         respondWithCsv(results, "user-survey-${new Date()}.csv")
     }
 
