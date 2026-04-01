@@ -29,7 +29,7 @@
 <div id="show-user" class="content scaffold-show" role="main">
     <h1><g:message code="default.show.label" args="[entityName]"/></h1>
     <g:if test="${flash.message}">
-        <div class="message" role="status">${flash.message}</div>
+        <div class="alert alert-info" role="status">${flash.message}</div>
     </g:if>
     <ol class="property-list user">
 
@@ -130,7 +130,7 @@
         </g:if>
 </div>
 <div class="col-md-4">
-    <div class="well">
+    <div class="alert alert-well">
 
             <span id="activated-label" class="property-label"><g:message code="user.activated.label"
                                                                          default="Activated"/>:</span>

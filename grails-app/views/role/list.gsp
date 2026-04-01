@@ -22,23 +22,24 @@
 	<g:set var="entityName" value="${message(code: 'role.label', default: 'Role')}" />
 	<title><g:message code="default.list.label" args="[entityName]" /></title>
 	<meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},Administration" />
+	<asset:stylesheet src="application.css" />
 </head>
 <body>
-<div id="list-role" class="content scaffold-list" role="main">
-	<div class="row">
+<div id="list-role" class="content container-fluid content scaffold-list" role="main">
+	<div class="row align-items-center">
 		<div class="col-sm-4">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 		</div>
 		<div class="col-sm-8">
-			<div class="pull-right">
+			<div class="d-flex justify-content-md-end mt-2 mt-md-0">
 				<g:link class="btn btn-primary" action="create"><i class="fa fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></g:link>
 			</div>
 		</div>
 		<div class="col-sm-12">
 			<g:if test="${flash.message}">
-				<div class="message" role="status">${flash.message}</div>
+				<div class="alert alert-info" role="status">${flash.message}</div>
 			</g:if>
-			<table class="table table-bordered table-striped table-condensed">
+			<table class="table table-bordered table-striped align-middle mb-3">
 				<thead>
 				<tr>
 					<g:sortableColumn property="role" title="${message(code: 'role.role.label', default: 'Role')}" mapping="adminRoleList"/>
@@ -60,7 +61,7 @@
 				</g:each>
 				</tbody>
 			</table>
-			<div class="text-center">
+			<div class="d-flex justify-content-center">
 				<hf:paginate total="${roleInstanceTotal}" params="${params}" />
 			</div>
 		</div>

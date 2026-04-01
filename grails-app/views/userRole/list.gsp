@@ -28,12 +28,12 @@
 				<div id="list-userRole" class="content scaffold-list" role="main">
 					<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 					<g:if test="${flash.message}">
-						<div class="message" role="status">${flash.message}</div>
+						<div class="alert alert-info" role="status">${flash.message}</div>
 					</g:if>
-					<table class="table table-bordered table-striped table-condensed">
+					<table class="table table-bordered table-striped">
 						<thead>
 						<tr>
-							<th><g:message code="userRole.user.label" default="ID" /></th>
+							<th><g:message code="userRole.id.label" default="ID" /></th>
 							<th><g:message code="userRole.user.label" default="User" /></th>
 							<th><g:message code="userRole.role.label" default="Role" /></th>
 						</tr>
@@ -55,7 +55,7 @@
 						</g:each>
 						</tbody>
 					</table>
-					<div class="text-center">
+					<div class="d-flex justify-content-center">
 						<hf:paginate total="${userRoleInstanceTotal}" params="${params}"/>
 					</div>
 				</div>

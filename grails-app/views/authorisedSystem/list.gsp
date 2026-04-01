@@ -21,30 +21,31 @@
 		<g:set var="entityName" value="${message(code: 'authorisedSystem.label', default: 'AuthorisedSystem')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
         <meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},Administration" />
+        <asset:stylesheet src="application.css" />
 	</head>
 	<body>
 		<div id="list-authorisedSystem" class="content scaffold-list" role="main">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
+			<div class="alert alert-info" role="status">${flash.message}</div>
 			</g:if>
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-md-8">
-                    <div class="pull-right">
-                        <div class="form-inline" style="margin-bottom: 10px">
+                    <div class="d-flex justify-content-end">
+                        <div class="mb-3">
                             <g:link class="btn btn-primary" action="create"><i class="fa fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></g:link>
-                            <div class="form-group">
-                                <label class="sr-only" for="q">Query</label>
+                            <div class="mb-3" style="display: inline-block;">
+                                <label class="visually-hidden" for="q">Query</label>
                                 <g:textField name="q" class="form-control" value="${params.q}" />
                             </div>
-                            <button type="button" class="btn btn-default" id="btnSearch">Search</button>
+                            <button type="button" class="btn btn-outline-dark" id="btnSearch">Search</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-8">
-                    <table class="table table-bordered table-striped table-condensed">
+                    <table class="table table-bordered table-striped table-sm align-middle">
                         <thead>
                             <tr>
                                 <g:sortableColumn property="host" title="${message(code: 'authorisedSystem.host.label', default: 'Host')}" />
@@ -60,18 +61,18 @@
                                 <td><div class="hostname" host="${authorisedSystemInstance.host}"><i class="fa fa-cog fa-spin"></i></div></td>
                                 <td>${authorisedSystemInstance.description}</td>
                                 <td>
-                                    <a href="${createLink(action:'edit', id:authorisedSystemInstance.id)}" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-edit"></i></a>
+                                    <a href="${createLink(action:'edit', id:authorisedSystemInstance.id)}" class="btn btn-outline-dark btn-sm"><i class="fa fa-edit"></i></a>
                                 </td>
                             </tr>
                         </g:each>
                         </tbody>
                     </table>
-                    <div class="text-center">
+                    <div class="d-flex justify-content-center">
                         <hf:paginate total="${authorisedSystemInstanceTotal}" params="${params}" />
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="well">
+                    <div class="alert alert-well">
                         This is a list of IP address that can access the web services providing user information.
                         Requests from IP addresses not listed here will get a HTTP 403 Forbidden response.
                     </div>
@@ -105,7 +106,7 @@
             var target = $(this); // create a copy of current scope
             if (host) {
                 $.ajax("${createLink(action:'ajaxResolveHostName')}?host=" + host).done(function(results) {
-                    var iconClass= results.reachable ? "glyphicon glyphicon-ok" : "glyphicon glyphicon-warning-sign";
+                    var iconClass= results.reachable ? "fa fa-check" : "fa fa-exclamation-triangle";
                     var tooltip = results.reachable ? "Host is reachable" : "Host is not currently reachable";
                     target.html(results.hostname + "&nbsp;<i title='" + tooltip + "' class='" +  iconClass + "'></i>");
                 });

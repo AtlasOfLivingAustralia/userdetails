@@ -25,7 +25,7 @@
     <h1><g:message code="account.disabled.successfully" /></h1>
     <div class="row">
         <div class="col-md-12">
-            <p class="well">
+            <p class="alert alert-danger">
                 <g:message code="account.disabled.description" />
             </p>
         </div>

@@ -1,6 +1,6 @@
 <%@ page import="au.org.ala.userdetails.AuthorisedSystem" %>
 
-<div class="form-group fieldcontain ${hasErrors(bean: authorisedSystemInstance, field: 'host', 'error')} ">
+<div class="mb-3 fieldcontain ${hasErrors(bean: authorisedSystemInstance, field: 'host', 'error')} ">
 	<label for="host">
 		<g:message code="authorisedSystem.host.label" default="Host" />
 		
@@ -8,7 +8,7 @@
 	<g:textField class="form-control" name="host" value="${authorisedSystemInstance?.host}"/>
 </div>
 
-<div class="form-group fieldcontain ${hasErrors(bean: authorisedSystemInstance, field: 'description', 'error')} ">
+<div class="mb-3 fieldcontain ${hasErrors(bean: authorisedSystemInstance, field: 'description', 'error')} ">
 	<label for="description">
 		<g:message code="authorisedSystem.description.label" default="Description" />
 	</label>

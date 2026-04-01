@@ -21,7 +21,7 @@
     <asset:stylesheet src="application.css" />
 </head>
 <body>
-<div class="row">
+<div class="container">
     <h1>Flickr success</h1>
     <table class="table">
         <tr>

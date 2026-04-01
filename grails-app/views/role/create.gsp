@@ -26,7 +26,7 @@
         <asset:script type="text/javascript">
             $(function(){
                 $('#validation-container').validationEngine('attach', {scroll: false});
-                $("#saveRoleForm").submit(function() {
+                $("#saveRoleForm").submit(function(event) {
                    var valid = $('#validation-container').validationEngine('validate');
                    if(!valid) {
                      event.preventDefault();
@@ -41,10 +41,10 @@
 			<div id="create-role" class="content scaffold-create" role="main">
 				<h1><g:message code="default.create.label" args="[entityName]" /></h1>
 				<g:if test="${flash.message}">
-					<div class="message well warning text-danger" role="status">${flash.message}</div>
+					<div class="alert alert-info" role="status">${flash.message}</div>
 				</g:if>
 				<g:hasErrors bean="${roleInstance}">
-					<div class="well warning">
+					<div class="alert alert-danger">
 						<ul class="errors" role="alert">
 							<g:eachError bean="${roleInstance}" var="error">
 								<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>

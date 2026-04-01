@@ -28,19 +28,19 @@
         <div class="col-md-6">
 
             <g:if test="${captchaInvalid}">
-            <p class="well text-danger">
+            <p class="alert alert-danger">
                 <g:message code="forgotten.password.captcha.fail" />
             </p>
             </g:if>
 
             <g:form action="startPasswordReset" method="POST" onsubmit="submitResetBtn.disabled = true; return true;">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="email"><g:message code="forgotten.password.email" /></label>
                     <input id="email" name="email" type="text" class="form-control" value="${params.email ?: email}"/>
                 </div>
 
                 <img src="${createLink(controller: 'simpleCaptcha', action: 'captcha')}"/>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="captcha"><g:message code="forgotten.password.captcha" /></label>
                     <g:textField name="captcha" class="form-control"/>
                 </div>
@@ -50,7 +50,7 @@
             </g:form>
         </div>
         <div class="col-md-6">
-            <p class="well">
+            <p class="alert alert-well">
                 <g:message code="forgotten.password.description.send.pass" />
                 <br/>
                 <g:message code="forgotten.password..valid.hours" />

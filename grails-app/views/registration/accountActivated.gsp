@@ -28,7 +28,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="well well-lg">
+            <div class="alert alert-well">
                 <g:message code="account.activated.thank.you.for.registering" args="[grailsApplication.config.getProperty('skin.orgNameLong')]" />
                 <br/>
                 <g:message code="account.activated.if.you.have.any.problems" args="[grailsApplication.config.getProperty('supportEmail')]" />

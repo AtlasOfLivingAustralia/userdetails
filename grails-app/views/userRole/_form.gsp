@@ -2,7 +2,7 @@
 
 
 
-<div class="form-group fieldcontain ${hasErrors(bean: userRoleInstance, field: 'role', 'error')} required">
+<div class="mb-3 fieldcontain ${hasErrors(bean: userRoleInstance, field: 'role', 'error')} required">
 	<label for="role">
 		<g:message code="userRole.role.label" default="Role" />
 		<span class="required-indicator">*</span>
@@ -10,7 +10,7 @@
 	<g:select id="role" name="role.id" from="${au.org.ala.userdetails.Role.list()}" optionKey="id" required="" value="${userRoleInstance?.role?.id}" class="form-control many-to-one"/>
 </div>
 
-<div class="form-group fieldcontain ${hasErrors(bean: userRoleInstance, field: 'user', 'error')} required">
+<div class="mb-3 fieldcontain ${hasErrors(bean: userRoleInstance, field: 'user', 'error')} required">
 	<label for="user">
 		<g:message code="userRole.user.label" default="User" />
 		<span class="required-indicator">*</span>

@@ -17,33 +17,33 @@
 
 <div class="row">
     <div class="col-md-6">
-        <div class="form-group fieldcontain ${hasErrors(bean: userInstance, field: 'firstName', 'error')} ">
+        <div class="mb-3 fieldcontain ${hasErrors(bean: userInstance, field: 'firstName', 'error')} ">
             <label for="firstName">
                 <g:message code="user.firstName.label" default="First Name"/>
             </label>
             <g:textField name="firstName" class="form-control" value="${userInstance?.firstName}"/>
         </div>
 
-        <div class="form-group fieldcontain ${hasErrors(bean: userInstance, field: 'lastName', 'error')} ">
+        <div class="mb-3 fieldcontain ${hasErrors(bean: userInstance, field: 'lastName', 'error')} ">
             <label for="lastName">
                 <g:message code="user.lastName.label" default="Last Name"/>
             </label>
             <g:textField name="lastName" class="form-control" value="${userInstance?.lastName}"/>
         </div>
 
-        <div class="form-group fieldcontain ${hasErrors(bean: userInstance, field: 'email', 'error')} ">
+        <div class="mb-3 fieldcontain ${hasErrors(bean: userInstance, field: 'email', 'error')} ">
             <label for="email">
                 <g:message code="user.email.label" default="Email"/>
             </label>
             <g:textField name="email" class="form-control" value="${userInstance?.email}"/>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
             <label for="organisation"><g:message code="create.account.organisation" /></label>
             <input id="organisation" name="organisation" type="text" class="form-control" value="${props?.organisation}"/>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
             <label for="country"><g:message code="create.account.country" /></label>
             <g:select id="country" name="country"
                       class="form-control chosen-select"
@@ -55,7 +55,7 @@
             />
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
             <label for="state"><g:message code="create.account.state.province" /></label>
             <g:select id="state" name="state"
                       class="form-control chosen-select"
@@ -67,15 +67,15 @@
             />
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
             <label for="city"><g:message code="create.account.city" /></label>
             <input id="city" name="city" type="text" class="form-control" value="${props?.city}" />
         </div>
 
 </div>
-<div class="col-md-6 well well-lg">
+<div class="col-md-6 alert alert-well">
     <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'activated', 'error')} ">
-        <div class="checkbox">
+        <div class="checkbox ps-0">
             <label>
                 <g:checkBox name="activated" value="${userInstance?.activated}"/> <g:message code="user.form.activated" />
             </label>
@@ -83,7 +83,7 @@
     </div>
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'locked', 'error')} ">
-    <div class="checkbox">
+    <div class="checkbox ps-0">
         <label>
             <g:checkBox name="locked" value="${userInstance?.locked}"/> <g:message code="user.form.locked" />
         </label>
@@ -116,7 +116,7 @@
     </table>
 
     <g:link controller="userRole" action="create"
-            class="btn btn-default"
+            class="btn btn-outline-dark"
                     params="['user.id': userInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'userRole.label', default: 'UserRole')])}</g:link>
 
 </div>

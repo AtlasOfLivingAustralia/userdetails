@@ -67,12 +67,12 @@
             <input id="authKey" type="hidden" name="authKey" value="${authKey}"/>
             <input id="userId" type="hidden" name="userId" value="${user.id}"/>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="password">Your new password</label>
                 <input id="password" type="password" class="form-control" name="password" value=""/>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="reenteredPassword"><g:message code="password.reset.re.enter.password" /></label>
                 <input id="reenteredPassword" type="password" class="form-control" name="reenteredPassword" value=""/>
             </div>

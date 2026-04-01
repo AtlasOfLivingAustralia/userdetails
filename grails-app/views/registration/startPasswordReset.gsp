@@ -25,7 +25,7 @@
     <h1><g:message code="start.password.reset.header" /></h1>
     <div class="row">
         <div class="col-md-12">
-            <p class="well">
+            <p class="alert alert-well">
                 <g:message code="start.password.reset.description" args="[params.email]" />
                 <br/>
                 <g:message code="start.password.reset.description.click" />

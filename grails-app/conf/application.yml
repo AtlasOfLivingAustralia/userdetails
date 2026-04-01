@@ -403,3 +403,6 @@ myProfile:
   useDigiVol: true
   useSandbox: true
   useBiocollect: true
+headerAndFooter:
+  baseURL: https://www.test.ala.org.au/commonui-bs5-2019
+  version: 2

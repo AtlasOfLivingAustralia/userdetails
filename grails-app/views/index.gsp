@@ -27,7 +27,7 @@
         <g:if test="${flash.errorMessage || flash.message}">
             <div class="col-md-12">
                 <div class="alert alert-danger">
-                    <button class="close" onclick="$('.alert').fadeOut();" href="#">×</button>
+                    <button class="btn-close" data-bs-dismiss="alert" onclick="$('.alert').fadeOut();" href="#">×</button>
                     ${flash.errorMessage?:flash.message}
                 </div>
             </div>
@@ -42,8 +42,8 @@
 
     </div>
     <auth:ifAllGranted roles="ROLE_ADMIN">
-        <div style="color:white;" class="pull-right">
-            <g:link style="color:#DDDDDD; font-weight:bold;" controller="admin"><g:message code="userdetails.index.admin.tools" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></g:link>
+        <div class="col-md-12 text-end mt-3">
+            <g:link class="fw-bold text-decoration-none" style="color:#DDDDDD;" controller="admin"><g:message code="userdetails.index.admin.tools" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></g:link>
         </div>
     </auth:ifAllGranted>
 </div>

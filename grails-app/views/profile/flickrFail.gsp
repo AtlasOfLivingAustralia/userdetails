@@ -21,9 +21,9 @@
     <asset:stylesheet src="application.css" />
 </head>
 <body>
-<div class="row">
+<div class="container">
     <h1><g:message code="flickr.fail.link.failed" /></h1>
-    <p class="well text-danger">
+    <p class="alert alert-danger">
         <g:message code="flickr.fail.description" args="[grailsApplication.config.getProperty('supportEmail')]" />
     </p>
 </div>

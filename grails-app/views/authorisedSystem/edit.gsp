@@ -25,11 +25,11 @@
 	</head>
 	<body>
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-12 col-sm-8">
 				<div id="edit-authorisedSystem" class="content scaffold-edit" role="main">
 					<h1><g:message code="default.edit.label" args="[entityName]" /></h1>
 					<g:if test="${flash.message}">
-						<div class="message" role="status">${flash.message}</div>
+						<div class="alert alert-info" role="status">${flash.message}</div>
 					</g:if>
 					<g:hasErrors bean="${authorisedSystemInstance}">
 						<ul class="errors" role="alert">

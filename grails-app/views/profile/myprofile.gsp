@@ -33,9 +33,9 @@
             <div class="row">
                 <!-- Column 1 -->
                 <div class="col-lg-4">
-                    <div class="d-flex">
-                        <div class="image">
-                            <i class="glyphicon glyphicon-user"></i>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fa fa-user fs-2"></i>
                         </div>
                         <div class="content">
                             <h4 id="update-your-details">
@@ -46,9 +46,9 @@
                             <p><g:message code="myprofile.update.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <i class="glyphicon glyphicon-lock"></i>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fa fa-lock fs-2"></i>
                         </div>
                         <div class="content">
                             <h4 id="reset-your-password">
@@ -61,9 +61,9 @@
                     </div>
 
                     <g:if test="${isAdmin || isBiosecurityAdmin}">
-                        <div class="d-flex">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-cog"></i>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fa fa-cog fs-2"></i>
                             </div>
                             <div class="content">
                                 <h4 id="admin-tools">
@@ -79,9 +79,9 @@
 
                 <!-- Column 2 -->
                 <div class="col-lg-4">
-                    <div class="d-flex">
-                        <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.downloads')}" alt="">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                                <img src="${grailsApplication.config.getProperty('logo.downloads')}" alt="" height="40">
                         </div>
                         <div class="content">
                             <h4 id="your-doi">
@@ -92,9 +92,9 @@
                             <p><g:message code="myprofile.your.downloads.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <img src="${grailsApplication.config.getProperty('logo.specieslists')}" alt="">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <img src="${grailsApplication.config.getProperty('logo.specieslists')}" alt="" height="40">
                         </div>
                         <div class="content">
                             <h4 id="species-lists">
@@ -105,9 +105,9 @@
                             <p><g:message code="myprofile.uploaded.species.lists.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="image">
-                            <i class="glyphicon glyphicon-pencil"></i>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fa fa-pencil fs-2"></i>
                         </div>
                         <div class="content">
                             <h4 id="records-annotated">
@@ -119,9 +119,9 @@
                         </div>
                     </div>
                     <g:if test="${Holders.config.getProperty('myProfile.useSandbox', Boolean, true)}">
-                        <div class="d-flex">
-                            <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.sandbox')}" alt="">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <img src="${grailsApplication.config.getProperty('logo.sandbox')}" alt="" height="40">
                             </div>
                             <div class="content">
                                 <h4 id="records-uploaded">
@@ -137,9 +137,9 @@
 
                 <!-- Column 3 -->
                 <div class="col-lg-4">
-                    <div class="d-flex">
-                        <div class="image">
-                            <i class="glyphicon glyphicon-envelope"></i>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fa fa-envelope fs-2"></i>
                         </div>
                         <div class="content">
                             <h4 id="my-alerts">
@@ -151,9 +151,9 @@
                         </div>
                     </div>
                     <g:if test="${Holders.config.getProperty('myProfile.useBiocollect', Boolean, true)}">
-                        <div class="d-flex">
-                            <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.biocollect')}" alt="">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <img src="${grailsApplication.config.getProperty('logo.biocollect')}" alt="" height="40">
                             </div>
                             <div class="content">
                                 <h4 id="my-biocollect">
@@ -166,9 +166,9 @@
                         </div>
                     </g:if>
                     <g:if test="${Holders.config.getProperty('myProfile.useDigiVol', Boolean, true)}">
-                        <div class="d-flex">
-                            <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.digivol')}" alt="">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <img src="${grailsApplication.config.getProperty('logo.digivol')}" alt="" height="40">
                             </div>
                             <div class="content">
                                 <h4 id="record-a-sighting">
@@ -180,9 +180,9 @@
                             </div>
                         </div>
                     </g:if>
-                    <div class="d-flex">
-                        <div class="image">
-                            <img src="${grailsApplication.config.getProperty('logo.spatialportal')}" alt="">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <img src="${grailsApplication.config.getProperty('logo.spatialportal')}" alt="" height="40">
                         </div>
                         <div class="content">
                             <h4 id="spatial-portal">
@@ -197,39 +197,41 @@
             </div>
         </div>
         <g:if test="${Holders.config.getProperty('oauth.providers.inaturalist.enabled', Boolean, false) || Holders.config.getProperty('oauth.providers.flickr.enabled', Boolean, true) }">
-            <h3><g:message code="myprofile.external.site.linkages" /></h3>
+            <h3 class="pb-2"><g:message code="myprofile.external.site.linkages" /></h3>
         </g:if>
 
         <div id="external-linkages" class="row">
 
             <g:if test="${Holders.config.getProperty('oauth.providers.inaturalist.enabled', Boolean, false)}">
                 <div class="col-lg-6">
-                    <div class=" well well-small">
-                        <div class="d-flex">
-                            <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.inaturalist')}">
-                            </div>
-                            <div class="content">
-                                <h4>${grailsApplication.config.getProperty('inaturalist.name')}</h4>
-                                <g:if test="${props.inaturalistId}">
-                                    <strong><g:message code="myprofile.inat.you.have.connected.with.user" args="[grailsApplication.config.getProperty('inaturalist.name')]" />
-                                    <u:link baseProperty="inaturalist.baseUrl" paths="['people', props.inaturalistId]">${props.inaturalistUsername}</u:link>
-                                    </strong>
-                                    <ul>
-                                        <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery"), fq: "alau_user_id:${props.inaturalistUsername}"]'>View my iNaturalist observations in ${grailsApplication.config.getProperty('skin.orgNameShort')}</u:link></li>
-                                        <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery") + " OR " + grailsApplication.config.getProperty("inaturalist.sightingsSearchQuery"), fq: "alau_user_id:${props.inaturalistUsername} OR alau_user_id:\"${user.id}\""]'>View my iNaturalist observations and my ${grailsApplication.config.skin.orgNameShort} Sightings in ${grailsApplication.config.skin.orgNameShort}</u:link></li>
-                                    </ul>
-                                    <g:link controller="profile" class="btn btn-default" action="removeLink" params="[provider: 'inaturalist']"><g:message code="myprofile.remove.link.to.inaturalist" /></g:link>
-                                </g:if>
-                                <g:else>
-                                    <p>
-                                        <g:message code="myprofile.inaturalists.link.description" args="[grailsApplication.config.getProperty('skin.orgNameShort'), grailsApplication.config.getProperty('skin.orgNameShort')]" />
-                                    </p>
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3 pt-3">
+                                    <img src="${grailsApplication.config.getProperty('logo.inaturalist')}" height="30">
+                                </div>
+                                <div class="content">
+                                    <h4>${grailsApplication.config.getProperty('inaturalist.name')}</h4>
+                                    <g:if test="${props.inaturalistId}">
+                                        <strong><g:message code="myprofile.inat.you.have.connected.with.user" args="[grailsApplication.config.getProperty('inaturalist.name')]" />
+                                        <u:link baseProperty="inaturalist.baseUrl" paths="['people', props.inaturalistId]">${props.inaturalistUsername}</u:link>
+                                        </strong>
+                                        <ul>
+                                            <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery"), fq: "alau_user_id:${props.inaturalistUsername}"]'>View my iNaturalist observations in ${grailsApplication.config.getProperty('skin.orgNameShort')}</u:link></li>
+                                            <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery") + " OR " + grailsApplication.config.getProperty("inaturalist.sightingsSearchQuery"), fq: "alau_user_id:${props.inaturalistUsername} OR alau_user_id:\"${user.id}\""]'>View my iNaturalist observations and my ${grailsApplication.config.skin.orgNameShort} Sightings in ${grailsApplication.config.skin.orgNameShort}</u:link></li>
+                                        </ul>
+                                        <g:link controller="profile" class="btn btn-outline-dark" action="removeLink" params="[provider: 'inaturalist']"><g:message code="myprofile.remove.link.to.inaturalist" /></g:link>
+                                    </g:if>
+                                    <g:else>
+                                        <p>
+                                            <g:message code="myprofile.inaturalists.link.description" args="[grailsApplication.config.getProperty('skin.orgNameShort'), grailsApplication.config.getProperty('skin.orgNameShort')]" />
+                                        </p>
 
-                                    <span class="btn btn-default">
-                                        <oauth:connect provider="inaturalist"><g:message code="myprofile.link.to.my.inaturalist" /></oauth:connect>
-                                    </span>
-                                </g:else>
+                                        <span class="btn btn-outline-dark">
+                                            <oauth:connect provider="inaturalist"><g:message code="myprofile.link.to.my.inaturalist" /></oauth:connect>
+                                        </span>
+                                    </g:else>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -238,32 +240,34 @@
 
             <g:if test="${Holders.config.getProperty('oauth.providers.flickr.enabled', Boolean, true)}">
                 <div class="col-lg-6">
-                    <div class=" well well-small">
-                        <div class="d-flex">
-                            <div class="image">
-                                <img src="${grailsApplication.config.getProperty('logo.flickr')}">
-                            </div>
-                            <div class="content">
-                                <h4><g:message code="myprofile.flickr.title" /></h4>
-                                <g:if test="${props.flickrUsername}">
-                                    <strong>
-                                        <g:message code="myprofile.flickr.connected" args="[props.flickrId, props.flickrUsername]" />
-                                    </strong>
-                                    <p>
-                                        <g:message code="myprofile.linking.with.flickr.enables.images" />
-                                        <a href="http://www.flickr.com/groups/encyclopedia_of_life/"><g:message code="myprofile.flickr.eol.group" /></a>
-                                        <g:message code="myprofile.to.be.linked.to.your.atlas" />
-                                    </p>
-                                    <g:link controller="profile" class="btn btn-default" action="removeLink" params="[provider: 'flickr']"><g:message code="myprofile.remove.link.to.flickr.account" /></g:link>
-                                </g:if>
-                                <g:else>
-                                    <p>
-                                        <g:message code="myprofile.flicker.link.description" />
-                                    </p>
-                                    <span class="btn btn-default">
-                                        <oauth:connect provider="flickr"><g:message code="myprofile.link.to.my.flickr.account" /></oauth:connect>
-                                    </span>
-                                </g:else>
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3 pt-3">
+                                    <img src="${grailsApplication.config.getProperty('logo.flickr')}" height="40">
+                                </div>
+                                <div class="content">
+                                    <h4><g:message code="myprofile.flickr.title" /></h4>
+                                    <g:if test="${props.flickrUsername}">
+                                        <strong>
+                                            <g:message code="myprofile.flickr.connected" args="[props.flickrId, props.flickrUsername]" />
+                                        </strong>
+                                        <p>
+                                            <g:message code="myprofile.linking.with.flickr.enables.images" />
+                                            <a href="http://www.flickr.com/groups/encyclopedia_of_life/"><g:message code="myprofile.flickr.eol.group" /></a>
+                                            <g:message code="myprofile.to.be.linked.to.your.atlas" />
+                                        </p>
+                                        <g:link controller="profile" class="btn btn-outline-dark" action="removeLink" params="[provider: 'flickr']"><g:message code="myprofile.remove.link.to.flickr.account" /></g:link>
+                                    </g:if>
+                                    <g:else>
+                                        <p>
+                                            <g:message code="myprofile.flicker.link.description" />
+                                        </p>
+                                        <span class="btn btn-outline-dark">
+                                            <oauth:connect provider="flickr"><g:message code="myprofile.link.to.my.flickr.account" /></oauth:connect>
+                                        </span>
+                                    </g:else>
+                                </div>
                             </div>
                         </div>
                     </div>
