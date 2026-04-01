@@ -25,7 +25,7 @@
 	<asset:stylesheet src="application.css" />
 </head>
 <body>
-<div id="list-role" class="content container-fluid content scaffold-list" role="main">
+<div id="list-role" class="content container-fluid scaffold-list" role="main">
 	<div class="row align-items-center">
 		<div class="col-sm-4">
 			<h1><g:message code="default.list.label" args="[entityName]" /></h1>

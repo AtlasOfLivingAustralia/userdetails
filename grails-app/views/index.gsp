@@ -27,7 +27,7 @@
         <g:if test="${flash.errorMessage || flash.message}">
             <div class="col-md-12">
                 <div class="alert alert-danger">
-                    <button class="btn-close" data-bs-dismiss="alert" onclick="$('.alert').fadeOut();" href="#">×</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     ${flash.errorMessage?:flash.message}
                 </div>
             </div>
