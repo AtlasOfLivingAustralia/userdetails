@@ -208,7 +208,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-start">
                                 <div class="me-3 pt-3">
-                                    <img src="${grailsApplication.config.getProperty('logo.inaturalist')}" height="30">
+                                    <img src="${grailsApplication.config.getProperty('logo.inaturalist')}" alt="" height="30">
                                 </div>
                                 <div class="content">
                                     <h4>${grailsApplication.config.getProperty('inaturalist.name')}</h4>
@@ -244,7 +244,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-start">
                                 <div class="me-3 pt-3">
-                                    <img src="${grailsApplication.config.getProperty('logo.flickr')}" height="40">
+                                    <img src="${grailsApplication.config.getProperty('logo.flickr')}" alt="" height="40">
                                 </div>
                                 <div class="content">
                                     <h4><g:message code="myprofile.flickr.title" /></h4>

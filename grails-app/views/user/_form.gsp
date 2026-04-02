@@ -75,16 +75,16 @@
 </div>
 <div class="col-md-6 alert alert-well">
     <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'activated', 'error')} ">
-        <div class="checkbox ps-0">
-            <label>
+        <div class="form-check ps-0">
+            <label class="form-check-label">
                 <g:checkBox name="activated" value="${userInstance?.activated}"/> <g:message code="user.form.activated" />
             </label>
         </div>
     </div>
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'locked', 'error')} ">
-    <div class="checkbox ps-0">
-        <label>
+    <div class="form-check ps-0">
+        <label class="form-check-label">
             <g:checkBox name="locked" value="${userInstance?.locked}"/> <g:message code="user.form.locked" />
         </label>
     </div>

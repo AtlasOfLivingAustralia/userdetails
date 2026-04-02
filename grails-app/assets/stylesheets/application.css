@@ -195,7 +195,7 @@ label {
     font-weight: 700;
 }
 
-label:has(input[type="checkbox"]) {
+.form-check-label {
     font-weight: 400;
 }
 

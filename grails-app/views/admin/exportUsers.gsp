@@ -60,7 +60,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <g:checkBox name="includeInactiveUsers" class="form-check-input" id="includeInactiveUsers"/>
-                        <label class="form-check-label fw-normal" for="includeInactiveUsers">
+                        <label class="form-check-label" for="includeInactiveUsers">
                             Include inactive users
                         </label>
                     </div>
@@ -68,7 +68,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <g:checkBox name="includeExtraFields" class="form-check-input" id="includeExtraFields"/>
-                        <label class="form-check-label fw-normal" for="includeExtraFields">
+                        <label class="form-check-label" for="includeExtraFields">
                             Include extra data fields (e.g. organisation, city, state, country, etc)
                         </label>
                     </div>
@@ -76,7 +76,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <g:checkBox name="includeRoles" class="form-check-input" id="includeRoles"/>
-                        <label class="form-check-label fw-normal" for="includeRoles">
+                        <label class="form-check-label" for="includeRoles">
                             Include roles field
                         </label>
                     </div>
