@@ -270,7 +270,7 @@ sightings:
   url: https://biocollect.ala.org.au/spotter
 
 myData:
-  url: https://sandbox.ala.org.au/tempDataResource/myData
+  url: https://spatial.ala.org.au/?tool=addPoints
 
 biocollect:
   url: https://biocollect.ala.org.au/acsa/bioActivity/list?hub=acsa

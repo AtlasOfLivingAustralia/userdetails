@@ -158,7 +158,7 @@ biocache:
   myDownloads:
     url: "https://biocache.ala.org.au/download/myDownloads/"
 myData:
-  url: "https://sandbox.ala.org.au/tempDataResource/myData"
+  url: "https://spatial.ala.org.au/?tool=addPoints"
 alerts:
   url: "https://alerts.ala.org.au"
 ala:
