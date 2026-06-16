@@ -22,18 +22,14 @@ import au.org.ala.userdetails.IPasswordOperations
 import au.org.ala.userdetails.IUserService
 import au.org.ala.userdetails.LocationService
 import au.org.ala.userdetails.PasswordService
-import au.org.ala.userdetails.secrets.DefaultRandomStringGenerator
 import au.org.ala.userdetails.secrets.RandomStringGenerator
 import au.org.ala.web.AuthService
 import au.org.ala.ws.service.WebService
-import com.amazonaws.auth.AWSCredentials
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.auth.BasicSessionCredentials
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
-import com.amazonaws.services.apigateway.AmazonApiGateway
-import com.amazonaws.services.apigateway.AmazonApiGatewayClientBuilder
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
@@ -69,37 +65,35 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean
-    AWSCredentialsProvider awsCredentialsProvider() {
+    AwsCredentialsProvider awsCredentialsProvider() {
 
         String accessKey = grailsApplication.config.getProperty('apigateway.accessKey')
         String secretKey = grailsApplication.config.getProperty('apigateway.secretKey')
         String sessionToken = grailsApplication.config.getProperty('apigateway.sessionToken')
 
-        AWSCredentialsProvider credentialsProvider
         if (accessKey && secretKey) {
-            AWSCredentials credentials
             if (sessionToken) {
-                credentials = new BasicSessionCredentials(accessKey, secretKey, sessionToken)
-            } else {
-                credentials = new BasicAWSCredentials(accessKey, secretKey)
+                return StaticCredentialsProvider.create(
+                        AwsSessionCredentials.create(accessKey, secretKey, sessionToken)
+                )
             }
-            credentialsProvider = new AWSStaticCredentialsProvider(credentials)
-        } else {
-            credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
+
+            return StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(accessKey, secretKey)
+            )
         }
-        return credentialsProvider
+
+        return DefaultCredentialsProvider.builder().build()
     }
 
 //    @Bean
-//    AmazonApiGateway gatewayIdpClient(AWSCredentialsProvider awsCredentialsProvider) {
+//    ApiGatewayClient gatewayIdpClient(ApiGatewayClient awsCredentialsProvider) {
 //        def region = grailsApplication.config.getProperty('apigateway.region')
 //
-//        AmazonApiGateway gatewayIdp = AmazonApiGatewayClientBuilder.standard()
-//                .withRegion(region)
-//                .withCredentials(awsCredentialsProvider)
-//                .build()
-//
-//        return gatewayIdp
+//        return ApiGatewayClient.builder()
+//               .region(Region.of(region))
+//               .credentialsProvider(awsCredentialsProvider)
+//               .build()
 //    }
 
     @Bean('userService')

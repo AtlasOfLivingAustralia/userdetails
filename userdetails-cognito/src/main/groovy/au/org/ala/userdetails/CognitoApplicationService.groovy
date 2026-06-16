@@ -1,79 +1,82 @@
 package au.org.ala.userdetails
 
-import com.amazonaws.AmazonWebServiceResult
-import com.amazonaws.ResponseMetadata
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider
-import com.amazonaws.services.cognitoidp.model.CreateUserPoolClientRequest
-import com.amazonaws.services.cognitoidp.model.CreateUserPoolClientResult
-import com.amazonaws.services.cognitoidp.model.DeleteUserPoolClientRequest
-import com.amazonaws.services.cognitoidp.model.DescribeUserPoolClientRequest
-import com.amazonaws.services.cognitoidp.model.UpdateUserPoolClientRequest
-import com.amazonaws.services.cognitoidp.model.UserPoolClientType
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest
-import com.amazonaws.services.dynamodbv2.model.QueryRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
+import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolClientRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolClientResponse
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DeleteUserPoolClientRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUserPoolClientRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.ExplicitAuthFlowsType
+import software.amazon.awssdk.services.cognitoidentityprovider.model.OAuthFlowType
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UpdateUserPoolClientRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolClientType
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import groovy.util.logging.Slf4j
 
 @Slf4j
 class CognitoApplicationService implements IApplicationService {
 
     IUserService userService
-    AWSCognitoIdentityProvider cognitoIdp
+    CognitoIdentityProviderClient cognitoIdp
     String poolId
 
 //    Config config
     List<String> supportedIdentityProviders
-    List<String> authFlows
+    List<ExplicitAuthFlowsType> authFlows
     List<String> clientScopes
     List<String> galahCallbackURLs
     List<String> tokensCallbackURLs
 
-    AmazonDynamoDB dynamoDB
+    DynamoDbClient dynamoDbClient
     String dynamoDBTable
     String dynamoDBPK
     String dynamoDBSK
 
     List<ApplicationRecord> listApplicationsForUser(String userId) {
-        def qr = new QueryRequest()
-                .withTableName(dynamoDBTable)
-                .withKeyConditionExpression("$dynamoDBPK = :userId")
-                .withExpressionAttributeValues([":userId": new AttributeValue(userId)])
-        def result = dynamoDB.query(qr)
+        def qr = QueryRequest.builder()
+                .tableName(dynamoDBTable)
+                .keyConditionExpression("$dynamoDBPK = :userId")
+                .expressionAttributeValues([":userId": AttributeValue.builder().s(userId).build()])
+                .build() as QueryRequest
+        def result = dynamoDbClient.query(qr)
 
-        if (result.sdkHttpMetadata.httpStatusCode == 200) {
-            result.items.collect { itemToApplication(it) }
+        if (result.sdkHttpResponse().statusCode() == 200) {
+            result.items().collect { itemToApplication(it) }
         } else {
             throw new RuntimeException("Could not list clients for user $userId")
         }
     }
 
     private ApplicationRecord itemToApplication(item) {
-        def clientId = item.get(dynamoDBSK).getS()
+        def clientId = item.get(dynamoDBSK).s()
 
         def client = cognitoIdp.describeUserPoolClient(
-                new DescribeUserPoolClientRequest()
-                        .withUserPoolId(poolId)
-                        .withClientId(clientId)
+                DescribeUserPoolClientRequest.builder()
+                        .userPoolId(poolId)
+                        .clientId(clientId)
+                        .build() as DescribeUserPoolClientRequest
         )
-        userPoolClientToApplication(client.userPoolClient)
+        userPoolClientToApplication(client.userPoolClient())
     }
 
     private ApplicationRecord userPoolClientToApplication(UserPoolClientType userPoolClient) {
-        def name = userPoolClient.clientName
-        def clientId = userPoolClient.clientId
-        def secret = userPoolClient.clientSecret
-        def callbackUrls = userPoolClient.callbackURLs
-        def allowedFlows = userPoolClient.allowedOAuthFlows
-        userPoolClient.logoutURLs
-        userPoolClient.defaultRedirectURI
+        def name = userPoolClient.clientName()
+        def clientId = userPoolClient.clientId()
+        def secret = userPoolClient.clientSecret()
+        def callbackUrls = userPoolClient.callbackURLs()
+        def allowedFlows = userPoolClient.allowedOAuthFlows()
+        userPoolClient.logoutURLs()
+        userPoolClient.defaultRedirectURI()
 
         def type
-        if (allowedFlows.contains('client_credentials')) {
+        if (allowedFlows.contains(OAuthFlowType.CLIENT_CREDENTIALS)) {
             type = ApplicationType.M2M
-        } else if (allowedFlows.contains('code')) {
-            if (userPoolClient.clientSecret) {
+        } else if (allowedFlows.contains(OAuthFlowType.CODE)) {
+            if (userPoolClient.clientSecret()) {
                 type = ApplicationType.CONFIDENTIAL
             } else {
                 type = ApplicationType.PUBLIC
@@ -97,24 +100,34 @@ class CognitoApplicationService implements IApplicationService {
     }
 
     private def addClientIdForUser(String userId, String clientId) {
-        def putResponse = dynamoDB.putItem(
-                new PutItemRequest(dynamoDBTable, [(dynamoDBPK): new AttributeValue(userId), (dynamoDBSK): new AttributeValue(clientId)]))
-        if (putResponse.sdkHttpMetadata.httpStatusCode != 200) {
+        def putResponse = dynamoDbClient.putItem(
+                PutItemRequest.builder()
+                        .tableName(dynamoDBTable)
+                        .item([(dynamoDBPK): AttributeValue.builder().s(userId).build(), (dynamoDBSK): AttributeValue.builder().s(clientId).build()])
+                        .build() as PutItemRequest)
+        if (putResponse.sdkHttpResponse().statusCode() != 200) {
             throw new RuntimeException("Couldn't add mapping for $clientId to $userId")
         }
     }
 
     private def deleteClientIdForUser(String userId, String clientId) {
-        def deleteResponse = dynamoDB.deleteItem(
-                new DeleteItemRequest(dynamoDBTable, [(dynamoDBPK): new AttributeValue(userId), (dynamoDBSK): new AttributeValue(clientId)]))
-        if (deleteResponse.sdkHttpMetadata.httpStatusCode != 200) {
+        def deleteResponse = dynamoDbClient.deleteItem(
+                DeleteItemRequest.builder()
+                        .tableName(dynamoDBTable)
+                        .key([(dynamoDBPK): AttributeValue.builder().s(userId).build(), (dynamoDBSK): AttributeValue.builder().s(clientId).build()])
+                        .build() as DeleteItemRequest)
+        if (deleteResponse.sdkHttpResponse().statusCode() != 200) {
             throw new RuntimeException("Couldn't delete mapping for $clientId to $userId")
         }
     }
 
     private def getClientByUserIdAndClientId(String userId, String clientId) {
-        def result = dynamoDB.getItem(dynamoDBTable, [(dynamoDBPK): new AttributeValue(userId), (dynamoDBSK): new AttributeValue(clientId)])
-        return result.item
+        def result = dynamoDbClient.getItem(
+                GetItemRequest.builder()
+                        .tableName(dynamoDBTable)
+                        .key([(dynamoDBPK): AttributeValue.builder().s(userId).build(), (dynamoDBSK): AttributeValue.builder().s(clientId).build()])
+                        .build() as GetItemRequest)
+        return result.item()
     }
 
     private def isUserOwnsClientId(String userId, String clientId) {
@@ -123,45 +136,48 @@ class CognitoApplicationService implements IApplicationService {
 
     @Override
     ApplicationRecord generateClient(String userId, ApplicationRecord applicationRecord) {
-        CreateUserPoolClientRequest request =  new CreateUserPoolClientRequest().withUserPoolId(poolId)
-        request.clientName = applicationRecord.name
+        def requestBuilder = CreateUserPoolClientRequest.builder().userPoolId(poolId)
+        requestBuilder.clientName(applicationRecord.name)
         // TODO enable user consent
         if (applicationRecord.type == ApplicationType.M2M) {
-            request.generateSecret = true
-            request.allowedOAuthFlows = ["client_credentials"]
+            requestBuilder.generateSecret(true)
+            requestBuilder.allowedOAuthFlows([OAuthFlowType.CLIENT_CREDENTIALS])
         } else {
-            request.generateSecret = applicationRecord.type == ApplicationType.CONFIDENTIAL //do not need secret for public clients
-            request.allowedOAuthFlows = ["code"]
+            requestBuilder.generateSecret(applicationRecord.type == ApplicationType.CONFIDENTIAL) //do not need secret for public clients
+            requestBuilder.allowedOAuthFlows([OAuthFlowType.CODE])
         }
-        request.supportedIdentityProviders = new ArrayList<>(supportedIdentityProviders)
-        request.preventUserExistenceErrors = "ENABLED"
-        request.explicitAuthFlows = new ArrayList<>(authFlows)
-        request.allowedOAuthFlowsUserPoolClient = true
+        requestBuilder.supportedIdentityProviders(new ArrayList<>(supportedIdentityProviders))
+        requestBuilder.preventUserExistenceErrors("ENABLED")
+        requestBuilder.explicitAuthFlows(new ArrayList<>(authFlows))
+        requestBuilder.allowedOAuthFlowsUserPoolClient(true)
 
         def scopes = new ArrayList<>(clientScopes)
 
         if (scopes && applicationRecord.type != ApplicationType.M2M) {
-            request.allowedOAuthScopes = scopes
+            requestBuilder.allowedOAuthScopes(scopes)
         }
         if(applicationRecord.type == ApplicationType.M2M) {
-            request.allowedOAuthScopes = ["ala/attrs"]
+            requestBuilder.allowedOAuthScopes(["ala/attrs"])
         }
 
-        request.callbackURLs = new ArrayList<>(applicationRecord.callbacks.findAll{it != ""})
+        def callbackUrls = new ArrayList<>(applicationRecord.callbacks.findAll{it != ""})
         if (applicationRecord.type == ApplicationType.M2M) {
-            request.callbackURLs = null
+            callbackUrls = null
         }
         else if(applicationRecord.needTokenAppAsCallback) {
-            request.callbackURLs.addAll(tokensCallbackURLs)
+            callbackUrls.addAll(tokensCallbackURLs)
+        }
+        if (callbackUrls) {
+            requestBuilder.callbackURLs(callbackUrls)
         }
 
         try {
-            CreateUserPoolClientResult response = cognitoIdp.createUserPoolClient(request)
+            CreateUserPoolClientResponse response = cognitoIdp.createUserPoolClient(requestBuilder.build() as CreateUserPoolClientRequest)
 
             if (isSuccessful(response)) {
-                def clientId = response.userPoolClient.clientId
+                def clientId = response.userPoolClient().clientId()
                 addClientIdForUser(userId, clientId)
-                return userPoolClientToApplication(response.userPoolClient)
+                return userPoolClientToApplication(response.userPoolClient())
             } else {
                 throw new RuntimeException("Could not generate client")
             }
@@ -177,39 +193,43 @@ class CognitoApplicationService implements IApplicationService {
         if (!isUserOwnsClientId(userId, applicationRecord.clientId)) {
             throw new IllegalArgumentException("${applicationRecord.clientId} not found")
         }
-        def request = new UpdateUserPoolClientRequest().withUserPoolId(poolId)
-        request.withClientId(applicationRecord.clientId)
-        request.withClientName(applicationRecord.name)
-        request.supportedIdentityProviders = new ArrayList<>(supportedIdentityProviders)
-        request.preventUserExistenceErrors = "ENABLED"
-        request.explicitAuthFlows = new ArrayList<>(authFlows)
-        request.allowedOAuthFlowsUserPoolClient = true
+        def requestBuilder = UpdateUserPoolClientRequest.builder()
+                .userPoolId(poolId)
+                .clientId(applicationRecord.clientId)
+                .clientName(applicationRecord.name)
+        requestBuilder.supportedIdentityProviders(new ArrayList<>(supportedIdentityProviders))
+        requestBuilder.preventUserExistenceErrors("ENABLED")
+        requestBuilder.explicitAuthFlows(new ArrayList<>(authFlows))
+        requestBuilder.allowedOAuthFlowsUserPoolClient(true)
 
         if (applicationRecord.type == ApplicationType.M2M) {
-            request.allowedOAuthFlows = ["client_credentials"]
+            requestBuilder.allowedOAuthFlows([OAuthFlowType.CLIENT_CREDENTIALS])
         } else {
-            request.allowedOAuthFlows = ["code"]
+            requestBuilder.allowedOAuthFlows([OAuthFlowType.CODE])
         }
 
         def scopes = new ArrayList<>(clientScopes)
 
         if (scopes && applicationRecord.type != ApplicationType.M2M) {
-            request.allowedOAuthScopes = scopes
+            requestBuilder.allowedOAuthScopes(scopes)
         }
         if(applicationRecord.type == ApplicationType.M2M) {
-            request.allowedOAuthScopes = ["ala/attrs"]
+            requestBuilder.allowedOAuthScopes(["ala/attrs"])
         }
 
-        request.callbackURLs = new ArrayList<>(applicationRecord.callbacks.findAll{it != ""})
+        def callbackUrls = new ArrayList<>(applicationRecord.callbacks.findAll{it != ""})
         if (applicationRecord.type == ApplicationType.M2M) {
-            request.callbackURLs = null
+            callbackUrls = null
         }
         else if(applicationRecord.needTokenAppAsCallback) {
-            request.callbackURLs.addAll(tokensCallbackURLs)
+            callbackUrls.addAll(tokensCallbackURLs)
+        }
+        if (callbackUrls) {
+            requestBuilder.callbackURLs(callbackUrls)
         }
 
         try {
-            def response = cognitoIdp.updateUserPoolClient(request)
+            def response = cognitoIdp.updateUserPoolClient(requestBuilder.build() as UpdateUserPoolClientRequest)
             if (!isSuccessful(response)) {
                 throw new RuntimeException("Could not update client $applicationRecord.clientId")
             }
@@ -225,8 +245,8 @@ class CognitoApplicationService implements IApplicationService {
         return itemToApplication(getClientByUserIdAndClientId(userId, clientId))
     }
 
-    private static boolean isSuccessful(AmazonWebServiceResult<? extends ResponseMetadata> result) {
-        def code = result.sdkHttpMetadata.httpStatusCode
+    private static boolean isSuccessful(def result) {
+        def code = result.sdkHttpResponse().statusCode()
         return code >= 200 && code < 300
     }
 
@@ -235,7 +255,10 @@ class CognitoApplicationService implements IApplicationService {
         if (!isUserOwnsClientId(userId, clientId)) {
             throw new IllegalArgumentException("${clientId} not found")
         }
-        def request = new DeleteUserPoolClientRequest().withUserPoolId(poolId).withClientId(clientId)
+        def request = DeleteUserPoolClientRequest.builder()
+                .userPoolId(poolId)
+                .clientId(clientId)
+                .build() as DeleteUserPoolClientRequest
 
         def response = cognitoIdp.deleteUserPoolClient(request)
         if (!isSuccessful(response)) {
