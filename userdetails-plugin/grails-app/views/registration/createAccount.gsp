@@ -166,7 +166,7 @@
                     </p>
                     <div id="newEmailDiv">
                         <p id="newEmailMessage" hidden></p>
-                        <input id="newEmail" name="newEmail" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                        <input id="newEmail" name="newEmail" type="text" class="form-control w-100" style="max-width: 300px;" data-validation-engine="validate[required]"/>
                         <g:if test="${!grailsApplication.config.getProperty('userdetails.users.reactivation-allowed', boolean, true)}">
                             <button class="btn btn-outline-dark" id="updateEmail">Request Code</button>
                             <div id="emailCodeDiv" hidden="hidden">
@@ -427,7 +427,7 @@
                         document.getElementById("enableMFA").checked = true;
                     }
                      else{
-                         document.getElementById("message").textContent = result.error
+                         document.getElementById("message").textContent = "${message(code: 'invalid.mfa.code', default: 'The code entered does not match. Please check the code and try again.')}"
                          document.getElementById("message").style.color = "red"
                          document.getElementById("message").hidden = false
                      }

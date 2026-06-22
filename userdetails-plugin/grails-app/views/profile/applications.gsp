@@ -88,8 +88,8 @@
 
                                 <td>
 %{--                                    <button class="app-enable" data-id="${application.clientId}">Enable</button>--}%
-                                    <button class="app-edit" aria-label="View/Edit" data-id="${application.clientId}"><i class="fas fa-eye"></i></button>
-                                    <button class="app-delete" aria-label="Delete" data-id="${application.clientId}"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-outline-secondary btn-sm app-edit" aria-label="View/Edit" data-id="${application.clientId}"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-outline-secondary btn-sm app-delete" aria-label="Delete" data-id="${application.clientId}"><i class="fas fa-trash"></i></button>
                                     <g:set var="m2m" value="${!application?.type || application?.type == ApplicationType.M2M}" />
                                     <a href="${grailsApplication.config.getProperty('tokenApp.url')}?step=generation&client_id=${application.clientId}&client_secret=${application.secret}" target="_blank" style="${m2m ? 'display:none;' : ''}">Generate JWT</a>
                                 </td>
@@ -193,8 +193,8 @@
                     else if(data[i].type.name === "CONFIDENTIAL") type = "Confidential Client (Server-side Application)";
                     $tr.append($('<td></td>', {text: type}));
                     let $buttonsTd = $('<td></td>');
-                    $buttonsTd.append($('<button>', {class: 'app-edit', 'aria-label': 'View/Edit', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-eye'})));
-                    $buttonsTd.append($('<button>', {class: 'app-delete', 'aria-label': 'Delete', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-trash'})));
+                    $buttonsTd.append($('<button>', {class: 'btn btn-outline-secondary btn-sm app-edit', 'aria-label': 'View/Edit', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-eye'})));
+                    $buttonsTd.append($('<button>', {class: 'btn btn-outline-secondary btn-sm app-delete', 'aria-label': 'Delete', 'data-id': data[i].clientId}).append($('<i></i>', {class: 'fas fa-trash'})));
                     if(data[i].type.name !== "M2M"){
                         var url = "${grailsApplication.config.getProperty('tokenApp.url')}?step=generation&client_id=" + data[i].clientId + (data[i].secret ? "&client_secret=" + data[i].secret : "");
                         var createA = document.createElement('a');
