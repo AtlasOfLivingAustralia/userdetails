@@ -257,3 +257,11 @@ code {
     background-color: #f2f2f2;
     opacity: 1;
 }
+
+.profile-icon {
+    width: 60px;
+    flex: 0 0 60px;
+    margin-right: 1rem;
+    text-align: center;
+    margin-top: 10px;
+}

@@ -33,8 +33,8 @@
             <div class="row">
                 <!-- Column 1 -->
                 <div class="col-lg-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <i class="fas fa-user fs-2"></i>
                         </div>
                         <div class="content">
@@ -46,8 +46,8 @@
                             <p><g:message code="myprofile.update.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <i class="fas fa-lock fs-2"></i>
                         </div>
                         <div class="content">
@@ -61,8 +61,8 @@
                     </div>
 
                     <g:if test="${isAdmin || isBiosecurityAdmin}">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
+                        <div class="d-flex">
+                            <div class="profile-icon">
                                 <i class="fas fa-cog fs-2"></i>
                             </div>
                             <div class="content">
@@ -75,8 +75,8 @@
                             </div>
                         </div>
                     </g:if>
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <i class="fas fa-list-alt fs-2"></i>
                         </div>
                         <div class="content">
@@ -92,8 +92,8 @@
 
                 <!-- Column 2 -->
                 <div class="col-lg-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                                 <img src="${grailsApplication.config.getProperty('logo.downloads')}" alt="" height="40">
                         </div>
                         <div class="content">
@@ -105,8 +105,8 @@
                             <p><g:message code="myprofile.your.downloads.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <img src="${grailsApplication.config.getProperty('logo.specieslists')}" alt="" height="40">
                         </div>
                         <div class="content">
@@ -118,8 +118,8 @@
                             <p><g:message code="myprofile.uploaded.species.lists.desc" /></p>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <i class="fas fa-pencil fs-2"></i>
                         </div>
                         <div class="content">
@@ -132,8 +132,8 @@
                         </div>
                     </div>
                     <g:if test="${Holders.config.getProperty('myProfile.useSandbox', Boolean, true)}">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
+                        <div class="d-flex">
+                            <div class="profile-icon">
                                 <img src="${grailsApplication.config.getProperty('logo.sandbox')}" alt="" height="37">
                             </div>
                             <div class="content">
@@ -150,8 +150,8 @@
 
                 <!-- Column 3 -->
                 <div class="col-lg-4">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <i class="fas fa-envelope fs-2"></i>
                         </div>
                         <div class="content">
@@ -164,8 +164,8 @@
                         </div>
                     </div>
                     <g:if test="${Holders.config.getProperty('myProfile.useBiocollect', Boolean, true)}">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
+                        <div class="d-flex">
+                            <div class="profile-icon">
                                 <img src="${grailsApplication.config.getProperty('logo.biocollect')}" alt="" height="30">
                             </div>
                             <div class="content">
@@ -179,8 +179,8 @@
                         </div>
                     </g:if>
                     <g:if test="${Holders.config.getProperty('myProfile.useDigiVol', Boolean, true)}">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
+                        <div class="d-flex">
+                            <div class="profile-icon">
                                 <img src="${grailsApplication.config.getProperty('logo.digivol')}" alt="" height="30">
                             </div>
                             <div class="content">
@@ -193,8 +193,8 @@
                             </div>
                         </div>
                     </g:if>
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
+                    <div class="d-flex">
+                        <div class="profile-icon">
                             <img src="${grailsApplication.config.getProperty('logo.spatialportal')}" alt="" height="40">
                         </div>
                         <div class="content">
@@ -213,7 +213,7 @@
             <h3 class="pb-2"><g:message code="myprofile.external.site.linkages" /></h3>
         </g:if>
 
-        <div id="external-linkages" class="row">
+        <div id="external-linkages" class="row g-4">
 
             <g:if test="${Holders.config.getProperty('oauth.providers.inaturalist.enabled', Boolean, false)}">
                 <div class="col-lg-6">
