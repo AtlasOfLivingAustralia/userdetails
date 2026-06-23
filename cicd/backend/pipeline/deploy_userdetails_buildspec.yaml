@@ -30,10 +30,11 @@ phases:
                                         --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
       - cd helm
       - cat $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
+      - echo "Deploying image tag: $BUILD_IMAGE_TAG"
       - helm upgrade --install $IMAGE_NAME . 
                      -n $EKS_NAMESPACE
                      --set image.repository=$ECR_REPO 
-                     --set image.tag=$IMAGE_TAG 
+                     --set image.tag=$BUILD_IMAGE_TAG
                      --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
                      --set ingress.certificateArn=$SSL_CERTIFICATE
                      --set aws.resourceTags.environment=$ENVIRONMENT

@@ -260,6 +260,7 @@ Resources:
               Category: Build
               Version: 1
               Provider: CodeBuild
+            Namespace: BuildUserdetailsNS
             Configuration:
               ProjectName: !Ref BuildUserdetails
               EnvironmentVariables: !Sub |
@@ -292,6 +293,7 @@ Resources:
                   { "name":"HOSTED_ZONE", "value":"#{ExportConfigNS.HOSTED_ZONE}" },
                   { "name":"IMAGE_NAME", "value":"#{ExportConfigNS.IMAGE_NAME}" },
                   { "name":"IMAGE_TAG", "value":"#{ExportConfigNS.IMAGE_TAG}" },
+                  { "name":"BUILD_IMAGE_TAG", "value":"#{BuildUserdetailsNS.BUILD_IMAGE_TAG}" },
                   { "name":"PRODUCT_NAME", "value":"${pProductName}" },
                   { "name":"SERVICE_ACCOUNT_NAME", "value":"#{ExportConfigNS.SERVICE_ACCOUNT_NAME}" },
                   { "name":"SSL_CERTIFICATE", "value":"#{ExportConfigNS.SSL_CERTIFICATE}" },
