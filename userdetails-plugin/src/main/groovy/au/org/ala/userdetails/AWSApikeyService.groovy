@@ -1,17 +1,17 @@
 package au.org.ala.userdetails
 
-import com.amazonaws.services.apigateway.AmazonApiGateway
-import com.amazonaws.services.apigateway.model.CreateApiKeyRequest
-import com.amazonaws.services.apigateway.model.CreateUsagePlanKeyRequest
-import com.amazonaws.services.apigateway.model.GetApiKeysRequest
-import com.amazonaws.services.apigateway.model.GetApiKeysResult
+import software.amazon.awssdk.services.apigateway.ApiGatewayClient
+import software.amazon.awssdk.services.apigateway.model.CreateApiKeyRequest
+import software.amazon.awssdk.services.apigateway.model.CreateUsagePlanKeyRequest
+import software.amazon.awssdk.services.apigateway.model.GetApiKeysRequest
+import software.amazon.awssdk.services.apigateway.model.GetApiKeysResponse
 
 class AWSApikeyService implements IApikeyService {
 
-    AmazonApiGateway apiGatewayIdp
+    ApiGatewayClient apiGatewayIdp
     IUserService userService
 
-    AWSApikeyService(AmazonApiGateway apiGatewayIdp, IUserService userService) {
+    AWSApikeyService(ApiGatewayClient apiGatewayIdp, IUserService userService) {
         this.apiGatewayIdp = apiGatewayIdp
         this.userService = userService
     }
@@ -24,18 +24,20 @@ class AWSApikeyService implements IApikeyService {
 
         def currentUser = userService.currentUser
 
-        CreateApiKeyRequest request = new CreateApiKeyRequest()
-        request.enabled = true
-        request.customerId = currentUser.userId
-        request.name = "API key for user " + currentUser.userId
+        CreateApiKeyRequest request = CreateApiKeyRequest.builder()
+                .enabled(true)
+                .customerId(currentUser.userId)
+                .name("API key for user " + currentUser.userId)
+                .build() as CreateApiKeyRequest
         def response = apiGatewayIdp.createApiKey(request)
 
-        if (response.getSdkHttpMetadata().httpStatusCode == 201) {
+        if (response.sdkHttpResponse().statusCode() == 201) {
             //add api key to usage plan
-            CreateUsagePlanKeyRequest usagePlanKeyRequest = new CreateUsagePlanKeyRequest()
-            usagePlanKeyRequest.keyId = response.id
-            usagePlanKeyRequest.keyType = "API_KEY"
-            usagePlanKeyRequest.usagePlanId = usagePlanId
+            CreateUsagePlanKeyRequest usagePlanKeyRequest = CreateUsagePlanKeyRequest.builder()
+                    .keyId(response.id())
+                    .keyType("API_KEY")
+                    .usagePlanId(usagePlanId)
+                    .build() as CreateUsagePlanKeyRequest
             apiGatewayIdp.createUsagePlanKey(usagePlanKeyRequest)
 
             return getApikeys(currentUser.userId)
@@ -46,10 +48,13 @@ class AWSApikeyService implements IApikeyService {
 
     @Override
     List<String> getApikeys(String userId) {
-        GetApiKeysRequest getApiKeysRequest = new GetApiKeysRequest().withCustomerId(userId).withIncludeValues(true)
-        GetApiKeysResult response = apiGatewayIdp.getApiKeys(getApiKeysRequest)
-        if (response.getSdkHttpMetadata().httpStatusCode == 200) {
-            return response.items*.value
+        GetApiKeysRequest getApiKeysRequest = GetApiKeysRequest.builder()
+                .customerId(userId)
+                .includeValues(true)
+                .build() as GetApiKeysRequest
+        GetApiKeysResponse response = apiGatewayIdp.getApiKeys(getApiKeysRequest)
+        if (response.sdkHttpResponse().statusCode() == 200) {
+            return response.items()*.value()
         } else {
             throw new RuntimeException("Error retrieving apikeys")
         }

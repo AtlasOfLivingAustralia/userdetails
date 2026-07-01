@@ -141,7 +141,7 @@ dependencies {
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
     testImplementation 'io.github.joke:spock-mockable:2.3.0'
 
-    api 'com.amazonaws:aws-java-sdk-api-gateway:1.12.279'
+    implementation 'software.amazon.awssdk:apigateway:2.33.4'
 }
 
 application {

@@ -20,15 +20,15 @@ import au.org.ala.web.AuthService
 import au.org.ala.web.OidcClientProperties
 import au.org.ala.ws.security.JwtProperties
 import au.org.ala.ws.tokens.TokenService
-import com.amazonaws.auth.*
-import com.amazonaws.regions.Region
-import com.amazonaws.services.apigateway.AmazonApiGateway
-import com.amazonaws.services.apigateway.AmazonApiGatewayClientBuilder
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.dynamodbv2.document.DynamoDB
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
+import software.amazon.awssdk.services.cognitoidentityprovider.model.ExplicitAuthFlowsType
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsAutoConfiguration
 import groovy.util.logging.Slf4j
@@ -42,49 +42,49 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean
-    AWSCredentialsProvider awsCredentialsProvider() {
+    AwsCredentialsProvider awsCredentialsProvider() {
 
         String accessKey = grailsApplication.config.getProperty('cognito.accessKey')
         String secretKey = grailsApplication.config.getProperty('cognito.secretKey')
         String sessionToken = grailsApplication.config.getProperty('cognito.sessionToken')
 
-        AWSCredentialsProvider credentialsProvider
         if (accessKey && secretKey) {
-            AWSCredentials credentials
             if (sessionToken) {
-                credentials = new BasicSessionCredentials(accessKey, secretKey, sessionToken)
-            } else {
-                credentials = new BasicAWSCredentials(accessKey, secretKey)
+                return StaticCredentialsProvider.create(
+                        AwsSessionCredentials.create(accessKey, secretKey, sessionToken)
+                )
             }
-            credentialsProvider = new AWSStaticCredentialsProvider(credentials)
-        } else {
-            credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
+            return StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(accessKey, secretKey)
+            )
         }
-        return credentialsProvider
+        return DefaultCredentialsProvider.builder().build()
     }
 
     @Bean
-    AWSCognitoIdentityProvider cognitoIdpClient(AWSCredentialsProvider awsCredentialsProvider) {
+    CognitoIdentityProviderClient cognitoIdpClient(AwsCredentialsProvider awsCredentialsProvider) {
         def region = grailsApplication.config.getProperty('cognito.region')
 
-        AWSCognitoIdentityProvider cognitoIdp = AWSCognitoIdentityProviderClientBuilder.standard()
-                .withRegion(region)
-                .withCredentials(awsCredentialsProvider)
+        CognitoIdentityProviderClient cognitoIdp = CognitoIdentityProviderClient.builder()
+                .region(Region.of(region))
+                .credentialsProvider(awsCredentialsProvider)
                 .build()
 
         return cognitoIdp
     }
 
     @Bean
-    AmazonDynamoDB amazonDynamoDB(AWSCredentialsProvider awsCredentialsProvider, Region awsRegion) {
-        return AmazonDynamoDBClientBuilder.standard()
-                .withRegion(awsRegion.toString())
-                .withCredentials(awsCredentialsProvider)
+    DynamoDbClient dynamoDbClient(AwsCredentialsProvider awsCredentialsProvider) {
+        def region = grailsApplication.config.getProperty('cognito.region')
+
+        return DynamoDbClient.builder()
+                .region(Region.of(region))
+                .credentialsProvider(awsCredentialsProvider)
                 .build()
     }
 
     @Bean('userService')
-    IUserService userService(TokenService tokenService, EmailService emailService, AWSCognitoIdentityProvider cognitoIdp, JwtProperties jwtProperties,
+    IUserService userService(TokenService tokenService, EmailService emailService, CognitoIdentityProviderClient cognitoIdp, JwtProperties jwtProperties,
                              LocationService locationService, AuthService authService) {
 
         CognitoUserService userService = new CognitoUserService()
@@ -105,17 +105,17 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean('passwordOperations')
-    IPasswordOperations passwordOperations(AWSCognitoIdentityProvider cognitoIdp, OidcClientProperties oidcClientProperties) {
+    IPasswordOperations passwordOperations(CognitoIdentityProviderClient cognitoIdp, OidcClientProperties oidcClientProperties) {
         return new CognitoPasswordOperations(cognitoIdp: cognitoIdp, poolId: grailsApplication.config.getProperty('cognito.poolId'),
                 oidcClientProperties: oidcClientProperties)
     }
 
     @Bean('applicationService')
-    IApplicationService applicationService(AWSCognitoIdentityProvider cognitoIdp, IUserService userService, AmazonDynamoDB amazonDynamoDB) {
+    IApplicationService applicationService(CognitoIdentityProviderClient cognitoIdp, IUserService userService, DynamoDbClient dynamoDbClient) {
 
         def poolId = grailsApplication.config.getProperty('cognito.poolId')
         def supportedIdentityProviders = grailsApplication.config.getProperty('oauth.support.dynamic.client.supportedIdentityProviders', List, [])
-        def authFlows = grailsApplication.config.getProperty('oauth.support.dynamic.client.authFlows', List, [])
+        def authFlows = grailsApplication.config.getProperty('oauth.support.dynamic.client.authFlows', List, []).collect { ExplicitAuthFlowsType.fromValue(it.toString()) }
         def clientScopes = grailsApplication.config.getProperty('oauth.support.dynamic.client.scopes', List, [])
         def galahCallbackURLs = grailsApplication.config.getProperty('oauth.support.dynamic.client.galah.callbackURLs', List, [])
         def tokensCallbackURLs = grailsApplication.config.getProperty('oauth.support.dynamic.client.tokens.callbackURLs', List, [])
@@ -131,7 +131,7 @@ class Application extends GrailsAutoConfiguration {
                 authFlows: authFlows,
                 clientScopes: clientScopes,
                 galahCallbackURLs: galahCallbackURLs,
-                dynamoDB: amazonDynamoDB,
+                dynamoDbClient: dynamoDbClient,
                 dynamoDBTable: dynamoDBTable,
                 dynamoDBPK: dynamoDBPK,
                 dynamoDBSK: dynamoDBSK,
@@ -141,9 +141,4 @@ class Application extends GrailsAutoConfiguration {
 
         return applicationService
     }
-//
-//    @Bean('apikeyService')
-//    IApikeyService apikeyService(IUserService userService, AmazonApiGateway apiGatewayIdp) {
-//        return new AWSApikeyService(userService: userService, apiGatewayIdp: apiGatewayIdp)
-//    }
 }
