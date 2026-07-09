@@ -28,7 +28,7 @@
     <g:if test="${emailNotRecognised}">
     <div class="row">
         <div class="col-sm-12">
-            <div class="well">
+            <div class="alert alert-danger">
                 <p class="text-danger">Email address <strong>${email}</strong> not recognised.</p>
             </div>
         </div>
@@ -36,17 +36,17 @@
     </g:if>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-12 col-md-6">
             <g:form action="sendPasswordResetEmail" method="POST">
-                <div class="form-group">
-                    <label for="email">Email address of user</label>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address of user</label>
                     <input id="email" name="email" type="text" class="form-control" value="${params.email ?: email}"/>
                 </div>
                 <g:submitButton class="btn btn-primary" name="submit" value="Send user password"/>
             </g:form>
         </div>
-        <div class="col-md-6">
-            <p class="well">
+        <div class="col-12 col-md-6">
+            <p class="alert alert-well">
                 When you click the Send Password Reset Link button, a one-time link will be emailed to your
                 registered email address, allowing you to enter a new password.
                 <br/>

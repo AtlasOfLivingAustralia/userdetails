@@ -30,18 +30,18 @@
 
 <div class="row">
     <div class="col-md-12" id="page-body" role="main">
-        <g:form name="emailList" action="emailList" method="get"  class="form-horizontal">
-            <div class="form-group">
+        <g:form name="emailList" action="emailList" method="get">
+            <div class="mb-3">
                 <label for="start_date">Start Date</label>
-                <input type="date" class="form-control" id="start_date" >
+                <input type="date" class="form-control" id="start_date" name="start_date">
 %{--                <g:datePicker name="start_date" value="${new Date()}"/>--}%
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="end_date">End Date</label>
-                <input type="date" class="form-control" id="end_date" >
+                <input type="date" class="form-control" id="end_date" name="end_date">
 %{--                <g:datePicker name="end_date" value="${new Date()}"/>--}%
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-outline-dark">Submit</button>
         </g:form>
     </div>
 </div>

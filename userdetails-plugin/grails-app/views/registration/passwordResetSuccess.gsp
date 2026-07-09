@@ -22,10 +22,12 @@
 </head>
 <body>
 <div class="row">
-    <h1><g:message code="password.reset.success.header" /></h1>
+    <div class="col-12">
+        <h1><g:message code="password.reset.success.header" /></h1>
+    </div>
     <div class="row">
         <div class="col-md-12">
-            <p class="well">
+            <p class="alert alert-well">
                 <g:message code="password.reset.success.description" />
             </p>
             <g:link controller="login" class="btn btn-primary"><g:message code="password.reset.success.btn" /></g:link>

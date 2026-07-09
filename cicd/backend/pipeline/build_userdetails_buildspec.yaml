@@ -4,6 +4,8 @@ env:
   shell: bash
   variables:
     JAVA_TOOL_OPTIONS: -Dhttps.protocols=TLSv1.2
+  exported-variables:
+    - BUILD_IMAGE_TAG
 
 phases:
   install:
@@ -29,11 +31,11 @@ phases:
       - aws ecr get-login-password | docker login -u AWS --password-stdin "https://$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
       - rm -rf build/libs/*-plain.war
       - echo Building the Docker image...
-      - docker build -t $IMAGE_NAME .
+      - export BUILD_IMAGE_TAG=$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
+      - echo "BUILD_IMAGE_TAG=$BUILD_IMAGE_TAG"
+      - docker build -t $IMAGE_NAME:$BUILD_IMAGE_TAG .
       - echo Tagging the Docker image...
       - echo tagging
-      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
+      - docker tag $IMAGE_NAME:$BUILD_IMAGE_TAG $ECR_REPO:$BUILD_IMAGE_TAG
       - echo Pushing the Docker image to Amazon ECR...
-      - docker push $ECR_REPO:$CLEAN_BRANCH-$CODEBUILD_BUILD_NUMBER
-      - docker push $ECR_REPO:$IMAGE_TAG
+      - docker push $ECR_REPO:$BUILD_IMAGE_TAG

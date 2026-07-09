@@ -3,15 +3,13 @@ package au.org.ala.userdetails
 import au.org.ala.recaptcha.RecaptchaClient
 import au.org.ala.userdetails.secrets.DefaultRandomStringGenerator
 import au.org.ala.userdetails.secrets.RandomStringGenerator
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.auth.BasicSessionCredentials
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
-import com.amazonaws.regions.Region
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.apigateway.AmazonApiGateway
-import com.amazonaws.services.apigateway.AmazonApiGatewayClientBuilder
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.apigateway.ApiGatewayClient
 import grails.core.GrailsApplication
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,42 +66,44 @@ class UserDetailsGrailsPluginConfiguration {
     @Bean('awsRegion')
     Region awsRegion() {
         def region = grailsApplication.config.getProperty('aws.region') ?: grailsApplication.config.getProperty('cognito.region')
-        return region ? Region.getRegion(Regions.fromName(region)) : Regions.currentRegion
+        return region ? Region.of(region) : Region.AP_SOUTHEAST_2
     }
 
     @Bean
     @Qualifier('gatewayAwsCredentialsProvider')
     @ConditionalOnProperty(name = 'apikey.type', havingValue = 'aws')
-    AWSCredentialsProvider gatewayAwsCredentialsProvider() {
+    AwsCredentialsProvider gatewayAwsCredentialsProvider() {
         def accessKey = grailsApplication.config.getProperty('apikey.aws.gateway.access-key')
         def secretKey = grailsApplication.config.getProperty('apikey.aws.gateway.secret-key')
         def sessionToken = grailsApplication.config.getProperty('apikey.aws.gateway.session-token')
 
 
         if (accessKey && secretKey) {
-            def credentials
             if (sessionToken) {
-                credentials = new BasicSessionCredentials(accessKey, secretKey, sessionToken)
-            } else {
-                credentials = new BasicAWSCredentials(accessKey, secretKey)
+                return StaticCredentialsProvider.create(
+                        AwsSessionCredentials.create(accessKey, secretKey, sessionToken)
+                )
             }
-            return new AWSStaticCredentialsProvider(credentials)
-        } else {
-            return DefaultAWSCredentialsProviderChain.instance
+
+            return StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(accessKey, secretKey)
+            )
         }
+
+        return DefaultCredentialsProvider.builder().build()
     }
 
     @Bean('apikeyService')
     @ConditionalOnMissingBean(name = 'apikeyService')
     @ConditionalOnProperty(name = 'apikey.type', havingValue = 'aws')
     IApikeyService apikeyService(
-            @Qualifier('gatewayAwsCredentialsProvider') AWSCredentialsProvider gatewayAwsCredentialsProvider,
+            @Qualifier('gatewayAwsCredentialsProvider') AwsCredentialsProvider gatewayAwsCredentialsProvider,
             IUserService userService, Region awsRegion) {
 
         // TODO @Bean this
-        AmazonApiGateway gatewayIdp = AmazonApiGatewayClientBuilder.standard()
-                .withRegion(awsRegion.name)
-                .withCredentials(gatewayAwsCredentialsProvider)
+        ApiGatewayClient gatewayIdp = ApiGatewayClient.builder()
+                .region(awsRegion)
+                .credentialsProvider(gatewayAwsCredentialsProvider)
                 .build()
 
         return new AWSApikeyService(gatewayIdp, userService)

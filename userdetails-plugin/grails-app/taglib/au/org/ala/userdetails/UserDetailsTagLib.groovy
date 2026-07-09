@@ -102,9 +102,9 @@ class UserDetailsTagLib {
             MarkupBuilder mb = new MarkupBuilder(writer)
             mb.nav('aria-label': "Page navigation") {
                 mb.ul('class': cssClasses) {
-                    mb.li {
+                    mb.li('class': 'page-item') {
                         mb.mkp.yieldUnescaped(
-                            g.link(withParams(linkTagAttrs, [token: null])) {
+                            g.link(withParams(linkTagAttrs, [token: null]) + [class: 'page-link']) {
                                 (attrs.start ?: messageSource.getMessage('paginate.start', null, 'First', locale))
                             }
                         )
@@ -129,16 +129,16 @@ class UserDetailsTagLib {
 //                    }
 
                     if (nextToken) {
-                        mb.li {
+                        mb.li('class': 'page-item') {
                             mb.mkp.yieldUnescaped(
-                                    g.link(withParams(linkTagAttrs, [token: nextToken])) {
+                                    g.link(withParams(linkTagAttrs, [token: nextToken])+ [class: 'page-link']) {
                                 (attrs.next ?: messageSource.getMessage('paginate.next', null, '&raquo;', locale))
                             }
                             )
                         }
                     } else {
-                        mb.li('class': 'disabled') {
-                            mb.span {
+                        mb.li('class': 'page-item disabled', 'aria-disabled': 'true') {
+                            mb.span('class': 'page-link', 'tabindex': '-1') {
                                 mb.mkp.yieldUnescaped(
                                         (attrs.next ?: messageSource.getMessage('paginate.next', null, '&raquo;', locale))
                                 )

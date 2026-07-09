@@ -27,113 +27,131 @@
             <h1>User Administration</h1>
             <div class="row userdetails-grid">
                 <g:if test="${!isBiosecurityAdmin}">
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-user"></i>
-                            </div>
-                            <div class="caption">
-                                <h3>Find a user</h3>
-                                <g:link controller="user" action="list" class="btn btn-primary">Find a user</g:link>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-lock"></i>
-                            </div>
-                            <div class="caption">
-                                <h3>Reset user password</h3>
-                                <g:link controller="admin" action="resetPasswordForUser" class="btn btn-primary">Reset user password</g:link>
+                    <div class="col-12 col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="image">
+                                    <i class="fas fa-user fs-1 pb-4"></i>
+                                </div>
+                                <div class="card-title">
+                                    <h3>Find a user</h3>
+                                    <g:link controller="user" action="list" class="btn btn-primary">Find a user</g:link>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-wrench"></i>
+                    <div class="col-12 col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="image">
+                                    <i class="fas fa-lock  fs-1 pb-4"></i>
+                                </div>
+                                <div class="card-title">
+                                    <h3>Reset user password</h3>
+                                    <g:link controller="admin" action="resetPasswordForUser" class="btn btn-primary">Reset user password</g:link>
+                                </div>
                             </div>
-                            <div class="caption">
-                                <h3>Roles</h3>
-                                <g:link controller="role" action="list" class="btn btn-primary">Roles</g:link>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="image">
+                                    <i class="fas fa-wrench fs-1 pb-4"></i>
+                                </div>
+                                <div class="card-title">
+                                    <h3>Roles</h3>
+                                    <g:link controller="role" action="list" class="btn btn-primary">Roles</g:link>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!-- TODO have these contributed by implementations instead of controlled by feature flags -->
                     <g:if test="${grailsApplication.config.getProperty('userdetails.features.authorisedSystems', Boolean, false)}">
-                        <div class="col-md-3">
-                            <div class="thumbnail">
-                                <div class="image">
-                                    <i class="glyphicon glyphicon-inbox"></i>
-                                </div>
-                                <div class="caption">
-                                    <h3>Authorised systems</h3>
-                                    <g:link controller="authorisedSystem" action="list" class="btn btn-primary">Authorised systems</g:link>
+                        <div class="col-12 col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="image">
+                                        <i class="fas fa-inbox fs-1 pb-4"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Authorised systems</h3>
+                                        <g:link controller="authorisedSystem" action="list" class="btn btn-primary">Authorised systems</g:link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </g:if>
                     <g:if test="${grailsApplication.config.getProperty('userdetails.features.bulkCreate', Boolean, false)}">
-                        <div class="col-md-3">
-                            <div class="thumbnail">
-                                <div class="image">
-                                    <i class="glyphicon glyphicon-upload"></i>
-                                </div>
-                                <div class="caption">
-                                    <h3>Bulk create user accounts</h3>
-                                    <g:link controller="admin" action="bulkUploadUsers" class="btn btn-primary">Bulk create user accounts</g:link>
+                        <div class="col-12 col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="image">
+                                        <i class="fas fa-upload fs-1 pb-4"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Bulk create user accounts</h3>
+                                        <g:link controller="admin" action="bulkUploadUsers" class="btn btn-primary">Bulk create user accounts</g:link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </g:if>
                     <g:if test="${grailsApplication.config.getProperty('userdetails.features.exportUsers', Boolean, false)}">
-                        <div class="col-md-3">
-                            <div class="thumbnail">
-                                <div class="image">
-                                    <i class="glyphicon glyphicon-download"></i>
-                                </div>
-                                <div class="caption">
-                                    <h3>Export users to CSV file</h3>
-                                    <g:link controller="admin" action="exportUsers" class="btn btn-primary">Export users to CSV file</g:link>
+                        <div class="col-12 col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="image">
+                                        <i class="fas fa-download fs-1 pb-4"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Export users to CSV file</h3>
+                                        <g:link controller="admin" action="exportUsers" class="btn btn-primary">Export users to CSV file</g:link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </g:if>
                     <g:if test="${grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)}">
-                        <div class="col-md-3">
-                            <div class="thumbnail">
-                                <div class="image">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                </div>
-                                <div class="caption">
-                                    <h3>Get user survey results</h3>
-                                    <g:link controller="admin" action="surveyResults" class="btn btn-primary">Get user survey results</g:link>
+                        <div class="col-12 col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="image">
+                                        <i class="fas fa-th-list fs-1 pb-4"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Get user survey results</h3>
+                                        <g:link controller="admin" action="surveyResults" class="btn btn-primary">Get user survey results</g:link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </g:if>
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-asterisk"></i>
-                            </div>
-                            <div class="caption">
-                                <h3>ALA admin page</h3>
-                                <g:link controller="alaAdmin" action="index" class="btn btn-primary">ALA admin page</g:link>
+                    <div class="col-12 col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="image">
+                                    <i class="fas fa-asterisk fs-1 pb-4"></i>
+                                </div>
+                                <div class="card-title">
+                                    <h3>ALA admin page</h3>
+                                    <g:link controller="alaAdmin" action="index" class="btn btn-primary">ALA admin page</g:link>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </g:if>
                 <g:else>
-                    <div class="col-md-3">
-                        <div class="thumbnail">
-                            <div class="image">
-                                <i class="glyphicon glyphicon-user"></i>
-                            </div>
-                            <div class="caption">
-                                <h3>Create a user</h3>
-                                <g:link controller="user" action="create" class="btn btn-primary">Create a user</g:link>
+                    <div class="col-12 col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="image">
+                                    <i class="fas fa-user fs-1 pb-4"></i>
+                                </div>
+                                <div class="card-title">
+                                    <h3>Create a user</h3>
+                                    <g:link controller="user" action="create" class="btn btn-primary">Create a user</g:link>
+                                </div>
                             </div>
                         </div>
                     </div>

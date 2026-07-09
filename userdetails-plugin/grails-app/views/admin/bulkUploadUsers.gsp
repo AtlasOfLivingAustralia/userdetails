@@ -47,23 +47,23 @@
                 </p>
             </div>
         </div>
-        <g:form action="loadUsersCSV" method="post" enctype="multipart/form-data" class="form-horizontal well well-small">
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <input type="file" name="userList" />
+        <g:form action="loadUsersCSV" method="post" enctype="multipart/form-data" class="card card-body alert-well">
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <input type="file" name="userList" class="form-control"/>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <div class="checkbox">
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
                         <label>
-                            <g:checkBox name="firstRowHasFieldNames"/> First row contains field names
+                            <g:checkBox name="firstRowHasFieldNames" class="form-check-input"/> First row contains field names
                         </label>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="affiliation">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="affiliation">
                     Affiliation (will default to 'Not Supplied')
                 </label>
 
@@ -81,13 +81,13 @@
             </div>
 
             <h4>Password Reset Email</h4>
-            <div class="form-group">
+            <div class="row mb-3">
             An email will be sent out to each user created, prompting them to reset their password.
             You can customize the content of this email by filling out the fields below, or you can leave them blank to use the default wording.
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="emailSubject">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-end" for="emailSubject">
                     Subject
                 </label>
                 <div class="col-sm-10">
@@ -95,8 +95,8 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="emailTitle">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-end" for="emailTitle">
                     Title
                 </label>
                 <div class="col-sm-10">
@@ -104,8 +104,8 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-2 control-label" for="emailBody">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label text-end" for="emailBody">
                     Body
                 </label>
                 <div class="col-sm-10">
@@ -113,8 +113,8 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
                     <button class="btn btn-primary">Upload</button>
                 </div>
             </div>

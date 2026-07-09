@@ -21,6 +21,7 @@
     <g:set var="entityName" value="${message(code: 'user.label', default: 'User')}"/>
     <title><g:message code="default.list.label" args="[entityName]"/></title>
     <meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},Administration" />
+    <asset:stylesheet src="userdetails.css" />
 </head>
 
 <body>
@@ -32,14 +33,12 @@
             <h1><g:message code="default.list.label" args="[entityName]"/></h1>
         </div>
         <div class="col-md-8">
-            <div class="pull-right">
-                <g:form class="form-inline" action="list" controller="user" method="get">
-                    <g:link class="btn btn-primary" action="create"><i class="fa fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></g:link>
+            <div class="d-flex justify-content-end mb-3">
+                <g:form action="list" controller="user" method="get" class="d-flex align-items-center gap-2">
+                    <g:link class="btn btn-primary text-nowrap" action="create"><i class="fas fa-pencil"></i> <g:message code="default.new.label" args="[entityName]" /></g:link>
                     <div class="input-group">
                         <input type="text" class="form-control" name="q" value="${q?:''}" placeholder="Search for user"/>
-                        <span class="input-group-btn">
-                            <input type="submit" class="btn btn-default"/>
-                        </span>
+                        <input type="submit" class="btn btn-outline-dark"/>
                     </div>
                 </g:form>
             </div>
@@ -47,9 +46,9 @@
         <div class="col-md-12">
 
     <g:if test="${flash.message}">
-        <div class="message" role="status">${flash.message}</div>
+        <div class="alert alert-info" role="status">${flash.message}</div>
     </g:if>
-    <table class="table table-bordered table-striped table-condensed">
+    <table class="table table-bordered table-striped">
         <thead>
         <tr>
             <g:sortableColumn property="id" title="${message(code: 'user.id.label', default: 'ID')}" mapping="adminUserList"/>
@@ -97,7 +96,7 @@
     </table>
 
     <g:if test="${!q}">
-        <div class="text-center">
+        <div class="d-flex justify-content-center">
             <ud:paginate action="list" total="${userInstanceTotal}" nextToken="${nextToken}" params="${params}"/>
         </div>
     </g:if>

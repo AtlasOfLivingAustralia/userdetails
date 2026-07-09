@@ -44,7 +44,7 @@
     <g:if test="${inactiveUser}">
         <div class="row">
             <div class="col-sm-12">
-                <div class="well">
+                <div class="alert alert-well">
                     <p class="text-danger"><g:message code="create.account.already-reg" args="[params.email]" />
                     </p>
 
@@ -58,7 +58,7 @@
     <g:elseif test="${lockedUser}">
         <div class="row">
             <div class="col-sm-12">
-                <div class="well">
+                <div class="alert alert-well">
                     <p class="text-danger"><g:message code="create.account.locked" args="[params.email]" />
                     </p>
 
@@ -72,7 +72,7 @@
     <g:elseif test="${alreadyRegistered}">
         <div class="row">
             <div class="col-sm-12">
-                <div class="well">
+                <div class="alert alert-well">
                     <p class="text-danger"><g:message code="create.account.already.registered" /> <strong>${params.email}</strong>.</p>
 
                     <p>
@@ -87,8 +87,8 @@
     </g:elseif>
 
     <div class="row">
-        <div class="col-md-8 col-md-push-4">
-            <div class="well">
+        <div class="col-md-8 order-md-2">
+            <div class="alert alert-well">
                 <g:if test="${!edit}">
                     <h2><g:message code="create.account.do.i.need.account" /></h2>
 
@@ -140,7 +140,7 @@
                         <p><g:message code="user.enabledMFA.description" />
                     </g:if>
                     <g:else>
-                        <input name="setupMFA" class="btn btn-default" id="setupMFA" value="${message(code: 'user.setupMFA')}">
+                        <input name="setupMFA" class="btn btn-outline-dark" id="setupMFA" value="${message(code: 'user.setupMFA')}">
                     </g:else>
 
                     <div id="mfa" hidden="hidden">
@@ -166,9 +166,9 @@
                     </p>
                     <div id="newEmailDiv">
                         <p id="newEmailMessage" hidden></p>
-                        <input id="newEmail" name="newEmail" type="text" class="form-control" data-validation-engine="validate[required]"/>
+                        <input id="newEmail" name="newEmail" type="text" class="form-control w-100" style="max-width: 300px;" data-validation-engine="validate[required]"/>
                         <g:if test="${!grailsApplication.config.getProperty('userdetails.users.reactivation-allowed', boolean, true)}">
-                            <button class="btn btn-default" id="updateEmail">Request Code</button>
+                            <button class="btn btn-outline-dark" id="updateEmail">Request Code</button>
                             <div id="emailCodeDiv" hidden="hidden">
                                 <input id="emailCode" name="emailCode" type="text" class="form-control" data-validation-engine="validate[required]"/>
                                 <button class="btn btn-primary" id="verifyCode">Verify Code</button>
@@ -181,18 +181,18 @@
                 </g:if>
             </div>
         </div>
-        <div class="col-md-4 col-md-pull-8">
+        <div class="col-md-4 order-md-1">
             <div>
             <g:form name="updateAccountForm" method="POST" action="${edit ? 'update' : 'register'}" controller="registration" useToken="true" onsubmit="updateAccountSubmit.disabled = true; return true;">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="firstName"><g:message code="create.account.first.name" /></label>
                     <input id="firstName" name="firstName" type="text" class="form-control" value="${user?.firstName}" data-validation-engine="validate[required]"/>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="lastName"><g:message code="create.account.last.name" /></label>
                     <input id="lastName" name="lastName" type="text" class="form-control" value="${user?.lastName}"  data-validation-engine="validate[required]"/>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="email"><g:message code="create.account.email.address" /></label>
                     <input id="email" name="email" type="text" class="form-control" value="${user?.email}"
                            data-validation-engine="validate[required,custom[email]]"
@@ -200,7 +200,7 @@
                     />
                 </div>
                 <g:if test="${!edit}">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="confirm-email"><g:message code="create.account.confirm.email.address" /></label>
                         <input id="confirm-email" name="confirm-email" type="text" class="form-control" value="${user?.email}"
                                data-validation-engine="validate[required,custom[email],equals[email]]"
@@ -211,7 +211,7 @@
                 </g:if>
 
                 <g:if test="${!edit}">
-                    <div class="form-group">
+                    <div class="mb-3">
                     <label for="password"><g:message code="create.account.password" /></label>
                     <input id="password"
                            name="password"
@@ -222,7 +222,7 @@
                            type="password"
                     />
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                     <label for="reenteredPassword"><g:message code="create.account.reentered.password" /></label>
                     <input id="reenteredPassword"
                            name="reenteredPassword"
@@ -235,7 +235,7 @@
                     </div>
                 </g:if>
                 <g:if test="${grailsApplication.config.getProperty('attributes.affiliations.enabled', Boolean, false)}">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="affiliation"><g:message code="create.account.affiliation" default="What is your primary affiliation?" /> *</label>
                         <g:select id="affiliation" name="affiliation"
                                   class="form-control"
@@ -248,11 +248,11 @@
                         />
                     </div>
                 </g:if>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="organisation"><g:message code="create.account.organisation" /></label>
                     <input id="organisation" name="organisation" type="text" class="form-control" value="${props?.organisation}"/>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="country"><g:message code="create.account.country" /> *</label>
                     <g:select id="country" name="country"
                               class="form-control chosen-select"
@@ -265,7 +265,7 @@
                               data-validation-engine="validate[required]"
                     />
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="state"><g:message code="create.account.state.province" /></label>
                     <g:select id="state" name="state"
                               class="form-control chosen-select"
@@ -277,13 +277,13 @@
                               valueMessagePrefix="ala.state"
                     />
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="city"><g:message code="create.account.city" /></label>
                     <input id="city" name="city" type="text" class="form-control" value="${props?.city}" />
                 </div>
                 <g:if test="${edit}">
                     <g:if test="${visibleMFA}">
-                        <div class="form-group checkbox">
+                        <div class="mb-3 form-check ps-0">
                             <label>
                                 <g:checkBox name="enableMFA" value="${props?.enableMFA == 'true'}" id="enableMFA" disabled="disabled"/> <g:message code="user.enabledMFA" />
                             </label>
@@ -293,7 +293,7 @@
                         </div>
                     </g:if>
                     <g:if test="${grailsApplication.config.getProperty('userdetails.features.requirePasswordForUserUpdate', Boolean, true)}">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="confirmUserPassword">
                                 <g:message code="create.account.confirm.password" />
                             </label>
@@ -427,7 +427,7 @@
                         document.getElementById("enableMFA").checked = true;
                     }
                      else{
-                         document.getElementById("message").textContent = result.error
+                         document.getElementById("message").textContent = "${message(code: 'invalid.mfa.code', default: 'The code entered does not match. Please check the code and try again.')}"
                          document.getElementById("message").style.color = "red"
                          document.getElementById("message").hidden = false
                      }

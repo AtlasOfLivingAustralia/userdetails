@@ -21,9 +21,9 @@
     <asset:stylesheet src="userdetails.css" />
 </head>
 <body>
-<div class="row">
+<div class="container">
     <h1><g:message code="inaturalist.fail.link" /></h1>
-    <p class="well text-danger">
+    <p class="alert alert-danger">
         <g:message code="inaturalist.fail.description" args="[grailsApplication.config.getProperty('supportEmail')]" />
     </p>
 </div>

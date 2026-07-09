@@ -19,7 +19,7 @@
         <meta name="section" content="home"/>
         <g:set var="title">Export Users to CSV</g:set>
         <title>${title} | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
-        <asset:stylesheet src="userdetails.css" />
+        <asset:stylesheet src="userdetails.css"></asset:stylesheet>
     </head>
     <body>
         <g:if test="${flash.message}">
@@ -54,26 +54,24 @@
                 </p>
             </div>
         </div>
-    <div class="well well-small">
-        <g:form name="exportUsersForm" action="downloadUsersCsvFile" method="post"  class="form-horizontal">
-            <div class="form-group">
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+    <div class="card card-body alert-well">
+        <g:form name="exportUsersForm" action="downloadUsersCsvFile" method="post">
+            <div class="mb-3">
+                <div class="col-sm-10 offset-sm-2">
                     <div class="checkbox">
                         <label>
                             <g:checkBox name="includeInactiveUsers"/> Include inactive users
                         </label>
                     </div>
                 </div>
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-10 offset-sm-2">
                     <div class="checkbox">
                         <label>
                             <g:checkBox name="includeExtraFields"/> Include extra data fields (e.g. organisation, city, state, country, etc)
                         </label>
                     </div>
                 </div>
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-10 offset-sm-2">
                     <div class="checkbox">
                         <label>
                             <g:checkBox name="includeRoles"/> Include roles field
@@ -81,16 +79,16 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-2" for="selectedRoles">
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label" for="selectedRoles">
                     Only users in selected roles (defaults to all if none selected)
                 </label>
                 <div class="col-sm-10">
-                    <g:select class="form-control" size="10" name="selectedRoles" from="${roles}"  multiple="true"/>
+                    <g:select class="form-select" size="10" name="selectedRoles" from="${roles}"  multiple="true"/>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+            <div class="mb-3">
+                <div class="col-sm-10 offset-sm-2">
                     <button id="downloadFileButton" class="btn btn-primary">Download CSV file</button>
                 </div>
             </div>

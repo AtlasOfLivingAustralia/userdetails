@@ -2,14 +2,13 @@ package au.org.ala.userdetails
 
 import au.org.ala.auth.PasswordResetFailedException
 import au.org.ala.users.IUser
-import au.org.ala.users.UserRecord
 import au.org.ala.web.OidcClientProperties
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest
-import com.amazonaws.services.cognitoidp.model.AdminResetUserPasswordRequest
-import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordRequest
-import com.amazonaws.services.cognitoidp.model.AuthFlowType
-import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminResetUserPasswordRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminSetUserPasswordRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType
+import software.amazon.awssdk.services.cognitoidentityprovider.model.ConfirmForgotPasswordRequest
 import groovy.util.logging.Slf4j
 import org.apache.commons.codec.digest.HmacAlgorithms
 import org.apache.commons.codec.digest.HmacUtils
@@ -17,7 +16,7 @@ import org.apache.commons.codec.digest.HmacUtils
 @Slf4j
 class CognitoPasswordOperations implements IPasswordOperations {
 
-    AWSCognitoIdentityProvider cognitoIdp
+    CognitoIdentityProviderClient cognitoIdp
     String poolId
     OidcClientProperties oidcClientProperties
 
@@ -29,22 +28,25 @@ class CognitoPasswordOperations implements IPasswordOperations {
 
         try {
             if (confirmationCode == null) {
-                def request = new AdminSetUserPasswordRequest()
-                request.username = user.email
-                request.userPoolId = poolId
-                request.password = newPassword
-                request.permanent = isPermanent
+                def request = AdminSetUserPasswordRequest.builder()
+                        .username(user.email)
+                        .userPoolId(poolId)
+                        .password(newPassword)
+                        .permanent(isPermanent)
+                        .build() as AdminSetUserPasswordRequest
 
                 def response = cognitoIdp.adminSetUserPassword(request)
-                return response.getSdkHttpMetadata().httpStatusCode == 200
+                return response.sdkHttpResponse().statusCode() == 200
             } else {
-                def request = new ConfirmForgotPasswordRequest().withUsername(user.email)
-                request.password = newPassword
-                request.confirmationCode = confirmationCode
-                request.clientId = oidcClientProperties.getClientId()
-                request.secretHash = calculateSecretHash(oidcClientProperties.getClientId(), oidcClientProperties.getSecret(), user.email)
+                def request = ConfirmForgotPasswordRequest.builder()
+                        .username(user.email)
+                        .password(newPassword)
+                        .confirmationCode(confirmationCode)
+                        .clientId(oidcClientProperties.getClientId())
+                        .secretHash(calculateSecretHash(oidcClientProperties.getClientId(), oidcClientProperties.getSecret(), user.email))
+                        .build() as ConfirmForgotPasswordRequest
                 def response = cognitoIdp.confirmForgotPassword(request)
-                return response.getSdkHttpMetadata().httpStatusCode == 200
+                return response.sdkHttpResponse().statusCode() == 200
             }
         } catch(Exception e) {
             return false
@@ -53,9 +55,10 @@ class CognitoPasswordOperations implements IPasswordOperations {
 
     @Override
     void resetAndSendTemporaryPassword(IUser<?> user, String emailSubject, String emailTitle, String emailBody, String password) throws PasswordResetFailedException {
-        def request = new AdminResetUserPasswordRequest()
-        request.username = user.email
-        request.userPoolId = poolId
+        def request = AdminResetUserPasswordRequest.builder()
+                .username(user.email)
+                .userPoolId(poolId)
+                .build() as AdminResetUserPasswordRequest
 
         cognitoIdp.adminResetUserPassword(request)
     }
@@ -65,17 +68,18 @@ class CognitoPasswordOperations implements IPasswordOperations {
         def clientId = oidcClientProperties.getClientId()
         def secret = oidcClientProperties.getSecret()
         try {
-            def authResult = cognitoIdp.adminInitiateAuth(new AdminInitiateAuthRequest()
-                    .withAuthFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
-                    .withClientId(clientId)
-                    .withUserPoolId(poolId)
-                    .withAuthParameters([
+            def authResult = cognitoIdp.adminInitiateAuth(AdminInitiateAuthRequest.builder()
+                    .authFlow(AuthFlowType.ADMIN_USER_PASSWORD_AUTH)
+                    .clientId(clientId)
+                    .userPoolId(poolId)
+                    .authParameters([
                             USERNAME   : user.userName,
                             PASSWORD   : password,
                             SECRET_HASH: calculateSecretHash(clientId, secret, user.userName)
                     ])
+                    .build() as AdminInitiateAuthRequest
             )
-            return authResult.authenticationResult != null
+            return authResult.authenticationResult() != null
         } catch (e) {
             log.debug("Exception caught while checking user password", e)
             return false

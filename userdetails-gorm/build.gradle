@@ -70,6 +70,8 @@ dependencies {
     console("org.grails:grails-console")
     runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
     implementation("org.grails.plugins:mail:4.0.0")
+    implementation platform("software.amazon.awssdk:bom:2.33.4")
+    implementation "software.amazon.awssdk:auth"
 //    runtimeOnly("com.h2database:h2")
 //    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
     runtimeOnly("org.fusesource.jansi:jansi:1.18")
