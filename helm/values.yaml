@@ -1,0 +1,182 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ""
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+secret:
+  baseName: "userdetails-config-secret-"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  port: 80
+  targetPort: 9001
+
+ingress:
+  enabled: true
+  className: "alb"
+  certificateArn: ""
+  hostname: ""
+  tls: []
+  accessLogsBucket: ""
+  accessLogsPrefix: ""
+
+tags:
+  branch: ""
+  component: ""
+  environment: ""
+  Name: ""
+  product: ""
+  version: ""
+
+resources:
+  limits:
+    memory: 4096Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app:
+  url: "https://userdetails.ala.org.au"
+authCookieName: "ALA-Auth"
+defaultLogoutRedirectUri: "https://www.ala.org.au"
+affiliation:
+  enabled: true
+cookie:
+  enabled: true
+  domain: ".ala.org.au"
+oauth2:
+  baseUrl: ""
+oidc:
+  enabled: true
+  clientId: ""
+  secret: ""
+  discoveryUri: ""
+  logoutUrl: ""
+jwt:
+  enabled: true
+  legacy:
+    enabled: true
+webservices:
+  enabled: true
+  clientId: ""
+  secret: ""
+apikey:
+  enabled: true
+  auth:
+    serviceUrl: "https://auth.ala.org.au/apikey/ws/check/"
+  check:
+    serviceUrl: "https://auth.ala.org.au/apikey/ws/check?apikey="
+  userdetails:
+    serviceUrl: "https://auth.ala.org.au/userdetails/userDetails/"
+security:
+  user:
+    password: ""
+aws:
+  region: "ap-southeast-2"
+  poolId: ""
+  usagePlanId: ""
+tokenApp:
+  url: "https://tokens.ala.org.au/token"
+  callbackURLs: ["https://tokens.ala.org.au/login"]
+docsPortal:
+  url: "https://docs.ala.org.au/#introduction"
+dynamoDBTableName: "UserApplications"
+userdetails:
+  api:
+    url: "https://api.ala.org.au/userdetails/"
+delegatedGroupNames: []
+
+flickr:
+  key: ""
+  secret: ""
+inat:
+  key: ""
+  secret: ""
+recaptcha:
+  key: ""
+  secret: ""
+
+sightings:
+  url: "https://biocollect.ala.org.au/spotter"
+spatial:
+  url: "https://spatial.ala.org.au?tool=log"
+volunteer:
+  url: "https://volunteer.ala.org.au/user/myStats"
+lists:
+  url: "https://lists.ala.org.au/speciesList/list"
+biocache:
+  search:
+    baseUrl: "https://biocache.ala.org.au/occurrences/search"
+    url: "https://biocache.ala.org.au/occurrences/search/?q=*%3A*&fq=assertion_user_id%3A"
+  myDownloads:
+    url: "https://biocache.ala.org.au/download/myDownloads/"
+myData:
+  url: "https://spatial.ala.org.au/?tool=addPoints"
+alerts:
+  url: "https://alerts.ala.org.au"
+ala:
+  baseURL: "https://www.ala.org.au"
+bie:
+  baseURL: "https://bie.ala.org.au"
+
+authorisedSystems:
+  enabled: true
+bulkCreate:
+  enabled: false
+exportUsers:
+  enabled: false
+myProfile:
+  useDigiVol: true
+  useSandbox: true
+  useBiocollect: true
+
+headerAndFooter:
+  baseURL: "https://www.ala.org.au/commonui-bs3-2019"
+  version: "2"

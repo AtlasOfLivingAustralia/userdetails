@@ -1,0 +1,217 @@
+version: 0.2
+###
+# This build project exports any variables needed for later stages and actions,
+# builds the template configs used to launch the CloudFormation templates
+
+env:
+  shell: bash
+  git-credential-helper: yes
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  secrets-manager:
+    OIDC_SECRET: $USERDETAILS_SECRET_NAME:userdetails_oidc_secret
+    WEBSERVICE_SECRET: $USERDETAILS_SECRET_NAME:userdetails_webservice_secret
+    SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
+    FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
+    INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
+    RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
+  exported-variables:
+    - BASE_STACK_NAME
+    - CODEBUILD_BUILD_NUMBER
+    - ECR_REPO
+    - EKS_CLUSTER_NAME
+    - HOSTED_ZONE
+    - IMAGE_NAME
+    - IMAGE_TAG
+    - PRODUCT_COMPONENT
+    - PRODUCT_NAME
+    - SERVICE_ACCOUNT_NAME
+    - SLACK_CHANNEL
+    - SLACK_DEPLOY_NOTIFICATION
+    - SSL_CERTIFICATE
+    - SUB_DOMAIN
+    - USERDETAILS_ROLE_ARN
+    - EKS_NAMESPACE
+    - ACCESS_LOGS_S3_BUCKET_NAME
+
+phases:
+
+  install:
+    commands:
+      - echo Running on $(lsb_release -d | cut -f2)
+      - echo aws-cli version $(aws --version)
+      - pip install jinja2
+      - export CUR_PIPELINE_FINGERPRINT=$(md5sum cicd/$PRODUCT_COMPONENT/pipeline/pipeline.yaml | awk '{print $1}')
+      - # This next bit checks if the running pipeline is out of sync with the pipeline in the
+      - # current code revision. If it is it re-launches itself! For a normal branch commit the
+      - # pipeline is set to autorun on update so it will restart automatically and launch the
+      - # latest revision on the branch. For a rollback we dont want it to restart automatically as
+      - # we need to run a specific commit, not the latest. In this case the pipeline is set NOT to
+      - # autorun on update. It will have to be manually started after the rollback pipeline
+      - # has finished launching
+      - | 
+          if [[ $PIPELINE_FINGERPRINT != $CUR_PIPELINE_FINGERPRINT ]]; then
+            echo existing pipeline is out of sync with current code revision, relaunching!
+            cd cicd/$PRODUCT_COMPONENT/pipeline/
+            ./deploy_pipeline.sh -e ${ENVIRONMENT:0:4} -b $SRC_BRANCH
+            # pipeline execution should now stop if this is a rollback, 
+            # or restart automatically if this a normal branch deploy
+            exit 1
+          else
+            echo existing pipeline is in sync with current code revision, proceeding with the deploy!
+          fi
+    finally:
+      - #echo This always runs even if the update or install command fails
+
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - echo source branch is $SRC_BRANCH
+      - echo clean branch is $CLEAN_BRANCH
+      - echo Environment is $ENVIRONMENT
+      - echo generating environment vars...
+      - cicd/gen_env_vars.py --env $ENVIRONMENT --clean-branch $CLEAN_BRANCH --conf cicd/$PRODUCT_COMPONENT/config.ini > env.txt
+      - echo loading config..
+      - set -a ; source env.txt ; set +a
+      - export ECR_REPO=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRepositoryUri'].Value" --output text)
+      - echo ECR_REPO=$ECR_REPO
+      - export OIDC_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsAppClient'].Value" --output text)
+      - echo OIDC_CLIENT_ID=$OIDC_CLIENT_ID
+      - export WEBSERVICE_CLIENT_ID=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsServerToServerAppClient'].Value" --output text)
+      - echo WEBSERVICE_CLIENT_ID=$WEBSERVICE_CLIENT_ID
+      - export USERDETAILS_ROLE_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$BASE_STACK_NAME-UserdetailsRoleArn'].Value" --output text)
+      - echo USERDETAILS_ROLE_ARN=$USERDETAILS_ROLE_ARN
+      - export EKS_CLUSTER_NAME=$(aws cloudformation list-exports --query "Exports[?Name=='$REGOLITH_STACK_NAME-ClusterName'].Value" --output text)
+      - echo EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME
+      - export COGNITO_POOLID=$(aws cloudformation list-exports --query "Exports[?Name=='$COGNITO_STACK_NAME-UserPoolId'].Value" --output text)
+      - echo COGNITO_POOLID=$COGNITO_POOLID
+      - ACCESS_LOGS_S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $BASE_STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerAccessLogsBucket'].OutputValue" --output text)
+      - echo ACCESS_LOGS_S3_BUCKET_NAME=$ACCESS_LOGS_S3_BUCKET_NAME
+      - echo creating the configmap for the userdetails deployment...
+      - |
+          source cicd/unset_codebuild_env_vars.sh
+          for var in $(printenv | awk -F= '{print $1}'); do
+            echo "$var=\"$(printenv $var)\"" >> app.env
+          done
+    finally:
+      - #echo This always runs
+
+  build:
+    commands:
+      - echo Entered the build phase...
+      - |
+        echo "
+        app:
+          url: https://$SUB_DOMAIN.$HOSTED_ZONE
+        authCookieName: $AUTH_COOKIE_NAME
+        defaultLogoutRedirectUri: $DEFAULT_LOGOUT_REDIRECT_URL
+        affiliation:
+          enabled: $AFFILIATION_SURVEY
+        cookie:
+          enabled: $AUTH_COOKIE_ENABLED
+          domain: $AUTH_COOKIE_DOMAIN
+        oauth2:
+          baseUrl: $OPENAPI_OAUTH_URL
+        oidc:
+          enabled: $OIDC_ENABLED
+          discoveryUri: https://cognito-idp.ap-southeast-2.amazonaws.com/${COGNITO_POOLID}/.well-known/openid-configuration
+          clientId: $OIDC_CLIENT_ID
+          logoutUrl: $USERDETAILS_OIDC_LOGOUTURL
+          secret: $OIDC_SECRET
+        jwt:
+          enabled: $USERDETAILS_JWT_ENABLED
+          legacy:
+            enabled: $USERDETAILS_JWT_FALLBACK_TO_LEGACY
+        webservice:
+          enabled: $WEB_SERVICE_ENABLED
+          clientId: $WEBSERVICE_CLIENT_ID
+          secret: $WEBSERVICE_SECRET
+        apikey:
+          enabled: $APIKEY_ENABLED
+          auth:
+            serviceUrl: $APIKEY_AUTH_URL
+          check:
+            serviceUrl: $APIKEY_CHECK_URL
+          userdetails:
+            serviceUrl: $APIKEY_USERDETAILS_URL
+        security:
+          user:
+            password: $SECURITY_USER_PASSWORD
+        aws:
+          region: $COGNITO_REGION
+          poolId: $COGNITO_POOLID
+          usagePlanId: $GATEWAY_USAGEPLANID
+        tokenApp:
+          url: $TOKENAPP_URL
+          callbackURLs: $DYNAMIC_CLIENT_TOKENS_CALLBACKURLS
+        docsPortal:
+          url: $DOCSPORTAL_URL
+        dynamoDBTableName: $DYNAMODBTABLENAME
+        userdetails:
+          api:
+            url: $OPENAPI_SERVER_URLS
+        delegatedGroupNames: ${COGNITO_POOLID}_AAF,${COGNITO_POOLID}_Facebook,${COGNITO_POOLID}_Google,${COGNITO_POOLID}_SignInWithApple
+        flickr:
+          key: $FLICKR_KEY
+          secret: $FLICKR_SECRET
+        inat:
+          key: $INATURALIST_KEY
+          secret: $INATURALIST_SECRET
+        recaptcha:
+          key: $RECAPTCHA_SITE_KEY
+          secret: $RECAPTCHA_SITE_SECRET
+        authorisedSystems:
+          enabled: $ENABLED_AUTHORISED_SYSTEMS
+        bulkCreate:
+          enabled: $ENABLED_BULKCREATE
+        exportUsers:
+          enabled: $ENABLED_EXPORTUSERS
+        myProfile:
+          useDigiVol: $DIGIVOL_ENABLED
+          useSandbox: $SANDBOX_ENABLED
+          useBiocollect: $BIOCOLLECT_ENABLED
+        headerAndFooter:
+          baseURL: $HEADER_AND_FOOTER_BASEURL
+          version: $HEADER_AND_FOOTER_VERSION
+        sightings:
+          url: $SIGHTINGS_URL
+        spatial:
+          url: $SPATIAL_URL
+        volunteer:
+          url: $VOLUNTEER_URL
+        lists:
+          url: $LISTS_URL
+        biocache:
+          search:
+            baseUrl: $BIOCACHE_SEARCH_BASE_URL
+            url: $BIOCACHE_SEARCH_URL
+          myDownloads:
+            url: $BIOCACHE_DOWNLOAD_URL
+        myData:
+          url: $MYDATA_URL
+        alerts:
+          url: $ALERTS_URL
+        ala:
+          baseURL: $ALA_BASE_URL
+        bie:
+          baseURL: $BIE_BASE_URL
+        ingress:
+          accessLogsPrefix: "logs"
+          accessLogsBucket: "${ACCESS_LOGS_S3_BUCKET_NAME}"
+        tags:
+          branch: "${CLEAN_BRANCH}"
+          environment: "${ENVIRONMENT}"
+          product: "${PRODUCT_NAME}"
+          component: "${PRODUCT_COMPONENT}"
+          version: "${COMMIT_ID}"
+          Name: "${HELM_RELEASE_NAME}"" > helm_values.yaml
+    finally:
+      - #echo This always runs
+
+  post_build:
+    commands:
+      - #echo Entered the post_build phase...
+
+artifacts:
+  files:
+    - '**/*'

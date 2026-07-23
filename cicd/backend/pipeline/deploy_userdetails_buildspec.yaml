@@ -1,0 +1,56 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    JAVA_TOOL_OPTIONS: -Dhttps.protocols=TLSv1.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      - chmod 700 get_helm.sh
+      - ./get_helm.sh
+      - echo copying configmap artifact
+      - cp $CODEBUILD_SRC_DIR_ExportConfigArtifact/app.env app.env
+
+  build:
+    commands:
+      - echo Build started on $(date)
+      - aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - kubectl config set-context --current --namespace=$EKS_NAMESPACE
+      - printf "$(kubectl config current-context)\n"
+      - eksctl create iamserviceaccount --name $SERVICE_ACCOUNT_NAME 
+                                        --namespace $EKS_NAMESPACE
+                                        --cluster $EKS_CLUSTER_NAME 
+                                        --attach-role-arn $USERDETAILS_ROLE_ARN
+                                        --approve 
+                                        --override-existing-serviceaccounts 
+                                        --tags "product=$PRODUCT_NAME,environment=$ENVIRONMENT,branch=CLEAN_BRANCH"
+      - cd helm
+      - cat $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
+      - echo "Deploying image repository $ECR_REPO"
+      - helm upgrade --install $IMAGE_NAME . 
+                     -n $EKS_NAMESPACE
+                     --set image.repository=$ECR_REPO 
+                     --set image.tag=$BUILD_IMAGE_TAG
+                     --set ingress.hostname=$SUB_DOMAIN.$HOSTED_ZONE
+                     --set ingress.certificateArn=$SSL_CERTIFICATE
+                     --set aws.resourceTags.environment=$ENVIRONMENT
+                     --set aws.resourceTags.product=$PRODUCT_NAME
+                     --set aws.resourceTags.branch=$CLEAN_BRANCH
+                     --set aws.resourceTags.component=helm
+                     -f $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
+      - kubectl rollout restart deployment -n $EKS_NAMESPACE
+
+
+  post_build:
+    commands:
+      - echo Post-build phase...
+      - echo Build completed on $(date)
+
+artifacts:
+  base-directory: $CODEBUILD_SRC_DIR
+  files:
+    - '**/*'

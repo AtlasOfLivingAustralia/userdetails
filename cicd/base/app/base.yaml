@@ -1,0 +1,396 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Base resources for the Userdetails service
+
+Parameters:
+  pBuild:
+    Type: String
+    Description: The build number
+  pCleanBranch:
+    Type: String
+    Description: The clean branch, can be used in resource names
+  pClusterOidcIssuerUrl:
+    Type: String
+    Description: The OIDC issuer URL for the cluster
+  pEnvironment:
+    Type: String
+    Description: The AWS environment this belongs to
+  pProductName:
+    Type: String
+    Description: The name of the product
+  pOidcConnectProvider:
+    Type: String
+    Description: The OIDC connect provider
+  pServiceAccountName:
+    Type: String
+    Description: The name of the service account
+  pCognitoStackName:
+    Type: String
+    Description: The name of the Cognito stack
+  pAppClientDomain:
+    Type: String
+    Description: The domain for the app client
+  pSecretName:
+    Type: String
+    Description: The name of the secret
+  pEksNamespace:
+    Type: String
+    Description: The namespace for the EKS cluster
+  pDefaultLogoutUrl:
+    Type: String
+    Description: The name of the default logout url
+
+Conditions:
+
+  IsDev: !Equals
+    - !Ref pEnvironment
+    - development
+  NotProd: !Not
+    - !Equals
+      - !Ref pEnvironment
+      - production
+  IsFirstBuild: !Equals [!Ref pBuild, "1"]
+
+Resources:
+
+  UserdetailsRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      EmptyOnDelete: !If [ NotProd, true, false ]
+      EncryptionConfiguration:
+        EncryptionType: AES256
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      RepositoryName: !Sub
+                         - ${pProductName}-${ResourceName}
+                         - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowPublicPull
+            Effect: Allow
+            Principal: '*'
+            Action:
+              - 'ecr:GetDownloadUrlForLayer'
+              - 'ecr:BatchGetImage'
+              - 'ecr:BatchCheckLayerAvailability'
+      Tags:
+        - Key: Environment
+          Value: !Ref pEnvironment
+        - Key: Branch
+          Value: !Ref pCleanBranch
+
+  UserdetailsSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Sub ${pSecretName}
+      Description: !Sub Userdetails app ${pEnvironment} secrets
+      SecretString: !If
+              - IsFirstBuild
+              - |
+                {
+                   "userdetails_oidc_secret" : "",
+                   "userdetails_webservice_secret": "",
+                   "security_admin_password" : "",
+                   "flickr_secret" : "",
+                   "inaturalist_secret" : "",
+                   "recaptcha_secret": ""
+                }
+              - !Ref "AWS::NoValue"
+
+  UserdetailsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Permissions need for ${pProductName}
+      ManagedPolicyName: !Sub 
+                           - ${pProductName}-policy-${ResourceName}
+                           - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendTemplatedEmail
+              - ses:SendRawEmail
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - apigateway:POST
+              - apigateway:GET
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:UpdateTimeToLive
+              - dynamodb:ConditionCheckItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:Scan
+              - dynamodb:ListTagsOfResource
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+              - dynamodb:DescribeTimeToLive
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+            Resource:
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UserApplications*/stream/*
+      Roles:
+        - !Ref UserdetailsRole
+
+  UserdetailsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+                  - ${pProductName}-role-${ResourceName}
+                  - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      AssumeRolePolicyDocument: !Sub |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "${pOidcConnectProvider}"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                                          "${pClusterOidcIssuerUrl}:sub": "system:serviceaccount:${pEksNamespace}:${pServiceAccountName}",
+                                          "${pClusterOidcIssuerUrl}:aud": "sts.amazonaws.com"
+                        }
+                    }
+                }
+            ]
+          }
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
+
+  AppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AccessTokenValidity: 60
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: True
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - ala/roles
+        - ala/attrs
+        - aws.cognito.signin.user.admin
+      ReadAttributes:
+        - email
+        - email_verified
+        - family_name
+        - given_name
+        - preferred_username
+        - profile
+        - updated_at
+        - "custom:activated"
+        - "custom:disabled"
+        - "custom:expired"
+        - "custom:affiliation"
+        - "custom:organisation"
+        - "custom:city"
+        - "custom:state"
+        - "custom:country"
+        - "custom:created"
+        - "custom:lastUpdated"
+        - "custom:role"
+        - "custom:userid"
+        - "custom:flickrId"
+        - "custom:flickrUsername"
+        - "custom:inaturalistId"
+        - "custom:inaturalistToken"
+        - "custom:inaturalistUsername"
+      WriteAttributes :
+        - email
+        - family_name
+        - given_name
+        - preferred_username
+        - profile
+        - updated_at
+        - "custom:activated"
+        - "custom:disabled"
+        - "custom:expired"
+        - "custom:affiliation"
+        - "custom:organisation"
+        - "custom:city"
+        - "custom:state"
+        - "custom:country"
+        - "custom:role"
+        - "custom:flickrId"
+        - "custom:flickrUsername"
+        - "custom:inaturalistId"
+        - "custom:inaturalistToken"
+        - "custom:inaturalistUsername"
+      AuthSessionValidity: 3
+      CallbackURLs:
+        - !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
+      ClientName: !Sub
+        - ${pProductName}-${ResourceName}
+        - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
+      EnablePropagateAdditionalUserContextData: True
+      EnableTokenRevocation: True
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      GenerateSecret: True
+      IdTokenValidity: 60
+      LogoutURLs:
+        - !Sub "https://${pAppClientDomain}"
+        - !Sub "https://${pAppClientDomain}/"
+        - !Sub "https://${pAppClientDomain}/registration/accountDisabled"
+        - !Sub "https://${pAppClientDomain}/registration/passwordResetSuccess"
+        - !Sub ${pDefaultLogoutUrl}
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 30
+      SupportedIdentityProviders:
+        - COGNITO
+        - Facebook
+        - Google
+        - AAF
+        - SignInWithApple
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: days
+      UserPoolId: !ImportValue
+        Fn::Sub: ${pCognitoStackName}-UserPoolId
+
+  AppClientServerToServer:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AccessTokenValidity: 60
+      AllowedOAuthFlows:
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: True
+      AllowedOAuthScopes:
+        - ala/internal
+        - ala/attrs
+        - users/read
+      AuthSessionValidity: 3
+      CallbackURLs:
+        - !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
+      ClientName: !Sub
+        - ${pProductName}-${ResourceName}-server-to-server
+        - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      DefaultRedirectURI: !Sub "https://${pAppClientDomain}/callback?client_name=OidcClient"
+      EnablePropagateAdditionalUserContextData: True
+      EnableTokenRevocation: True
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      GenerateSecret: True
+      IdTokenValidity: 60
+      LogoutURLs:
+        - !Sub "https://${pAppClientDomain}"
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 30
+      SupportedIdentityProviders:
+        - COGNITO
+        - Facebook
+        - Google
+        - AAF
+        - SignInWithApple
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: days
+      UserPoolId: !ImportValue
+        Fn::Sub: ${pCognitoStackName}-UserPoolId
+
+  LoadBalancerAccessLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub
+        - ala-${pProductName}-${ResourceName}-alb-access-logs
+        - ResourceName: !If [ IsDev, !Ref pCleanBranch, !Ref pEnvironment ]
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: "ExpireOldLogs"
+            Status: Enabled
+            ExpirationInDays: 90
+            Prefix: "logs/"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      Tags:
+        - Key: Name
+          Value: LoadBalancerAccessLogs
+
+  LoadBalancerAccessLogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LoadBalancerAccessLogsBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowELBAccess
+            Effect: Allow
+            Principal:
+              Service: "logdelivery.elasticloadbalancing.amazonaws.com"
+            Action: "s3:PutObject"
+            Resource: !Sub "arn:aws:s3:::${LoadBalancerAccessLogsBucket}/logs/AWSLogs/${AWS::AccountId}/*"
+
+Outputs:
+
+  UserdetailsRepositoryArn:
+    Description: The ECR repository ARN for the userdetails service
+    Value: !GetAtt UserdetailsRepository.Arn
+
+  UserdetailsRepositoryName:
+    Description: The ECR repository ARN for the userdetails service
+    Value: !Ref UserdetailsRepository
+
+  UserdetailsRepositoryUri:
+    Description: The ECR repository ARN for the userdetails service
+    Value: !GetAtt UserdetailsRepository.RepositoryUri
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsRepositoryUri
+
+  UserdetailsSecretArn:
+    Description: The Secrets name for userdetails
+    Value: !Ref UserdetailsSecret
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsSecretArn
+
+  UserdetailsRoleArn:
+    Description: The name of the userdetails role
+    Value: !GetAtt UserdetailsRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsRoleArn
+
+  UserdetailsAppClient:
+    Description: The app client for the Userdetails service
+    Value: !Ref AppClient
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsAppClient
+
+  UserdetailsServerToServerAppClient:
+    Description: The app client for the Userdetails service
+    Value: !Ref AppClientServerToServer
+    Export:
+      Name: !Sub ${AWS::StackName}-UserdetailsServerToServerAppClient
+
+  LoadBalancerAccessLogsBucket:
+    Description: The S3 bucket for the Load Balancer access logs
+    Value: !Ref LoadBalancerAccessLogsBucket
