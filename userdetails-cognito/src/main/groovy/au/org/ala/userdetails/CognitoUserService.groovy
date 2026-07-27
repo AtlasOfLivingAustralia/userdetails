@@ -24,6 +24,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminUpdate
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AssociateSoftwareTokenRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeDataType
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DeliveryMediumType
 import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUserPoolRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateGroupRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetGroupRequest
