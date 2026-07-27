@@ -340,7 +340,6 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
                 .username(UUID.randomUUID().toString())
                 .userPoolId(poolId)
                 .desiredDeliveryMediums(DeliveryMediumType.EMAIL)
-                .build()
 
 
         Collection<AttributeType> userAttributes = new ArrayList<>()
@@ -370,9 +369,9 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         if (affiliationsEnabled && params.get('affiliation')) {
             userAttributes.add(AttributeType.builder().name("custom:affiliation").value(params.get('affiliation', '')).build())
         }
-        request.userAttributes = userAttributes
+        request.userAttributes(userAttributes)
 
-        def userResponse = cognitoIdp.adminCreateUser(request as AdminCreateUserRequest)
+        def userResponse = cognitoIdp.adminCreateUser(request.build() as AdminCreateUserRequest)
 
         if (userResponse.user()) {
 
