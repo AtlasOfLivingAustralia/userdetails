@@ -32,13 +32,40 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import grails.boot.GrailsApp
 import grails.boot.config.GrailsAutoConfiguration
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.env.YamlPropertySourceLoader
 import org.springframework.context.annotation.Bean
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.env.EnumerablePropertySource
 
 @Slf4j
 class Application extends GrailsAutoConfiguration {
 
     static void main(String[] args) {
-        GrailsApp.run(Application, args)
+        GrailsApp app = new GrailsApp(Application)
+        app.setDefaultProperties(loadUserdetailsPluginDefaults())
+        app.run(args)
+    }
+
+    private static Map<String, Object> loadUserdetailsPluginDefaults() {
+        ClassPathResource resource = new ClassPathResource('userdetails-plugin.yml')
+        if (!resource.exists()) {
+            throw new IllegalStateException('Required classpath resource userdetails-plugin.yml was not found')
+        }
+
+        Map<String, Object> defaults = [:]
+        new YamlPropertySourceLoader()
+                .load('userdetails-plugin', resource)
+                .findAll { it instanceof EnumerablePropertySource }
+                .each { EnumerablePropertySource propertySource ->
+                    propertySource.propertyNames.each { String propertyName ->
+                        Object value = propertySource.getProperty(propertyName)
+                        if (value != null) {
+                            defaults[propertyName] = value
+                        }
+                    }
+                }
+        defaults
     }
 
     @Bean
@@ -62,7 +89,7 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean
-    CognitoIdentityProviderClient cognitoIdpClient(AwsCredentialsProvider awsCredentialsProvider) {
+    CognitoIdentityProviderClient cognitoIdpClient(@Qualifier('awsCredentialsProvider') AwsCredentialsProvider awsCredentialsProvider) {
         def region = grailsApplication.config.getProperty('cognito.region')
 
         CognitoIdentityProviderClient cognitoIdp = CognitoIdentityProviderClient.builder()
@@ -74,7 +101,7 @@ class Application extends GrailsAutoConfiguration {
     }
 
     @Bean
-    DynamoDbClient dynamoDbClient(AwsCredentialsProvider awsCredentialsProvider) {
+    DynamoDbClient dynamoDbClient(@Qualifier('awsCredentialsProvider') AwsCredentialsProvider awsCredentialsProvider) {
         def region = grailsApplication.config.getProperty('cognito.region')
 
         return DynamoDbClient.builder()

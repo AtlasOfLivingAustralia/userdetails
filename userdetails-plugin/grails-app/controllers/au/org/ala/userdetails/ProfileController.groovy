@@ -21,12 +21,12 @@ import com.github.scribejava.core.builder.ServiceBuilder
 import com.github.scribejava.apis.FlickrApi
 import com.github.scribejava.core.exceptions.OAuthException
 import com.github.scribejava.core.model.*
+import com.github.scribejava.core.oauth.OAuth10aService
 import com.github.scribejava.core.oauth.OAuth20Service
 import com.github.scribejava.core.oauth.OAuthService
 import grails.converters.JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import uk.co.desirableobjects.oauth.scribe.OauthProvider
 
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED
 
@@ -40,8 +40,6 @@ class ProfileController {
 
     static final List<String> FLICKR_ATTRS = [FLICKR_ID, FLICKR_USERNAME]
     static final List<String> INATURALIST_ATTRS = [INATURALIST_TOKEN, INATURALIST_ID, INATURALIST_USERNAME]
-
-    def oauthService
 
     @Autowired
     @Qualifier('userService')
@@ -66,31 +64,52 @@ class ProfileController {
         }
     }
 
+    def connectInaturalist() {
+
+        def clientId = grailsApplication.config.getProperty('oauth.providers.inaturalist.key')
+        def clientSecret = grailsApplication.config.getProperty('oauth.providers.inaturalist.secret')
+        def callbackUrl = grailsApplication.config.getProperty('oauth.providers.inaturalist.callback')
+
+        OAuth20Service service =  new ServiceBuilder(clientId)
+                .apiSecret(clientSecret)
+                .defaultScope("read")
+                .callback(callbackUrl)
+                .build(InaturalistApi.instance())
+
+        def state = UUID.randomUUID().toString()
+        session.oauthState = state
+
+        redirect url: service.getAuthorizationUrl(state)
+    }
+
     def inaturalistCallback() {
 
         // TODO use the OAuthController callback action and success redirect?
         String providerName = 'inaturalist'
-        OauthProvider provider = oauthService.findProviderConfiguration(providerName)
+        def cfg = grailsApplication.config.oauth.providers.inaturalist
 
         String code = params['code']
 
         if (!code) {
-            redirect(uri: provider.failureUri)
+            redirect(uri: cfg.failureUri)
             return
         }
 
-        def service = (OAuth20Service) provider.service
+        OAuth20Service service = new ServiceBuilder(cfg.key)
+                .apiSecret(cfg.secret)
+                .callback(cfg.callback)
+                .defaultScope("read")
+                .build(InaturalistApi.instance())
 
         OAuth2AccessToken accessToken
         try {
             accessToken = service.getAccessToken(code)
         } catch(OAuthException ex) {
             log.error("Cannot authenticate with oauth", ex)
-            return redirect(uri: provider.failureUri)
+            return redirect(uri: cfg.failureUri)
         }
 
-        session[oauthService.findSessionKeyForAccessToken(providerName)] = accessToken
-        session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
+        session["inaturalist.accessToken"] = accessToken
 
         OAuthRequest request = new OAuthRequest(Verb.GET, "${InaturalistApi.baseUrl}users/edit")
         request.addHeader('Accept', 'application/json')
@@ -100,7 +119,7 @@ class ProfileController {
 
         if (!response.isSuccessful()) {
             log.error("Got error response calling iNaturalist user API: {}, body: {}", response.code, response.body)
-            return redirect(uri: provider.failureUri)
+            return redirect(uri: cfg.failureUri)
         }
         def body = response.body
         def inaturalistUser = JSON.parse(body)
@@ -120,13 +139,29 @@ class ProfileController {
         redirect(controller: 'profile')
     }
 
+    def connectFlickr() {
+
+        def clientId = grailsApplication.config.getProperty('oauth.providers.flickr.key')
+        def clientSecret = grailsApplication.config.getProperty('oauth.providers.flickr.secret')
+        def callbackUrl = grailsApplication.config.getProperty('oauth.providers.flickr.callback')
+
+        OAuth10aService service = new ServiceBuilder(clientId)
+                .apiSecret(clientSecret)
+                .callback(callbackUrl)
+                .build(FlickrApi.instance())
+
+        OAuth1RequestToken requestToken = service.requestToken
+
+        session['flickrOasRequestToken'] = requestToken
+        redirect url: service.getAuthorizationUrl(requestToken)
+    }
+
     def flickrCallback() {
 
         FlickrApi flickrApi = FlickrApi.instance()
-        OAuth1RequestToken token = session.getAt("flickr:oasRequestToken")
-        OAuthService service = new ServiceBuilder().
-                apiKey(grailsApplication.config.getProperty('oauth.providers.flickr.key')).
-                apiSecret(grailsApplication.config.getProperty('oauth.providers.flickr.secret')).build(flickrApi)
+        OAuth1RequestToken token = session.getAt("flickrOasRequestToken")
+        OAuthService service = new ServiceBuilder(grailsApplication.config.getProperty('oauth.providers.flickr.key'))
+                .apiSecret(grailsApplication.config.getProperty('oauth.providers.flickr.secret')).build(flickrApi)
 
         def accessToken = service.getAccessToken(token, params.oauth_verifier)
 

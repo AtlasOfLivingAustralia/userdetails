@@ -14,7 +14,7 @@ import grails.core.GrailsApplication
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.actuate.mongo.MongoHealthIndicator
+import org.springframework.boot.actuate.data.mongo.MongoHealthIndicator
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
