@@ -148,6 +148,14 @@ assets {
     packagePlugin = true
     minifyJs = true
     minifyCss = true
+    excludes = [
+            '**/build/**',
+            '**/bootstrap/*/js/**',
+            '**/bootstrap.esm.js',
+            '**/bootstrap.esm.min.js',
+            '**/.babelrc.js',
+            '**/package.js'
+    ]
 }
 
 compileJava.dependsOn(processResources)
@@ -191,4 +199,3 @@ publishing {
         }
     }
 }
-
