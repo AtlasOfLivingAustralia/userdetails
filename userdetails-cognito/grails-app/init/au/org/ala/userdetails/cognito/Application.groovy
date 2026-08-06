@@ -48,9 +48,9 @@ class Application extends GrailsAutoConfiguration {
     }
 
     private static Map<String, Object> loadUserdetailsPluginDefaults() {
-        ClassPathResource resource = new ClassPathResource('userdetails-plugin.yml')
+        ClassPathResource resource = new ClassPathResource('plugin.yml')
         if (!resource.exists()) {
-            throw new IllegalStateException('Required classpath resource userdetails-plugin.yml was not found')
+            throw new IllegalStateException('Required classpath resource plugin.yml was not found')
         }
 
         Map<String, Object> defaults = [:]

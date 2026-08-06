@@ -65,9 +65,9 @@ class Application extends GrailsAutoConfiguration {
     }
 
     private static Map<String, Object> loadUserdetailsPluginDefaults() {
-        ClassPathResource resource = new ClassPathResource('userdetails-plugin.yml')
+        ClassPathResource resource = new ClassPathResource('plugin.yml')
         if (!resource.exists()) {
-            throw new IllegalStateException('Required classpath resource userdetails-plugin.yml was not found')
+            throw new IllegalStateException('Required classpath resource plugin.yml was not found')
         }
 
         Map<String, Object> defaults = [:]
@@ -170,26 +170,26 @@ class Application extends GrailsAutoConfiguration {
         return pojoCodecRegistry
     }
 
-//    @Bean('applicationServiceMongoClient')
-//    MongoClient mongoClient(CodecRegistry codecRegistry) {
-//        def appName = grailsApplication.config.getProperty('info.app.name')
-//        def connectionString = grailsApplication.config.getProperty('applications.mongo.uri')
-//        def username = grailsApplication.config.getProperty('applications.mongo.username')
-//        def password = grailsApplication.config.getProperty('applications.mongo.password')
-//        def authDb = grailsApplication.config.getProperty('applications.mongo.auth-db')
-//
-//        def builder = MongoClientSettings.builder()
-//                .applicationName(appName)
-//                .applyConnectionString(new ConnectionString(connectionString))
-//
-//        if (username && password) {
-//            builder = builder.credential(MongoCredential.createCredential(username, authDb ?: '', password.toCharArray()))
-//        }
-//
-//        MongoClientSettings settings =  builder.codecRegistry(codecRegistry).build()
-//        MongoClient mongoClient = MongoClients.create(settings)
-//        return mongoClient
-//    }
+    @Bean('applicationServiceMongoClient')
+    MongoClient mongoClient(CodecRegistry codecRegistry) {
+        def appName = grailsApplication.config.getProperty('info.app.name')
+        def connectionString = grailsApplication.config.getProperty('applications.mongo.uri')
+        def username = grailsApplication.config.getProperty('applications.mongo.username')
+        def password = grailsApplication.config.getProperty('applications.mongo.password')
+        def authDb = grailsApplication.config.getProperty('applications.mongo.auth-db')
+
+        def builder = MongoClientSettings.builder()
+                .applicationName(appName)
+                .applyConnectionString(new ConnectionString(connectionString))
+
+        if (username && password) {
+            builder = builder.credential(MongoCredential.createCredential(username, authDb ?: '', password.toCharArray()))
+        }
+
+        MongoClientSettings settings =  builder.codecRegistry(codecRegistry).build()
+        MongoClient mongoClient = MongoClients.create(settings)
+        return mongoClient
+    }
 
     @Bean('applicationService')
     IApplicationService applicationService(MongoClient mongoClient, RandomStringGenerator randomStringGenerator) {

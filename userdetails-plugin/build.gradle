@@ -13,7 +13,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
     id "java-library"
 }
-//apply plugin: 'org.apache.grails.gradle.grails-exploded'
+apply plugin: 'org.apache.grails.gradle.grails-exploded'
 
 repositories {
     mavenLocal()
@@ -159,16 +159,6 @@ assets {
 }
 
 compileJava.dependsOn(processResources)
-
-tasks.named('processResources') {
-    from('grails-app/conf/plugin.yml') {
-        rename { 'userdetails-plugin.yml' }
-    }
-}
-
-tasks.named('jar') {
-    from(layout.buildDirectory.file('resources/main/userdetails-plugin.yml'))
-}
 
 springBoot {
     buildInfo()

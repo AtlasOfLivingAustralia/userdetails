@@ -93,11 +93,6 @@ dependencies {
     // Groovy backwards compat
     runtimeOnly 'org.apache.groovy:groovy-dateutil'
 
-    // Grails plugin dependencies
-
-    // Base Userdetails plugin
-    implementation project(':userdetails-plugin')
-
     // regular JAR dependencies
 
     implementation 'com.zaxxer:HikariCP:5.1.0'
@@ -105,6 +100,11 @@ dependencies {
     testRuntimeOnly "com.h2database:h2"
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
 
+}
+grails {
+    plugins {
+        implementation project(':userdetails-plugin')
+    }
 }
 
 application {
