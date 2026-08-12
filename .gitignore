@@ -136,3 +136,6 @@ hs_err_pid*
 # Gradle
 .gradle/
 build/
+
+# agents
+EPCC_*
