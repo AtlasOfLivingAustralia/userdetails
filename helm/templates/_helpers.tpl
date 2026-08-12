@@ -60,3 +60,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Comma-separated key=value tag string built from .Values.tags, e.g. "product=userdetails,branch=main"
+*/}}
+{{- define "ala-userdetails.resourceTags" -}}
+{{- $tags := list -}}
+{{- range $key := keys .Values.tags | sortAlpha -}}
+{{- $tags = append $tags (printf "%s=%s" $key (index $.Values.tags $key)) -}}
+{{- end -}}
+{{- join "," $tags -}}
+{{- end }}
