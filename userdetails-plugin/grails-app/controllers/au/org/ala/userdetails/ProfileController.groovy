@@ -111,7 +111,7 @@ class ProfileController {
             if (accessToken.expiresIn == null) {
                 userService.addOrUpdateProperty(user, INATURALIST_TOKEN, accessToken.accessToken)
             }
-            userService.addOrUpdateProperty(user, INATURALIST_ID, inaturalistUser.id)
+            userService.addOrUpdateProperty(user, INATURALIST_ID, inaturalistUser.id.toString())
             userService.addOrUpdateProperty(user, INATURALIST_USERNAME, inaturalistUser.login)
         } else {
             flash.message = "Failed to retrieve user details!"
