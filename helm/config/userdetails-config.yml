@@ -90,7 +90,7 @@ oauth:
       callback: ${grails.serverURL}/profile/inaturalistCallback
 inaturalist:
   name: iNaturalist Australia
-  baseUrl: https://inaturalist.ala.org.au/
+  baseUrl: https://www.inaturalist.org/
 password:
   encoder: bcrypt
 bcrypt:

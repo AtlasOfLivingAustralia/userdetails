@@ -92,7 +92,7 @@ class ProfileController {
         session[oauthService.findSessionKeyForAccessToken(providerName)] = accessToken
         session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
 
-        OAuthRequest request = new OAuthRequest(Verb.GET, "${InaturalistApi.baseUrl}users/edit")
+        OAuthRequest request = new OAuthRequest(Verb.GET, "${InaturalistApi.baseUrl}users/edit.json")
         request.addHeader('Accept', 'application/json')
         service.signRequest(accessToken, request)
 
