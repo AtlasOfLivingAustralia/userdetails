@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -383,6 +384,12 @@ class RegistrationController {
         boolean isSuccess = userService.activateAccount(user, params)
 
         if (isSuccess) {
+            Map resp = webService.post("${grailsApplication.config.getProperty('alerts.url')}/api/alerts/user/createAlerts", [:], [userId: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName])
+            if (resp.statusCode == HttpStatus.SC_CREATED) {
+                emailService.sendAccountActivationSuccess(user, resp.resp)
+            } else if (resp.statusCode != HttpStatus.SC_OK) {
+                log.error("Alerts returned ${resp} when trying to create user alerts for " + user.id + " with email: " + user.email)
+            }
             render(view: 'accountActivatedSuccessful', model: [user: user])
         } else {
             render(view: "accountError")
