@@ -25,6 +25,9 @@ import au.org.ala.userdetails.PasswordService
 import au.org.ala.userdetails.secrets.RandomStringGenerator
 import au.org.ala.web.AuthService
 import au.org.ala.ws.service.WebService
+import org.springframework.boot.env.YamlPropertySourceLoader
+import org.springframework.core.env.EnumerablePropertySource
+import org.springframework.core.io.ClassPathResource
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials
@@ -56,7 +59,30 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries
 class Application extends GrailsAutoConfiguration {
 
     static void main(String[] args) {
-        GrailsApp.run(Application, args)
+        GrailsApp app = new GrailsApp(Application)
+        app.setDefaultProperties(loadUserdetailsPluginDefaults())
+        app.run(args)
+    }
+
+    private static Map<String, Object> loadUserdetailsPluginDefaults() {
+        ClassPathResource resource = new ClassPathResource('plugin.yml')
+        if (!resource.exists()) {
+            throw new IllegalStateException('Required classpath resource plugin.yml was not found')
+        }
+
+        Map<String, Object> defaults = [:]
+        new YamlPropertySourceLoader()
+                .load('userdetails-plugin', resource)
+                .findAll { it instanceof EnumerablePropertySource }
+                .each { EnumerablePropertySource propertySource ->
+                    propertySource.propertyNames.each { String propertyName ->
+                        Object value = propertySource.getProperty(propertyName)
+                        if (value != null) {
+                            defaults[propertyName] = value
+                        }
+                    }
+                }
+        defaults
     }
 
     @Bean

@@ -241,7 +241,7 @@
                                     </p>
 
                                     <span class="btn btn-outline-dark">
-                                        <oauth:connect provider="inaturalist"><g:message code="myprofile.link.to.my.inaturalist" /></oauth:connect>
+                                        <g:link controller="profile" action="connectInaturalist"><g:message code="myprofile.link.to.my.inaturalist"/></g:link>
                                     </span>
                                 </g:else>
                             </div>
@@ -277,7 +277,7 @@
                                         <g:message code="myprofile.flicker.link.description" />
                                     </p>
                                     <span class="btn btn-outline-dark">
-                                        <oauth:connect provider="flickr"><g:message code="myprofile.link.to.my.flickr.account" /></oauth:connect>
+                                        <g:link controller="profile" action="connectFlickr"><g:message code="myprofile.link.to.my.flickr.account"/></g:link>
                                     </span>
                                 </g:else>
                             </div>

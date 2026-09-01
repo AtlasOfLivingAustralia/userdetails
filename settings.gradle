@@ -7,10 +7,10 @@ pluginManagement {
     }
 
     plugins {
-        id "org.grails.grails-web" version "6.2.0"
-        id "org.grails.grails-gsp" version "6.2.0"
-        id "com.bertramlabs.asset-pipeline" version "4.3.0"
-        id "com.github.erdi.webdriver-binaries" version "3.2"
+        id "org.apache.grails.gradle.grails-web" version "7.2.1"
+        id "org.apache.grails.gradle.grails-gsp" version "7.2.1"
+        id "org.apache.grails.gradle.grails-plugin" version "7.2.1"
+        id "cloud.wondrify.asset-pipeline" version "5.0.32"
     }
 }
 

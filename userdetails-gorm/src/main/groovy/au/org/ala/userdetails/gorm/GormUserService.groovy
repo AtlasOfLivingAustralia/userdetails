@@ -26,6 +26,7 @@ import au.org.ala.userdetails.PasswordService
 import au.org.ala.userdetails.ResultStreamer
 import au.org.ala.web.AuthService
 import au.org.ala.ws.service.WebService
+import com.opencsv.CSVReaderBuilder
 import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
@@ -236,7 +237,7 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
 
         def roleUser = Role.findByRole("ROLE_USER")
 
-        stream.eachCsvLine { tokens ->
+        new CSVReaderBuilder(new InputStreamReader(stream, 'UTF-8')).build().each { String[] tokens ->
             // email_address,first_name,surname,roles
             if (++lineNumber == 1 && firstRowContainsFieldNames) {
                 // ignore...

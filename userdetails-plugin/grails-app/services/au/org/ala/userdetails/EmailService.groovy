@@ -17,13 +17,13 @@ package au.org.ala.userdetails
 
 import au.org.ala.auth.PasswordResetFailedException
 import au.org.ala.users.IUser
-import grails.web.mapping.LinkGenerator
+
+import grails.plugins.mail.MailService
 
 class EmailService {
 
     def grailsApplication
-
-    LinkGenerator linkGenerator
+    MailService mailService
 
     static transactional = false
 
@@ -52,7 +52,7 @@ class EmailService {
             emailBody2 = "If you did not request a new password, please let us know immediately by replying to this email."
         }
         try {
-            sendMail {
+            mailService.sendMail {
               from grailsApplication.config.getProperty('emailSenderTitle')+"<" + grailsApplication.config.getProperty('emailSender') + ">"
               subject emailSubject
               to user.email
@@ -68,7 +68,7 @@ class EmailService {
 
     def sendAccountActivation(user, authKey) throws PasswordResetFailedException {
         try {
-            sendMail {
+            mailService.sendMail {
                 from grailsApplication.config.getProperty('emailSenderTitle') + "<" + grailsApplication.config.getProperty('emailSender') + ">"
                 subject "Activate your account"
                 to user.email
@@ -84,7 +84,7 @@ class EmailService {
 
     def sendAccountActivationSuccess(user, activatedAlerts) throws PasswordResetFailedException {
         try {
-            sendMail {
+            mailService.sendMail {
                 from grailsApplication.config.getProperty('emailSenderTitle') + "<" + grailsApplication.config.getProperty('emailSender') + ">"
                 subject "Account activated successfully"
                 to user.email
@@ -100,7 +100,7 @@ class EmailService {
 
     def sendUpdateProfileSuccess(IUser user, List<String> emailRecipients) throws PasswordResetFailedException {
         try {
-            sendMail {
+            mailService.sendMail {
                 from grailsApplication.config.getProperty('emailSenderTitle')+"<" + grailsApplication.config.getProperty('emailSender') + ">"
                 subject "Account updated successfully"
                 to (emailRecipients.toArray())
@@ -116,7 +116,7 @@ class EmailService {
 
     def sendGeneratedPassword(user, generatedPassword) throws PasswordResetFailedException {
         try {
-            sendMail {
+            mailService.sendMail {
               from grailsApplication.config.getProperty('emailSenderTitle')+"<" + grailsApplication.config.getProperty('emailSender') + ">"
               subject "Accessing your account"
               to user.email
