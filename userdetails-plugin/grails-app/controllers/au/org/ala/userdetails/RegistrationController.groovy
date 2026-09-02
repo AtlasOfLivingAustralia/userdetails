@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -53,6 +54,7 @@ class RegistrationController {
     def simpleCaptchaService
     def emailService
     def passwordService
+    def profileService
 
     @Qualifier('userService')
     IUserService userService
@@ -383,6 +385,7 @@ class RegistrationController {
         boolean isSuccess = userService.activateAccount(user, params)
 
         if (isSuccess) {
+            profileService.createAlertForNewsBlogs(user)
             render(view: 'accountActivatedSuccessful', model: [user: user])
         } else {
             render(view: "accountError")

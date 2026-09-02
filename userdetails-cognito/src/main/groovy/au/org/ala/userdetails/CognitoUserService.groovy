@@ -223,17 +223,19 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
 
     @Override
     boolean activateAccount(UserRecord user, GrailsParameterMap params) {
+        def result = false
         if(user.locked) {
-            enableUser(user)
+            result = enableUser(user)
         }
         if(!user.activated) {
             def request = AdminConfirmSignUpRequest.builder()
                     .username(user.userName)
                     .userPoolId(poolId)
                     .build()
-            cognitoIdp.adminConfirmSignUp(request as AdminConfirmSignUpRequest)
+            def response = cognitoIdp.adminConfirmSignUp(request as AdminConfirmSignUpRequest)
+            result = isSuccessful(response)
         }
-        return true
+        return result
     }
 
     @Override
