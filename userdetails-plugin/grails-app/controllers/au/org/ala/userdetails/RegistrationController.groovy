@@ -54,6 +54,7 @@ class RegistrationController {
     def simpleCaptchaService
     def emailService
     def passwordService
+    def profileService
 
     @Qualifier('userService')
     IUserService userService
@@ -384,12 +385,7 @@ class RegistrationController {
         boolean isSuccess = userService.activateAccount(user, params)
 
         if (isSuccess) {
-            Map resp = webService.post("${grailsApplication.config.getProperty('alerts.url')}/api/alerts/user/createAlerts", [:], [userId: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName])
-            if (resp.statusCode == HttpStatus.SC_CREATED) {
-                emailService.sendAccountActivationSuccess(user, resp.resp)
-            } else if (resp.statusCode != HttpStatus.SC_OK) {
-                log.error("Alerts returned ${resp} when trying to create user alerts for " + user.id + " with email: " + user.email)
-            }
+            profileService.createAlertForNewsBlogs(user)
             render(view: 'accountActivatedSuccessful', model: [user: user])
         } else {
             render(view: "accountError")
