@@ -92,7 +92,7 @@ class ProfileController {
         session[oauthService.findSessionKeyForAccessToken(providerName)] = accessToken
         session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
 
-        OAuthRequest request = new OAuthRequest(Verb.GET, "${InaturalistApi.baseUrl}users/edit")
+        OAuthRequest request = new OAuthRequest(Verb.GET, "${InaturalistApi.baseUrl}users/edit.json")
         request.addHeader('Accept', 'application/json')
         service.signRequest(accessToken, request)
 
@@ -111,7 +111,7 @@ class ProfileController {
             if (accessToken.expiresIn == null) {
                 userService.addOrUpdateProperty(user, INATURALIST_TOKEN, accessToken.accessToken)
             }
-            userService.addOrUpdateProperty(user, INATURALIST_ID, inaturalistUser.id)
+            userService.addOrUpdateProperty(user, INATURALIST_ID, inaturalistUser.id.toString())
             userService.addOrUpdateProperty(user, INATURALIST_USERNAME, inaturalistUser.login)
         } else {
             flash.message = "Failed to retrieve user details!"
