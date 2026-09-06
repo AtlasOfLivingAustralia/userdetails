@@ -14,11 +14,7 @@ metadata:
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/success-codes: 200,404,301,302
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09
-    alb.ingress.kubernetes.io/tags: >
-      {{- $tags := list }}
-      {{- range $key, $value := .Values.tags }}
-      {{- $tags = append $tags (printf "%s=%s" $key $value) }}
-      {{- end }}
+    alb.ingress.kubernetes.io/tags:  {{ include "ala-userdetails.resourceTags" . | quote }}
     alb.ingress.kubernetes.io/load-balancer-attributes: >
       idle_timeout.timeout_seconds=90,
       access_logs.s3.enabled=true,

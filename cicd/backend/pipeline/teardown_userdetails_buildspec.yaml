@@ -20,7 +20,6 @@ phases:
       - eksctl delete iamserviceaccount
                   --name $SERVICE_ACCOUNT_NAME
                   --cluster $EKS_CLUSTER_NAME
-      - kubectl delete configmap $PRODUCT_NAME-config
       - cd helm
       - helm uninstall $IMAGE_NAME
                --timeout 900s

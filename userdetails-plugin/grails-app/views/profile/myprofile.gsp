@@ -231,7 +231,7 @@
                                     </strong>
                                     <ul>
                                         <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery"), fq: "alau_user_id:${props.inaturalistUsername}"]'>View my iNaturalist observations in ${grailsApplication.config.getProperty('skin.orgNameShort')}</u:link></li>
-                                        <li><u:link baseProperty="biocache.search.baseUrl" params='[q: grailsApplication.config.getProperty("inaturalist.searchQuery") + " OR " + grailsApplication.config.getProperty("inaturalist.sightingsSearchQuery"), fq: "alau_user_id:${props.inaturalistUsername} OR alau_user_id:\"${user.id}\""]'>View my iNaturalist observations and my ${grailsApplication.config.getProperty('skin.orgNameShort')} Sightings in ${grailsApplication.config.getProperty('skin.orgNameShort')}</u:link></li>
+                                        <li><u:link baseProperty="biocache.search.baseUrl" params='[q: "(${grailsApplication.config.getProperty("inaturalist.searchQuery")} AND userId: \"${props.inaturalistUsername}\") OR (${grailsApplication.config.getProperty("inaturalist.sightingsSearchQuery")} AND userId: \"${user.id}\")"]'>View my iNaturalist observations and my ${grailsApplication.config.getProperty('skin.orgNameShort')} Sightings in ${grailsApplication.config.getProperty('skin.orgNameShort')}</u:link></li>
                                     </ul>
                                     <g:link controller="profile" class="btn btn-outline-dark" action="removeLink" params="[provider: 'inaturalist']"><g:message code="myprofile.remove.link.to.inaturalist" /></g:link>
                                 </g:if>
