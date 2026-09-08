@@ -15,8 +15,7 @@
 
 package au.org.ala.userdetails.gorm
 
-import au.org.ala.recaptcha.RecaptchaClient
-import au.org.ala.recaptcha.RecaptchaResponse
+import au.org.ala.recaptcha.RecaptchaService
 import au.org.ala.userdetails.EmailService
 import au.org.ala.userdetails.IUserService
 import au.org.ala.userdetails.PasswordService
@@ -30,14 +29,13 @@ import org.grails.web.servlet.mvc.SynchronizerTokensHolder
 
 import org.passay.RuleResult
 import org.passay.RuleResultDetail
-import retrofit2.mock.Calls
 
 class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUnitTest<RegistrationController>, DataTest {
 
     def passwordService = Mock(PasswordService)
     def userService = Mock(IUserService)
     def emailService = Mock(EmailService)
-    def recaptchaClient = Mock(RecaptchaClient)
+    def recaptchaService = Mock(RecaptchaService)
 
     void setup() {
         defineBeans {
@@ -49,7 +47,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         controller.passwordService = passwordService
         controller.userService = userService
         controller.emailService = emailService
-        controller.recaptchaClient = recaptchaClient
+        controller.recaptchaService = recaptchaService
     }
 
     void setupSpec() {
@@ -221,15 +219,13 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         response.redirectedUrl == '/logout?url=%2Fregistration%2FpasswordResetSuccess'
     }
 
-    def "Account is registered when a recaptcha response is supplied and recaptcha secret key is defined"() {
+    def "Account is registered when a valid recaptcha Enterprise assessment is returned"() {
         setup:
         def password = 'password'
         def email = 'test@example.org'
         def authKey = '987'
-        def recaptchaSecretKey = 'xyz'
         def recaptchaResponseKey = '123'
         def remoteAddressIp = '127.0.0.1'
-        grailsApplication.config.recaptcha.secretKey = recaptchaSecretKey
 
         // This is to allow the submitted token to pass validation.  Failure to do this will result in the invalidToken block being used.
         def tokenHolder = SynchronizerTokensHolder.store(session)
@@ -253,7 +249,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         controller.register()
 
         then:
-        1 * recaptchaClient.verify(recaptchaSecretKey, recaptchaResponseKey, remoteAddressIp) >> { Calls.response(new RecaptchaResponse(true, '2019-09-27T16:06:00Z', 'test-host', [])) }
+        1 * recaptchaService.verify(recaptchaResponseKey, 'register', remoteAddressIp, null) >> true
         1 * userService.isEmailInUse(email) >> false
         1 * passwordService.validatePassword(email, password) >> new RuleResult(true)
         1 * userService.registerUser(_) >> { def user = new User(); user.tempAuthKey = authKey; user }
@@ -263,13 +259,12 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         response.redirectedUrl == '/registration/accountCreated'
     }
 
-    def "Account is registered when no recaptcha secret key is defined"() {
+    def "Account is registered when recaptcha is disabled"() {
         setup:
         def password = 'password'
         def email = 'test@example.org'
         def authKey = '987'
         def remoteAddressIp = '127.0.0.1'
-        grailsApplication.config.recaptcha.secretKey = ''
 
         // This is to allow the submitted token to pass validation.  Failure to do this will result in the invalidToken block being used.
         def tokenHolder = SynchronizerTokensHolder.store(session)
@@ -292,7 +287,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         controller.register()
 
         then:
-        0 * recaptchaClient.verify(_, _, _)
+        1 * recaptchaService.verify(null, 'register', remoteAddressIp, null) >> true
         1 * userService.isEmailInUse(email) >> false
         1 * passwordService.validatePassword(email, password) >> new RuleResult(true)
         1 * userService.registerUser(_) >> { def user = new User(); user.tempAuthKey = authKey; user }
@@ -302,11 +297,8 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         response.redirectedUrl == '/registration/accountCreated'
     }
 
-    def "Account is not registered when recaptcha secret key is defined and no recaptcha response is present"() {
+    def "Account is not registered when recaptcha Enterprise validation fails: #scenario"() {
         setup:
-        def secretKey = 'xyz'
-        grailsApplication.config.recaptcha.secretKey = secretKey
-
         // This is to allow the submitted token to pass validation.  Failure to do this will result in the invalidToken block being used.
         def tokenHolder = SynchronizerTokensHolder.store(session)
 
@@ -323,13 +315,13 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         params.city = 'Canberra'
         params.password = 'password'
         params.reenteredPassword = 'password'
-//        params['g-recaptcha-response'] = '123'
+        params['g-recaptcha-response'] = recaptchaToken
         request.remoteAddr = '127.0.0.1'
 
         controller.register()
 
         then:
-        1 * recaptchaClient.verify(secretKey, null, '127.0.0.1') >> { Calls.response(new RecaptchaResponse(false, null, null, ['missing-input-response'])) }
+        1 * recaptchaService.verify(recaptchaToken, 'register', '127.0.0.1', null) >> false
         0 * userService.registerUser(_)
         0 * passwordService.resetPassword(_, _, _, _)
         0 * emailService.sendAccountActivation(_, _)
@@ -337,6 +329,12 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         0 * _ // no other interactions
         view == '/registration/createAccount'
         !model.edit
+
+        where:
+        scenario        | recaptchaToken
+        'missing token' | null
+        'low score'     | 'token'
+        'wrong action'  | 'token'
     }
 
     def "Account is not registered when password fails password policy"() {
@@ -344,7 +342,6 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         def password = 'password'
         def email = 'test@example.org'
         def remoteAddressIp = '127.0.0.1'
-        grailsApplication.config.recaptcha.secretKey = ''
 
         // This is to allow the submitted token to pass validation.  Failure to do this will result in the invalidToken block being used.
         def tokenHolder = SynchronizerTokensHolder.store(session)
@@ -367,7 +364,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         controller.register()
 
         then:
-        0 * recaptchaClient.verify(_, _, _)
+        1 * recaptchaService.verify(null, 'register', remoteAddressIp, null) >> true
         1 * userService.isEmailInUse(email) >> false
         1 * passwordService.validatePassword(email, password) >> new RuleResult(
                 false,

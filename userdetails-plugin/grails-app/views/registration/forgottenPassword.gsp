@@ -23,7 +23,7 @@
     </g:if>
     <asset:stylesheet src="userdetails.css" />
     <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=${grailsApplication.config.getProperty('recaptcha.siteKey')}" async defer></script>
     </g:if>
 </head>
 <body>
@@ -47,20 +47,42 @@
                 </p>
             </g:if>
 
-            <g:form action="startPasswordReset" method="POST" onsubmit="submitResetBtn.disabled = true; return true;">
+            <g:form id="startPasswordReset" name="startPasswordReset" action="startPasswordReset" method="POST" onsubmit="submitResetBtn.disabled = true; return true;">
                 <div class="mb-3">
                     <label for="email"><g:message code="forgotten.password.email" /></label>
                     <input id="email" name="email" type="text" class="form-control" value="${params.email ?: email}"/>
                 </div>
 
                 <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
-                    <div class="g-recaptcha" data-sitekey="${grailsApplication.config.getProperty('recaptcha.siteKey')}"></div>
-                    <br/>
+                    <input type="hidden" id="recaptchaResponse" name="g-recaptcha-response" />
                 </g:if>
 
                 <br/>
                 <g:submitButton id="submitResetBtn" class="btn btn-primary" name="submit" value="${message(code:'forgotten.password.reset.link')}"/>
             </g:form>
+            <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
+                <asset:script type="text/javascript">
+                    document.getElementById('startPasswordReset').addEventListener('submit', function(event) {
+                        var form = this;
+                        if (form.dataset.recaptchaReady === 'true') {
+                            return;
+                        }
+
+                        event.preventDefault();
+                        grecaptcha.enterprise.ready(function() {
+                            grecaptcha.enterprise.execute('${grailsApplication.config.getProperty('recaptcha.siteKey')}', {action: 'password_reset'})
+                                .then(function(token) {
+                                    document.getElementById('recaptchaResponse').value = token;
+                                    form.dataset.recaptchaReady = 'true';
+                                    form.requestSubmit();
+                                })
+                                .catch(function() {
+                                    document.getElementById('submitResetBtn').disabled = false;
+                                });
+                        });
+                    });
+                </asset:script>
+            </g:if>
         </div>
         <div class="col-md-6">
             <p class="alert alert-well">
