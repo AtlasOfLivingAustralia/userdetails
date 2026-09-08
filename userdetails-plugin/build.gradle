@@ -187,9 +187,6 @@ publishing {
     publications {
         mavenJar(MavenPublication) {
             from components.java
-            artifact(sourcesJar) {
-                classifier 'sources'
-            }
         }
     }
 }

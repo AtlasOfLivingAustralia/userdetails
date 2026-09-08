@@ -258,7 +258,7 @@ oauth:
 
 inaturalist:
   name: iNaturalist Australia
-  baseUrl: https://inaturalist.ala.org.au/
+  baseUrl: https://www.inaturalist.org
   searchQuery: data_resource_uid:dr1411
   sightingsSearchQuery: data_resource_uid:dr364
 
