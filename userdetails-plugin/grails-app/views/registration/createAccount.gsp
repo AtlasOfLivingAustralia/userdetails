@@ -339,12 +339,18 @@
             }
 
             event.preventDefault();
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                document.getElementById('updateAccountSubmit').disabled = false;
+                alert('Security verification is still loading. Please try again.');
+                return;
+            }
+
             grecaptcha.enterprise.ready(function() {
                 grecaptcha.enterprise.execute('${grailsApplication.config.getProperty('recaptcha.siteKey')}', {action: 'register'})
                     .then(function(token) {
                         document.getElementById('recaptchaResponse').value = token;
                         form.dataset.recaptchaReady = 'true';
-                        form.submit();
+                        form.requestSubmit();
                     })
                     .catch(function() {
                         document.getElementById('updateAccountSubmit').disabled = false;

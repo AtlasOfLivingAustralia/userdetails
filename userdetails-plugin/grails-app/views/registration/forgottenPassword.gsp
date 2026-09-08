@@ -69,6 +69,12 @@
                         }
 
                         event.preventDefault();
+                        if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                            document.getElementById('submitResetBtn').disabled = false;
+                            alert('Security verification is still loading. Please try again.');
+                            return;
+                        }
+
                         grecaptcha.enterprise.ready(function() {
                             grecaptcha.enterprise.execute('${grailsApplication.config.getProperty('recaptcha.siteKey')}', {action: 'password_reset'})
                                 .then(function(token) {

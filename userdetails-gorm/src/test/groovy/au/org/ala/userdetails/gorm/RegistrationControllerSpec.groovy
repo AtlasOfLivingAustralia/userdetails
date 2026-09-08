@@ -331,10 +331,9 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         !model.edit
 
         where:
-        scenario        | recaptchaToken
-        'missing token' | null
-        'low score'     | 'token'
-        'wrong action'  | 'token'
+        scenario              | recaptchaToken
+        'missing token'       | null
+        'rejected assessment' | 'token'
     }
 
     def "Account is not registered when password fails password policy"() {
