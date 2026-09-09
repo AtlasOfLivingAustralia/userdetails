@@ -17,14 +17,14 @@
 <head>
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}"/>
     <meta name="section" content="home"/>
-    <title>User Administration | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
+    <title><g:message code="admin.user.administration.title" /> | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
     <meta name="breadcrumbParent" content="${g.createLink(controller: 'profile')},My Profile" />
     <asset:stylesheet src="userdetails.css" />
 </head>
 <body>
     <div class="row">
         <div class="col-md-12" id="page-body" role="main">
-            <h1>User Administration</h1>
+            <h1><g:message code="admin.user.administration.title" /></h1>
             <div class="row userdetails-grid">
                 <g:if test="${!isBiosecurityAdmin}">
                     <div class="col-12 col-md-3">
