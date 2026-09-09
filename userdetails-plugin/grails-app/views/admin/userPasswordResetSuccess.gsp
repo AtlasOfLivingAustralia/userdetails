@@ -17,13 +17,13 @@
 <head>
     <meta name="layout" content="${grailsApplication.config.getProperty('skin.layout')}"/>
     <meta name="section" content="home"/>
-    <title>Please check your email | ${grailsApplication.config.getProperty('skin.orgNameLong')} </title>
+    <title><g:message code="admin.user.password.reset.success.title" /> | ${grailsApplication.config.getProperty('skin.orgNameLong')}</title>
     <meta name="breadcrumbParent" content="${createLink(controller:'admin', action:'index')},Administration" />
     <asset:stylesheet src="userdetails.css" />
 </head>
 <body>
 <div class="row">
-    <h1>User password reset successfully</h1>
+    <h1><g:message code="admin.user.password.reset.success.title" /></h1>
     <div class="row">
         <div class="col-md-12">
             <p class="alert alert-well">
