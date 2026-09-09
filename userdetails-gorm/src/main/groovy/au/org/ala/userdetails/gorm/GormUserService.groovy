@@ -237,7 +237,8 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
 
         def roleUser = Role.findByRole("ROLE_USER")
 
-        new CSVReaderBuilder(new InputStreamReader(stream, 'UTF-8')).build().each { String[] tokens ->
+        new CSVReaderBuilder(new InputStreamReader(stream, 'UTF-8')).build().withCloseable { reader ->
+            reader.each { String[] tokens ->
             // email_address,first_name,surname,roles
             if (++lineNumber == 1 && firstRowContainsFieldNames) {
                 // ignore...
@@ -322,6 +323,7 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
                 }
 
 
+            }
             }
         }
 

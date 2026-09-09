@@ -60,10 +60,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("au.org.ala:ala-mail:3.0.0")
     implementation("org.grails.plugins:grails-mail:5.0.3")
-    runtimeOnly("javax.servlet:javax.servlet-api:4.0.1")
-    runtimeOnly("org.grails:grails-web-sitemesh:6.2.3") {
-        transitive = false
-    }
     console("org.apache.grails:grails-console")
     runtimeOnly("cloud.wondrify:asset-pipeline-grails")
 //    runtimeOnly("com.h2database:h2")

@@ -23,7 +23,6 @@ import com.github.scribejava.core.exceptions.OAuthException
 import com.github.scribejava.core.model.*
 import com.github.scribejava.core.oauth.OAuth10aService
 import com.github.scribejava.core.oauth.OAuth20Service
-import com.github.scribejava.core.oauth.OAuthService
 import grails.converters.JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -89,8 +88,11 @@ class ProfileController {
         def cfg = grailsApplication.config.oauth.providers.inaturalist
 
         String code = params['code']
+        String expectedState = session.oauthState as String
+        session.removeAttribute('oauthState')
 
-        if (!code) {
+        if (!code || !expectedState || params.state != expectedState) {
+            log.warn('Invalid iNaturalist OAuth callback: missing code or state mismatch')
             redirect(uri: cfg.failureUri)
             return
         }
@@ -159,11 +161,17 @@ class ProfileController {
     def flickrCallback() {
 
         FlickrApi flickrApi = FlickrApi.instance()
-        OAuth1RequestToken token = session.getAt("flickrOasRequestToken")
-        OAuthService service = new ServiceBuilder(grailsApplication.config.getProperty('oauth.providers.flickr.key'))
+        def token = session['flickrOasRequestToken']
+        session.removeAttribute('flickrOasRequestToken')
+        if (!token || !params.oauth_verifier) {
+            flash.message = 'Missing Flickr OAuth request token or verifier'
+            return redirect(controller: 'profile')
+        }
+
+        OAuth10aService service = new ServiceBuilder(grailsApplication.config.getProperty('oauth.providers.flickr.key'))
                 .apiSecret(grailsApplication.config.getProperty('oauth.providers.flickr.secret')).build(flickrApi)
 
-        def accessToken = service.getAccessToken(token, params.oauth_verifier)
+        def accessToken = service.getAccessToken(token as OAuth1RequestToken, params.oauth_verifier)
 
         // Now let's go and ask for a protected resource!
         OAuthRequest request = new OAuthRequest(Verb.GET, flickrApi.accessTokenEndpoint)
