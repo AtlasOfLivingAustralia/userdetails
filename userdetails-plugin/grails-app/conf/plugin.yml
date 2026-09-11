@@ -312,9 +312,8 @@ registration:
     activationArticle:
 
 recaptcha:
-  baseUrl: https://www.google.com/recaptcha/api/
-  siteKey:
-  secretKey:
+  baseUrl: https://recaptchaenterprise.googleapis.com/
+  scoreThreshold: 0.7
 
 environments:
     development:
