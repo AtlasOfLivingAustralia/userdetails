@@ -4,7 +4,7 @@ import au.org.ala.cas.encoding.CloseShieldWriter
 import au.org.ala.users.IUser
 import grails.converters.JSON
 
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponse
 
 class ResultStreamer {
 

@@ -2,12 +2,11 @@
 
 plugins {
     id "groovy"
-    id "org.grails.grails-web"
-    id "org.grails.grails-gsp"
-    id "com.github.erdi.webdriver-binaries"
+    id "org.apache.grails.gradle.grails-web"
+    id "org.apache.grails.gradle.grails-gsp"
     id "war"
     id "idea"
-    id "com.bertramlabs.asset-pipeline"
+    id "cloud.wondrify.asset-pipeline"
     id "application"
     id "eclipse"
 
@@ -44,41 +43,39 @@ configurations {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    exclude group: 'org.grails', module: 'grails-shell'
+    exclude group: 'org.apache.grails', module: 'grails-shell-cli'
 }
 
 dependencies {
-    implementation("org.grails:grails-core")
-    implementation("org.grails:grails-logging")
-    implementation("org.grails:grails-plugin-databinding")
-    implementation("org.grails:grails-plugin-i18n")
-    implementation("org.grails:grails-plugin-interceptors")
-    implementation("org.grails:grails-plugin-rest")
-    implementation("org.grails:grails-plugin-services")
-    implementation("org.grails:grails-plugin-url-mappings")
-    implementation("org.grails:grails-web-boot")
-    implementation("org.grails.plugins:gsp")
-    implementation("org.grails.plugins:hibernate5")
-    implementation("org.grails.plugins:scaffolding")
+    implementation("org.apache.grails:grails-core")
+    implementation("org.apache.grails:grails-logging")
+    implementation("org.apache.grails:grails-databinding")
+    implementation("org.apache.grails:grails-interceptors")
+    implementation("org.apache.grails:grails-rest-transforms")
+    implementation("org.apache.grails:grails-services")
+    implementation("org.apache.grails:grails-url-mappings")
+    implementation("org.apache.grails:grails-web-boot")
+    implementation("org.apache.grails:grails-gsp")
+    implementation("org.apache.grails:grails-data-hibernate5")
+    implementation("org.apache.grails:grails-scaffolding")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.boot:spring-boot-starter-tomcat")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    console("org.apache.grails:grails-console")
+    runtimeOnly("cloud.wondrify:asset-pipeline-grails")
+    implementation("org.grails.plugins:grails-mail:5.0.3")
     compileOnly("io.micronaut:micronaut-inject-groovy")
-    console("org.grails:grails-console")
-    runtimeOnly("com.bertramlabs.plugins:asset-pipeline-grails:4.3.0")
-    implementation("org.grails.plugins:mail:4.0.0")
     implementation platform("software.amazon.awssdk:bom:2.33.4")
     implementation "software.amazon.awssdk:auth"
 //    runtimeOnly("com.h2database:h2")
 //    runtimeOnly("org.apache.tomcat:tomcat-jdbc")
     runtimeOnly("org.fusesource.jansi:jansi:1.18")
-    testImplementation("io.micronaut:micronaut-inject-groovy")
-    testImplementation("org.grails:grails-gorm-testing-support")
-    testImplementation("org.grails:grails-web-testing-support")
-    testImplementation("org.grails.plugins:geb")
+    testImplementation("org.apache.grails:grails-testing-support-datamapping")
+    testImplementation("org.apache.grails:grails-testing-support-web")
+    testImplementation("org.apache.grails:grails-geb")
     testImplementation("org.seleniumhq.selenium:selenium-api:4.19.1")
     testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.19.1")
     testImplementation("org.seleniumhq.selenium:selenium-support:4.19.1")
@@ -88,16 +85,13 @@ dependencies {
     testRuntimeOnly("org.seleniumhq.selenium:selenium-safari-driver:4.19.1")
     testImplementation("io.micronaut:micronaut-http-client")
 
-    implementation "org.hibernate:hibernate-jcache"
+    implementation("org.hibernate:hibernate-jcache:5.6.15.Final") {
+        exclude group: "org.hibernate", module: "hibernate-core"
+    }
     runtimeOnly 'org.ehcache:ehcache'
 
     // Groovy backwards compat
-    runtimeOnly 'org.codehaus.groovy:groovy-dateutil'
-
-    // Grails plugin dependencies
-
-    // Base Userdetails plugin
-    implementation project(':userdetails-plugin')
+    runtimeOnly 'org.apache.groovy:groovy-dateutil'
 
     // regular JAR dependencies
 
@@ -106,6 +100,11 @@ dependencies {
     testRuntimeOnly "com.h2database:h2"
     testImplementation('com.squareup.retrofit2:retrofit-mock:2.9.0')
 
+}
+grails {
+    plugins {
+        implementation project(':userdetails-plugin')
+    }
 }
 
 application {
@@ -124,14 +123,17 @@ tasks.withType(Test) {
     systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
     systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
 }
-webdriverBinaries {
-    chromedriver '122.0.6260.0'
-    geckodriver '0.33.0'
-    //edgedriver '110.0.1587.57'
-}
 assets {
     minifyJs = true
     minifyCss = true
+    excludes = [
+            '**/build/**',
+            '**/bootstrap/*/js/**',
+            '**/bootstrap.esm.js',
+            '**/bootstrap.esm.min.js',
+            '**/.babelrc.js',
+            '**/package.js'
+    ]
 }
 
 springBoot {
