@@ -182,14 +182,6 @@ class GormUserService implements IUserService<User, UserProperty, Role, UserRole
         assert user instanceof User
         //check the activation key
         if (user.tempAuthKey == params.authKey) {
-
-            Map resp = webService.post("${grailsApplication.config.getProperty('alerts.url')}/api/alerts/user/createAlerts", [:], [userId: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName])
-            if (resp.statusCode == HttpStatus.SC_CREATED) {
-                emailService.sendAccountActivationSuccess(user, resp.resp)
-            } else if (resp.statusCode != HttpStatus.SC_OK) {
-                log.error("Alerts returned ${resp} when trying to create user alerts for " + user.id + " with email: " + user.email)
-            }
-
             user.activated = true
             user.save(flush:true)
             return true
