@@ -28,7 +28,7 @@
     <asset:stylesheet src="userdetails.css" />
     <asset:stylesheet src="createAccount.css" />
     <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script src="https://www.google.com/recaptcha/enterprise.js?render=${grailsApplication.config.getProperty('recaptcha.siteKey')}" async defer></script>
     </g:if>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </head>
@@ -313,8 +313,7 @@
                 </g:if>
                 <g:else>
                     <g:if test="${grailsApplication.config.getProperty('recaptcha.siteKey')}">
-                        <div class="g-recaptcha" data-sitekey="${grailsApplication.config.getProperty('recaptcha.siteKey')}"></div>
-                        <br/>
+                        <input type="hidden" id="recaptchaResponse" name="g-recaptcha-response" />
                     </g:if>
                     <button id="updateAccountSubmit" class="btn btn-primary"><g:message code="create.account.btn" /></button>
                 </g:else>
@@ -331,6 +330,34 @@
 <asset:script type="text/javascript">
     $(function() {
         userdetails.initCountrySelect('.chosen-select', '#country', '#state', "${g.createLink(uri: '/ws/registration/states')}");
+
+        <g:if test="${!edit && grailsApplication.config.getProperty('recaptcha.siteKey')}">
+        document.getElementById('updateAccountForm').addEventListener('submit', function(event) {
+            var form = this;
+            if (form.dataset.recaptchaReady === 'true') {
+                return;
+            }
+
+            event.preventDefault();
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                document.getElementById('updateAccountSubmit').disabled = false;
+                alert('Security verification is still loading. Please try again.');
+                return;
+            }
+
+            grecaptcha.enterprise.ready(function() {
+                grecaptcha.enterprise.execute('${grailsApplication.config.getProperty('recaptcha.siteKey')}', {action: 'register'})
+                    .then(function(token) {
+                        document.getElementById('recaptchaResponse').value = token;
+                        form.dataset.recaptchaReady = 'true';
+                        form.requestSubmit();
+                    })
+                    .catch(function() {
+                        document.getElementById('updateAccountSubmit').disabled = false;
+                    });
+            });
+        });
+        </g:if>
 
         $("#country").on("change", function(evt, params) {
             if(!params.selected){
@@ -360,7 +387,8 @@
             var valid = $('#updateAccountForm').validationEngine('validate');
 
             if (valid && validCountry && pm) {
-                $("form[name='updateAccountForm']").submit();
+                e.preventDefault();
+                document.getElementById('updateAccountForm').requestSubmit();
             } else {
                 if(!validCountry) {
                     $(".chosen-container").validationEngine('hide');

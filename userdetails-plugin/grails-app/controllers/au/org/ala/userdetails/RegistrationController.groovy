@@ -16,7 +16,7 @@
 package au.org.ala.userdetails
 
 import au.org.ala.auth.UpdatePasswordCommand
-import au.org.ala.recaptcha.RecaptchaClient
+import au.org.ala.recaptcha.RecaptchaService
 import au.org.ala.users.IUser
 import au.org.ala.ws.security.JwtProperties
 import au.org.ala.ws.service.WebService
@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -53,11 +54,12 @@ class RegistrationController {
     def simpleCaptchaService
     def emailService
     def passwordService
+    def profileService
 
     @Qualifier('userService')
     IUserService userService
     def locationService
-    RecaptchaClient recaptchaClient
+    RecaptchaService recaptchaService
     WebService webService
     def messageSource
     @Autowired
@@ -175,24 +177,10 @@ class RegistrationController {
 
     def startPasswordReset() {
         //check for human
-        def recaptchaKey = grailsApplication.config.getProperty('recaptcha.secretKey')
-        if (recaptchaKey) {
-            def recaptchaResponse = params['g-recaptcha-response']
-            def call = recaptchaClient.verify(recaptchaKey, recaptchaResponse, request.remoteAddr)
-            def response = call.execute()
-            if (response.isSuccessful()) {
-                def verifyResponse = response.body()
-                if (!verifyResponse.success) {
-                    log.warn('Recaptcha verify reported an error: {}', verifyResponse)
-                    flash.message = 'There was an error with the captcha, please try again'
-                    render(view: 'forgottenPassword', model: [email: params.email, captchaInvalid: true])
-                    return
-                }
-            } else {
-                //send password reset link
-                render(view: 'forgottenPassword', model: [email: params.email, captchaInvalid: true])
-                return
-            }
+        if (!recaptchaService.verify(params['g-recaptcha-response'], 'password_reset', request.remoteAddr, request.getHeader('User-Agent'))) {
+            flash.message = 'There was an error with the captcha, please try again'
+            render(view: 'forgottenPassword', model: [email: params.email, captchaInvalid: true])
+            return
         }
 
         log.info("Starting password reset for email address: " + params.email)
@@ -287,27 +275,11 @@ class RegistrationController {
         def paramsPassword = params?.password?.toString()
         withForm {
 
-            def recaptchaKey = grailsApplication.config.getProperty('recaptcha.secretKey')
-            if (recaptchaKey) {
-                def recaptchaResponse = params['g-recaptcha-response']
-                def call = recaptchaClient.verify(recaptchaKey, recaptchaResponse, request.remoteAddr)
-                def response = call.execute()
-                if (response.isSuccessful()) {
-                    def verifyResponse = response.body()
-                    if (!verifyResponse.success) {
-                        log.warn('Recaptcha verify reported an error: {}', verifyResponse)
-                        flash.message = 'There was an error with the captcha, please try again'
-                        render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
-                                                              visibleMFA: false])
-                        return
-                    }
-                } else {
-                    log.warn("error from recaptcha {}", response)
-                    flash.message = 'There was an error with the captcha, please try again'
-                    render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
-                                                          visibleMFA: false])
-                    return
-                }
+            if (!recaptchaService.verify(params['g-recaptcha-response'], 'register', request.remoteAddr, request.getHeader('User-Agent'))) {
+                flash.message = 'There was an error with the captcha, please try again'
+                render(view: 'createAccount', model: [edit: false, user: params, props: params, passwordPolicy: passwordService.buildPasswordPolicy(),
+                                                      visibleMFA: false])
+                return
             }
 
             def isEmailInUse = userService.isEmailInUse(paramsEmail)
@@ -383,6 +355,7 @@ class RegistrationController {
         boolean isSuccess = userService.activateAccount(user, params)
 
         if (isSuccess) {
+            profileService.createAlertForNewsBlogs(user)
             render(view: 'accountActivatedSuccessful', model: [user: user])
         } else {
             render(view: "accountError")

@@ -36,7 +36,7 @@ class UserDetailsGrailsPluginConfiguration {
 
     @Bean
     RecaptchaClient recaptchaClient() {
-        def baseUrl = grailsApplication.config.getProperty('recaptcha.baseUrl', 'https://www.google.com/recaptcha/api/')
+        def baseUrl = grailsApplication.config.getProperty('recaptcha.baseUrl', 'https://recaptchaenterprise.googleapis.com/')
         return new Retrofit.Builder().baseUrl(baseUrl).client(new OkHttpClient()).addConverterFactory(MoshiConverterFactory.create()).build().create(RecaptchaClient)
     }
 

@@ -15,7 +15,6 @@
 
 package au.org.ala.recaptcha
 
-import com.squareup.moshi.Json
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
@@ -23,9 +22,22 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class RecaptchaResponse {
 
-    boolean success
-    String challenge_ts
-    String hostname
-    @Json(name = "error-codes")
-    List<String> errorCodes
+    TokenProperties tokenProperties
+    RiskAnalysis riskAnalysis
+
+    @Canonical
+    @CompileStatic
+    static class TokenProperties {
+        boolean valid
+        String invalidReason
+        String hostname
+        String action
+    }
+
+    @Canonical
+    @CompileStatic
+    static class RiskAnalysis {
+        Double score
+        List<String> reasons
+    }
 }

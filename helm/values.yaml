@@ -141,7 +141,9 @@ inat:
   secret: ""
 recaptcha:
   key: ""
-  secret: ""
+  projectId: ""
+  apiKey: ""
+  scoreThreshold: 0.7
 
 sightings:
   url: "https://biocollect.ala.org.au/spotter"

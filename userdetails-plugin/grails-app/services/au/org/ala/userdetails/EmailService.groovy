@@ -49,7 +49,7 @@ class EmailService {
         }
         if (!password) {
             // only if user requested password reset, no temp password generated
-            emailBody2 = "If you did not request a new password, please let us know immediately by replying to this email."
+            emailBody2 = "If you did not request a new password, you can safely ignore this email."
         }
         try {
             mailService.sendMail {
