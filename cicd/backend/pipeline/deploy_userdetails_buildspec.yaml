@@ -42,7 +42,8 @@ phases:
                      --set aws.resourceTags.branch=$CLEAN_BRANCH
                      --set aws.resourceTags.component=helm
                      -f $CODEBUILD_SRC_DIR_ExportConfigArtifact/helm_values.yaml
-      - kubectl rollout restart deployment -n $EKS_NAMESPACE
+                     --wait --atomic --timeout 10m
+      - kubectl rollout status deployment -n $EKS_NAMESPACE -l app.kubernetes.io/instance=$IMAGE_NAME --timeout=5m
 
 
   post_build:
