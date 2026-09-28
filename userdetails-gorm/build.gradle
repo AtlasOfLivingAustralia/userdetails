@@ -1,4 +1,4 @@
-//import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
+import org.springframework.boot.loader.tools.LoaderImplementation
 
 plugins {
     id "groovy"
@@ -155,6 +155,7 @@ bootRun {
 bootWar {
     launchScript()
     archiveClassifier = 'exec'
+    loaderImplementation = LoaderImplementation.CLASSIC
 }
 
 publishing {
