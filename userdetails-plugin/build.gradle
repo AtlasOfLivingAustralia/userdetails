@@ -116,9 +116,6 @@ dependencies {
     api 'org.mindrot:jbcrypt:0.4'
     api 'com.opencsv:opencsv:5.5.2'
 
-    api 'org.springframework.session:spring-session-data-mongodb'
-    api 'org.springframework.boot:spring-boot-starter-data-mongodb'
-
     api('org.webjars.bower:chosen:1.8.3')
     api('org.webjars.bower:chosen-bootstrap:1.1.0')
 
