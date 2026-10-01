@@ -227,3 +227,6 @@ mail:
 headerAndFooter:
   baseURL: https://www.test.ala.org.au/commonui-bs5-2019
   version: 2
+recaptcha:
+  baseUrl: https://recaptchaenterprise.googleapis.com/
+  scoreThreshold: 0.7

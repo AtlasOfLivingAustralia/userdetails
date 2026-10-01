@@ -94,7 +94,7 @@ Resources:
                    "security_admin_password" : "",
                    "flickr_secret" : "",
                    "inaturalist_secret" : "",
-                   "recaptcha_secret": ""
+                   "recaptcha_api_key": ""
                 }
               - !Ref "AWS::NoValue"
 

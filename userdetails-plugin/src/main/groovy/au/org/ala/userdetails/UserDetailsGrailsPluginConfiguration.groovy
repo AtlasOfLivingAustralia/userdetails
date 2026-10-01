@@ -14,7 +14,7 @@ import grails.core.GrailsApplication
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.actuate.mongo.MongoHealthIndicator
+import org.springframework.boot.actuate.data.mongo.MongoHealthIndicator
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
@@ -36,7 +36,7 @@ class UserDetailsGrailsPluginConfiguration {
 
     @Bean
     RecaptchaClient recaptchaClient() {
-        def baseUrl = grailsApplication.config.getProperty('recaptcha.baseUrl', 'https://www.google.com/recaptcha/api/')
+        def baseUrl = grailsApplication.config.getProperty('recaptcha.baseUrl', 'https://recaptchaenterprise.googleapis.com/')
         return new Retrofit.Builder().baseUrl(baseUrl).client(new OkHttpClient()).addConverterFactory(MoshiConverterFactory.create()).build().create(RecaptchaClient)
     }
 

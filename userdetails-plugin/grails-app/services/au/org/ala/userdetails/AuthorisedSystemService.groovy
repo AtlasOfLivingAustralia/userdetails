@@ -34,8 +34,8 @@ import org.pac4j.oidc.credentials.OidcCredentials
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 

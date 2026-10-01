@@ -17,15 +17,17 @@ package au.org.ala.recaptcha
 
 import groovy.transform.CompileStatic
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Body
+import retrofit2.http.Path
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 @CompileStatic
 interface RecaptchaClient {
 
-    @POST("siteverify")
-    @FormUrlEncoded
-    Call<RecaptchaResponse> verify(@Field("secret") secret, @Field("response") String response, @Field("remoteip") String remoteip)
+    @POST("v1/projects/{projectId}/assessments")
+    Call<RecaptchaResponse> assess(@Path("projectId") String projectId,
+                                   @Query("key") String apiKey,
+                                   @Body RecaptchaRequest request)
 
 }

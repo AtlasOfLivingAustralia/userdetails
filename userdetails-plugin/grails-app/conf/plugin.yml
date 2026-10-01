@@ -258,7 +258,7 @@ oauth:
 
 inaturalist:
   name: iNaturalist Australia
-  baseUrl: https://www.inaturalist.org
+  baseUrl: https://www.inaturalist.org/
   searchQuery: data_resource_uid:dr1411
   sightingsSearchQuery: data_resource_uid:dr364
 
@@ -312,9 +312,8 @@ registration:
     activationArticle:
 
 recaptcha:
-  baseUrl: https://www.google.com/recaptcha/api/
-  siteKey:
-  secretKey:
+  baseUrl: https://recaptchaenterprise.googleapis.com/
+  scoreThreshold: 0.7
 
 environments:
     development:

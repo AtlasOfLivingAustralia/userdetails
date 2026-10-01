@@ -24,7 +24,7 @@ import org.pac4j.core.config.Config
 import au.org.ala.ws.security.client.AlaAuthClient
 import spock.lang.Specification
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * See the API for {@link grails.test.mixin.web.InterceptorUnitTestMixin} for usage instructions

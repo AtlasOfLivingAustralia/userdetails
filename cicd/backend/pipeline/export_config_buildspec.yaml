@@ -14,7 +14,7 @@ env:
     SECURITY_USER_PASSWORD: $USERDETAILS_SECRET_NAME:security_admin_password
     FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
     INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
-    RECAPTCHA_SITE_SECRET: $USERDETAILS_SECRET_NAME:recaptcha_secret
+    RECAPTCHA_API_KEY: $USERDETAILS_SECRET_NAME:recaptcha_api_key
   exported-variables:
     - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
@@ -159,7 +159,9 @@ phases:
           secret: $INATURALIST_SECRET
         recaptcha:
           key: $RECAPTCHA_SITE_KEY
-          secret: $RECAPTCHA_SITE_SECRET
+          projectId: $RECAPTCHA_PROJECT_ID
+          apiKey: $RECAPTCHA_API_KEY
+          scoreThreshold: 0.7
         authorisedSystems:
           enabled: $ENABLED_AUTHORISED_SYSTEMS
         bulkCreate:

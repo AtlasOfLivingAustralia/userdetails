@@ -18,12 +18,18 @@ package au.org.ala.userdetails
 import au.org.ala.users.IUser
 import au.org.ala.users.IUserProperty
 import au.org.ala.users.UserRecord
+import au.org.ala.ws.service.WebService
+import grails.core.GrailsApplication
+import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
 
 class ProfileService {
 
     @Autowired
     IUserService userService
+    WebService webService
+    GrailsApplication grailsApplication
+    def emailService
 
     List<? extends IUserProperty> getUserProperty(IUser user, String name) {
         userService.searchProperty(user, name)
@@ -36,4 +42,16 @@ class ProfileService {
     List<? extends IUserProperty> getAllAvailableProperties() {
         userService.searchProperty(null, null)
     }
+
+    def createAlertForNewsBlogs(IUser user) {
+        Map resp = webService.post("${grailsApplication.config.getProperty('alerts.url')}/api/alerts/user/createAlerts", [:],
+                [userId: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName])
+
+        if (resp.statusCode == HttpStatus.SC_CREATED) {
+            emailService.sendAccountActivationSuccess(user, resp.resp)
+        } else if (resp.statusCode != HttpStatus.SC_OK) {
+            log.error("Alerts returned ${resp} when trying to create user alerts for " + user.id + " with email: " + user.email)
+        }
+    }
+
 }

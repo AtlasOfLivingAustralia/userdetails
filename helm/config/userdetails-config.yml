@@ -106,9 +106,11 @@ registration:
   activationArticle: https://support.ala.org.au/support/solutions/articles/6000195196-i-created-an-account-but-did-not-receive-the-account-activation-email
 
 recaptcha:
-  baseUrl: https://www.google.com/recaptcha/api/
+  baseUrl: https://recaptchaenterprise.googleapis.com/
   siteKey: {{ .Values.recaptcha.key }}
-  secretKey: {{ .Values.recaptcha.secret }}
+  projectId: {{ .Values.recaptcha.projectId }}
+  apiKey: {{ .Values.recaptcha.apiKey }}
+  scoreThreshold: {{ .Values.recaptcha.scoreThreshold }}
 
 ala:
   baseURL: https://www.ala.org.au
