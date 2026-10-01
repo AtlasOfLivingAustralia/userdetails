@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.actuate.data.mongo.MongoHealthIndicator
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
@@ -41,7 +42,7 @@ class UserDetailsGrailsPluginConfiguration {
     }
 
     @Configuration
-    @ConditionalOnProperty(value = "spring.session.enabled", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnExpression('${spring.session.enabled:false}')
     @Import(MongoAutoConfiguration) // unsure if this is disabled by grails?
     @EnableMongoHttpSession
     @EnableConfigurationProperties(MongoProperties)
