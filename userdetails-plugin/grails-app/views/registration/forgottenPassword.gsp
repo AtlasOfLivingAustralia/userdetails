@@ -30,7 +30,7 @@
 
 <div class="row">
     <div class="col-12">
-        <h1>Reset my password</h1>
+        <h1><g:message code="forgotten.password.title" /></h1>
     </div>
     <div class="row">
         <div class="col-md-6">

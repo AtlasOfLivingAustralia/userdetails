@@ -30,7 +30,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Bulk Load Users</h1>
+                <h1><g:message code="admin.bulk.load.users.title" /></h1>
                 <p>
                 Choose a CSV file to load. The file should be in the following format:
                 </p>
