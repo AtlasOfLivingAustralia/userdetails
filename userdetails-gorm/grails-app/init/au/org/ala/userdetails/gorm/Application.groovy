@@ -45,18 +45,9 @@ import groovy.util.logging.Slf4j
 import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.codecs.pojo.PojoCodecProvider
-import org.springframework.boot.actuate.data.mongo.MongoHealthIndicator
 import org.springframework.boot.actuate.jdbc.DataSourceHealthIndicator
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
-import org.springframework.boot.autoconfigure.mongo.MongoProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.session.data.mongo.config.annotation.web.http.EnableMongoHttpSession
 
 import javax.sql.DataSource
 
@@ -92,19 +83,6 @@ class Application extends GrailsAutoConfiguration {
                     }
                 }
         defaults
-    }
-
-    @Configuration
-    @ConditionalOnProperty(value = "spring.session.enabled", havingValue = "true", matchIfMissing = false)
-    @Import(MongoDataAutoConfiguration)
-    @EnableMongoHttpSession
-    @EnableConfigurationProperties(MongoProperties)
-    static class MongoSessionConfig {
-
-        @Bean
-        MongoHealthIndicator mongoHealthIndicator(MongoTemplate mongoTemplate) {
-            new MongoHealthIndicator(mongoTemplate)
-        }
     }
 
     @Bean
