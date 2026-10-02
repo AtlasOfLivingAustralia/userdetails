@@ -49,7 +49,6 @@ import org.springframework.boot.actuate.data.mongo.MongoHealthIndicator
 import org.springframework.boot.actuate.jdbc.DataSourceHealthIndicator
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource
@@ -97,7 +96,7 @@ class Application extends GrailsAutoConfiguration {
 
     @Configuration
     @ConditionalOnProperty(value = "spring.session.enabled", havingValue = "true", matchIfMissing = false)
-    @Import([MongoAutoConfiguration, MongoDataAutoConfiguration])
+    @Import(MongoDataAutoConfiguration)
     @EnableMongoHttpSession
     @EnableConfigurationProperties(MongoProperties)
     static class MongoSessionConfig {
