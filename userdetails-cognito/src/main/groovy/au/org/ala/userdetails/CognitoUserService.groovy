@@ -101,7 +101,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         }
 
         try {
-            baseUpdateUser(user, params, userId)
+            baseUpdateUser(user, params, userId, false)
 
             emailService.sendUpdateProfileSuccess(user, emailRecipients)
             return true
@@ -113,12 +113,16 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         return false
     }
 
-    private void baseUpdateUser(UserRecord user, GrailsParameterMap params, String userId) {
+    private void baseUpdateUser(UserRecord user, GrailsParameterMap params, String userId, boolean verifyUpdatedEmail) {
+        boolean emailChanged = params.email && params.email != user.email
         user.setProperties(params)
 
         Collection<AttributeType> userAttributes = new ArrayList<>()
 
         userAttributes.add(AttributeType.builder().name('email').value(user.email).build())
+        if (verifyUpdatedEmail && emailChanged) {
+            userAttributes.add(AttributeType.builder().name('email_verified').value('true').build())
+        }
 //            userAttributes.add(AttributeType.builder().name('userName').value(user.userName).build())
 //        userAttributes.add(AttributeType.builder().name('userid').value(record.id).build())
         userAttributes.add(AttributeType.builder().name('given_name').value(user.firstName).build())
@@ -149,7 +153,7 @@ class CognitoUserService implements IUserService<UserRecord, UserPropertyRecord,
         def isUserActivated = user.activated
 
         try {
-            baseUpdateUser(user, params, userId)
+            baseUpdateUser(user, params, userId, true)
             //enable or disable user
             if(params.locked && !isUserLocked){
                 disableUser(user)
