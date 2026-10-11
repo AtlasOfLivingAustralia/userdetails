@@ -55,13 +55,40 @@ resources:
     memory: 4096Mi
 
 livenessProbe:
+  enabled: true
   httpGet:
-    path: /
+    path: /actuator/health
     port: http
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+startupProbe:
+  enabled: true
+  httpGet:
+    path: /actuator/health
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 30
+
 readinessProbe:
+  enabled: true
   httpGet:
-    path: /
+    path: /actuator/health
     port: http
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
 
 autoscaling:
   enabled: false
