@@ -80,7 +80,7 @@ dependencies {
 
     // Grails plugin dependencies
 
-    api "org.grails.plugins:ala-bootstrap5:2.0.0"
+    api "org.grails.plugins:ala-bootstrap5:2.1.0"
     api "org.grails.plugins:ala-ws-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-ws-security-plugin:$alaSecurityLibsVersion"
     api "org.grails.plugins:ala-auth:$alaSecurityLibsVersion"
