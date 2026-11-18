@@ -103,6 +103,23 @@
     </div>
 </div>
 
+<div class="fieldcontain">
+    <g:if test="${newsletter?.available}">
+        <div class="checkbox">
+            <label>
+                <g:checkBox name="newsletterSubscribed" id="newsletterSubscribed"
+                            value="${newsletter.subscribed}"/>
+                <g:message code="user.newsletter.label" default="Newsletter subscription"/>
+            </label>
+        </div>
+    </g:if>
+    <g:else>
+        <div class="form-text">
+            <g:message code="user.newsletter.unavailable" default="Newsletter status is unavailable"/>
+        </div>
+    </g:else>
+</div>
+
 <hr/>
 
 <g:if test="${edit & !isBiosecurityAdmin}">

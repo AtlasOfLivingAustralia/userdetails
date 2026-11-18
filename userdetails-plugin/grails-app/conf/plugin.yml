@@ -311,6 +311,13 @@ registration:
     alertArticle:
     activationArticle:
 
+mailchimp:
+    enabled: true
+    apiKey: 0a5cd0da87c87f180231cb8f15c347b4
+    serverPrefix: us5
+    audienceId: 83e1b1e5a2
+    newsletterTag: test1
+
 recaptcha:
   baseUrl: https://recaptchaenterprise.googleapis.com/
   scoreThreshold: 0.7

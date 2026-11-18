@@ -69,6 +69,19 @@
             </li>
         </g:if>
 
+        <li class="fieldcontain">
+            <span id="newsletter-label" class="property-label"><g:message code="user.newsletter.label"
+                                                                             default="Newsletter subscription"/></span>
+            <span class="property-value" aria-labelledby="newsletter-label">
+                <g:if test="${newsletter?.available}">
+                    <g:formatBoolean boolean="${newsletter.subscribed}"/>
+                </g:if>
+                <g:else>
+                    <g:message code="user.newsletter.unavailable" default="Unavailable"/>
+                </g:else>
+            </span>
+        </li>
+
 
         <g:if test="${userInstance?.dateCreated}">
             <li class="fieldcontain">

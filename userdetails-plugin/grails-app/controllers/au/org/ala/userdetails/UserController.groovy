@@ -29,6 +29,8 @@ class UserController {
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def passwordService
+    ProfileService profileService
+    MailchimpNewsletterService mailchimpNewsletterService
 
     @Autowired
     @Qualifier('userService')
@@ -48,24 +50,35 @@ class UserController {
     @PreAuthorise(allowedRoles = ["ROLE_ADMIN", "ROLE_USER_CREATOR"])
     def create() {
         def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
-        [userInstance: userService.newUser(params), isBiosecurityAdmin: isBiosecurityAdmin, visibleMFA: false]
+        [userInstance: userService.newUser(params), isBiosecurityAdmin: isBiosecurityAdmin, visibleMFA: false,
+         newsletter: mailchimpNewsletterService.getNewsletterStatus(params)]
     }
 
     @PreAuthorise(allowedRoles = ["ROLE_ADMIN", "ROLE_USER_CREATOR"])
     def save() {
         if(!params.email){
-            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false, error:"Email is mandatory"])
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false,
+                                           newsletter: mailchimpNewsletterService.getNewsletterStatus(params), error:"Email is mandatory"])
             return
         }
         else if(userService.isEmailInUse(params.email)){
-            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false, error:"Email is already in use"])
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false,
+                                           newsletter: mailchimpNewsletterService.getNewsletterStatus(params), error:"Email is already in use"])
             return
         }
         IUser user = userService.registerUser(params)
 
         if (!user) {
-            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false])
+            render(view: "create", model: [userInstance: userService.newUser(params), visibleMFA: false,
+                                           newsletter: mailchimpNewsletterService.getNewsletterStatus(params)])
             return
+        }
+
+        boolean newsletterOptIn = params.containsKey('newsletterSubscribed')
+        //Only update the db property. Mailchimp newsletter subscription will be added after the account activation.
+        boolean newsletterUpdated = userService.addOrUpdateProperty(user, ProfileService.NEWSLETTER_OPT_IN, newsletterOptIn.toString())
+        if (!newsletterUpdated) {
+            flash.message = message(code: 'myprofile.newsletter.update.failed')
         }
 
         def isBiosecurityAdmin = request.isUserInRole("ROLE_USER_CREATOR")
@@ -75,7 +88,7 @@ class UserController {
             passwordService.resetPassword(user, passwordService.generatePassword(user), true, null)
             userService.sendAccountActivation(user)
 
-            redirect(action: "show", id: user.id)
+            redirect(action: "show", id: user.id) ////issueeeeee
         }
         else{
             //ROLE_USER_CREATOR role does not have permission to show(id) action
@@ -94,8 +107,7 @@ class UserController {
         }
 
         String resetPasswordUrl = passwordService.getResetPasswordUrl(userInstance)
-
-        [userInstance: userInstance, resetPasswordUrl: resetPasswordUrl]
+        [userInstance: userInstance, resetPasswordUrl: resetPasswordUrl, newsletter: mailchimpNewsletterService.getUserStatus(userInstance)]
     }
 
     def edit(String id) {
@@ -105,7 +117,8 @@ class UserController {
             redirect(action: "list")
             return
         }
-        [userInstance: userInstance, props:userInstance.propsAsMap(), visibleMFA: isMFAVisible(userInstance)]
+        [userInstance: userInstance, props:userInstance.propsAsMap(), visibleMFA: isMFAVisible(userInstance),
+         newsletter: mailchimpNewsletterService.getUserStatus(userInstance)]
     }
 
     def update(String id, Long version) {
@@ -121,11 +134,21 @@ class UserController {
         def success = userService.adminUpdateUser(id, params, request.locale)
 
         if (!success) {
-            render(view: "edit", model: [ userInstance: userInstance, visibleMFA: isMFAVisible(userInstance) ])
+            render(view: "edit", model: [ userInstance: userInstance, props: userInstance.propsAsMap(),
+                                         visibleMFA: isMFAVisible(userInstance), newsletter: mailchimpNewsletterService.getUserStatus(userInstance)])
             return
         }
 
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
+        boolean newsletterUpdated = true
+        boolean newsletterSubscribed = params.containsKey('newsletterSubscribed') && params.newsletterSubscribed?.toString() == 'on'
+        Map currentNewsletter = mailchimpNewsletterService.getUserStatus(userInstance)
+        if (currentNewsletter.subscribed != newsletterSubscribed) {
+            newsletterUpdated = profileService.updateNewsletterSubscription(userInstance, newsletterSubscribed)
+        }
+
+        flash.message = newsletterUpdated ?
+                message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id]) :
+                message(code: 'user.newsletter.update.failed')
         redirect(action: "show", id: userInstance.id)
     }
 

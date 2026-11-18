@@ -25,8 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class ProfileService {
 
+    static final String NEWSLETTER_OPT_IN = 'newsletterOptIn'
+
     @Autowired
     IUserService userService
+    MailchimpNewsletterService mailchimpNewsletterService
     WebService webService
     GrailsApplication grailsApplication
     def emailService
@@ -41,6 +44,12 @@ class ProfileService {
 
     List<? extends IUserProperty> getAllAvailableProperties() {
         userService.searchProperty(null, null)
+    }
+
+    boolean updateNewsletterSubscription(IUser user, boolean subscribed) {
+        IUser updatedUser = userService.getUserById(user.userId) ?: user
+        subscribed ? mailchimpNewsletterService.subscribe(updatedUser) :
+                mailchimpNewsletterService.unsubscribe(updatedUser.email)
     }
 
     def createAlertForNewsBlogs(IUser user) {

@@ -281,7 +281,30 @@
                     <label for="city"><g:message code="create.account.city" /></label>
                     <input id="city" name="city" type="text" class="form-control" value="${props?.city}" />
                 </div>
+                <g:if test="${!edit}">
+                    <div class="mb-3 form-check">
+                        <g:checkBox name="newsletterOptIn" id="newsletterOptIn" value="${true}" class="form-check-input" />
+                        <label class="form-check-label" for="newsletterOptIn">
+                            <g:message code="create.account.newsletter.opt.in" />
+                        </label>
+                        <div class="form-text"><g:message code="create.account.newsletter.description1" /></div>
+                        <div class="form-text"><g:message code="create.account.newsletter.description2" /></div>
+                    </div>
+                </g:if>
                 <g:if test="${edit}">
+                    <div class="mb-3 form-check">
+                        <g:if test="${newsletter?.available}">
+                            <g:checkBox name="newsletterSubscribed" id="newsletterSubscribed"
+                                        value="${newsletter.subscribed}" class="form-check-input"/>
+                            <label class="form-check-label" for="newsletterSubscribed">
+                                <g:message code="create.account.newsletter.opt.in"/>
+                            </label>
+                            <div class="form-text"><g:message code="create.account.newsletter.description1"/></div>
+                        </g:if>
+                        <g:else>
+                            <div class="form-text"><g:message code="myprofile.newsletter.unavailable"/></div>
+                        </g:else>
+                    </div>
                     <g:if test="${visibleMFA}">
                         <div class="mb-3 form-check ps-0">
                             <label>
