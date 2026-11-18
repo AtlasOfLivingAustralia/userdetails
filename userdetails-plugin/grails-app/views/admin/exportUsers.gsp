@@ -30,7 +30,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Export Users to CSV</h1>
+                <h1><g:message code="admin.export.users.title" /></h1>
                 <p>
                 Choose the options for exporting. The output will be in the following format:
                 </p>

@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="row">
-    <h1>Flickr success</h1>
+    <h1><g:message code="flickr.success.title" /></h1>
     <table class="table">
         <tr>
             <td>Flickr user ID</td>

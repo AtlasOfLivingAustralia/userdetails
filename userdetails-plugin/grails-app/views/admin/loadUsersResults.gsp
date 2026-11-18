@@ -32,7 +32,7 @@
 
         <div class="row">
             <div class="col-md-12" id="page-body" role="main">
-                <h1>Bulk Load Users Results</h1>
+                <h1><g:message code="admin.bulk.load.users.results.title" /></h1>
                 <p>
                     <g:if test="${results.success}">
                         Success!

@@ -23,7 +23,7 @@
 <body>
 <div class="row">
     <div class="col-12">
-        <h1>Account Error</h1>
+        <h1><g:message code="account.error.title" args="[grailsApplication.config.getProperty('skin.orgNameShort')]" /></h1>
     </div>
     <div class="row">
         <p>
