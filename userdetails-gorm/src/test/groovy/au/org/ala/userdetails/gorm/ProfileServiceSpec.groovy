@@ -21,7 +21,7 @@ class ProfileServiceSpec extends Specification {
         def updatedUser = new UserRecord(id: '123', email: 'new@example.org')
 
         when:
-        boolean updated = service.updateNewsletterSubscription(user, [newsletterSubscribed: 'true'])
+        boolean updated = service.updateNewsletterSubscription(user, true)
 
         then:
         1 * userService.getUserById('123') >> updatedUser
@@ -36,7 +36,7 @@ class ProfileServiceSpec extends Specification {
         def user = new UserRecord(id: '123', email: 'user@example.org')
 
         when:
-        boolean updated = service.updateNewsletterSubscription(user, [_newsletterSubscribed: ''])
+        boolean updated = service.updateNewsletterSubscription(user, false)
 
         then:
         1 * userService.getUserById('123') >> null
@@ -51,26 +51,13 @@ class ProfileServiceSpec extends Specification {
         def user = new UserRecord(id: '123', email: 'user@example.org')
 
         when:
-        boolean updated = service.updateNewsletterSubscription(user, [newsletterSubscribed: 'true'])
+        boolean updated = service.updateNewsletterSubscription(user, true)
 
         then:
         1 * userService.getUserById('123') >> user
         1 * mailchimpNewsletterService.subscribe(user) >> false
         0 * userService.removeUserProperty(_, _)
         !updated
-    }
-
-    void 'does nothing when newsletter parameters were not submitted'() {
-        given:
-        def user = new UserRecord(id: '123', email: 'user@example.org')
-
-        when:
-        boolean updated = service.updateNewsletterSubscription(user, [:])
-
-        then:
-        0 * userService._
-        0 * mailchimpNewsletterService._
-        updated
     }
 
 }

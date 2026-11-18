@@ -43,7 +43,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         getUserStatus(_) >> [available: true, subscribed: true, status: 'subscribed']
     }
     def profileService = Stub(ProfileService) {
-        updateNewsletterSubscription(_, _ as Map) >> true
+        updateNewsletterSubscription(_, _ as Boolean) >> true
     }
 
     void setup() {
