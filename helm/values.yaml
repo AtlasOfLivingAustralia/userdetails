@@ -144,6 +144,12 @@ recaptcha:
   projectId: ""
   apiKey: ""
   scoreThreshold: 0.7
+mailchimp:
+  enabled: false
+  apiKey: ""
+  serverPrefix: ""
+  audienceId: ""
+  newsletterTag: "ALA Newsletter"
 
 sightings:
   url: "https://biocollect.ala.org.au/spotter"

@@ -15,6 +15,7 @@ env:
     FLICKR_SECRET: $USERDETAILS_SECRET_NAME:flickr_secret
     INATURALIST_SECRET: $USERDETAILS_SECRET_NAME:inaturalist_secret
     RECAPTCHA_API_KEY: $USERDETAILS_SECRET_NAME:recaptcha_api_key
+    MAILCHIMP_API_KEY: $USERDETAILS_SECRET_NAME:mailchimp_api_key
   exported-variables:
     - BASE_STACK_NAME
     - CODEBUILD_BUILD_NUMBER
@@ -162,6 +163,12 @@ phases:
           projectId: $RECAPTCHA_PROJECT_ID
           apiKey: $RECAPTCHA_API_KEY
           scoreThreshold: 0.7
+        mailchimp:
+          enabled: $MAILCHIMP_ENABLED
+          apiKey: "$MAILCHIMP_API_KEY"
+          serverPrefix: "$MAILCHIMP_SERVER_PREFIX"
+          audienceId: "$MAILCHIMP_AUDIENCE_ID"
+          newsletterTag: "$MAILCHIMP_NEWSLETTER_TAG"
         authorisedSystems:
           enabled: $ENABLED_AUTHORISED_SYSTEMS
         bulkCreate:

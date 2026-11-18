@@ -312,7 +312,7 @@ registration:
     activationArticle:
 
 mailchimp:
-    enabled: true
+    enabled: false
     apiKey:
     serverPrefix: us5
     audienceId:
