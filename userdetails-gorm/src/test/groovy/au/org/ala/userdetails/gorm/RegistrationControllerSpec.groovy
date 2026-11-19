@@ -18,9 +18,12 @@ package au.org.ala.userdetails.gorm
 import au.org.ala.recaptcha.RecaptchaService
 import au.org.ala.userdetails.EmailService
 import au.org.ala.userdetails.IUserService
+import au.org.ala.userdetails.MailchimpNewsletterService
 import au.org.ala.userdetails.PasswordService
+import au.org.ala.userdetails.ProfileService
 import au.org.ala.userdetails.RegistrationController
 import au.org.ala.users.IUser
+import au.org.ala.users.IUserProperty
 import au.org.ala.ws.security.JwtProperties
 import grails.converters.JSON
 import grails.testing.gorm.DataTest
@@ -36,6 +39,12 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
     def userService = Mock(IUserService)
     def emailService = Mock(EmailService)
     def recaptchaService = Mock(RecaptchaService)
+    def mailchimpNewsletterService = Stub(MailchimpNewsletterService) {
+        getUserStatus(_) >> [available: true, subscribed: true, status: 'subscribed']
+    }
+    def profileService = Stub(ProfileService) {
+        updateNewsletterSubscription(_, _ as Boolean) >> true
+    }
 
     void setup() {
         defineBeans {
@@ -48,6 +57,8 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         controller.userService = userService
         controller.emailService = emailService
         controller.recaptchaService = recaptchaService
+        controller.mailchimpNewsletterService = mailchimpNewsletterService
+        controller.profileService = profileService
     }
 
     void setupSpec() {
@@ -243,6 +254,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         params.city = 'Canberra'
         params.password = password
         params.reenteredPassword = password
+        params.newsletterOptIn = true
         params['g-recaptcha-response'] = recaptchaResponseKey
         request.remoteAddr = remoteAddressIp
 
@@ -253,6 +265,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         1 * userService.isEmailInUse(email) >> false
         1 * passwordService.validatePassword(email, password) >> new RuleResult(true)
         1 * userService.registerUser(_) >> { def user = new User(); user.tempAuthKey = authKey; user }
+        1 * userService.addOrUpdateProperty(_, 'newsletterOptIn', 'true')
         1 * passwordService.resetPassword(_, password, _, _)
         1 * userService.sendAccountActivation(_)
         0 * _ // no other interactions
@@ -291,6 +304,7 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         1 * userService.isEmailInUse(email) >> false
         1 * passwordService.validatePassword(email, password) >> new RuleResult(true)
         1 * userService.registerUser(_) >> { def user = new User(); user.tempAuthKey = authKey; user }
+        1 * userService.addOrUpdateProperty(_, 'newsletterOptIn', 'false')
         1 * passwordService.resetPassword(_, password, _, _)
         1 * userService.sendAccountActivation(_)
         0 * _ // no other interactions
@@ -530,6 +544,29 @@ class RegistrationControllerSpec extends UserDetailsSpec implements ControllerUn
         //when email is changed, cannot access my profile until user activate the account
         def jsonMap = JSON.parse(response.getContentAsString())
         jsonMap.success == true
+    }
+
+    void "Activation removes the temporary newsletter property after Mailchimp is updated"() {
+        given:
+        IUser<Long> user = createUser(1)
+        IUserProperty newsletterPreference = Stub() {
+            getValue() >> 'true'
+        }
+        ProfileService activationProfileService = Mock()
+        controller.profileService = activationProfileService
+        params.userId = '1'
+
+        when:
+        controller.activateAccount()
+
+        then:
+        1 * userService.getUserById('1') >> user
+        1 * userService.activateAccount(user, _) >> true
+        1 * activationProfileService.createAlertForNewsBlogs(user)
+        1 * userService.searchProperty(user, ProfileService.NEWSLETTER_OPT_IN) >> [newsletterPreference]
+        1 * activationProfileService.updateNewsletterSubscription(user, true) >> true
+        1 * userService.removeUserProperty(user, [ProfileService.NEWSLETTER_OPT_IN])
+        view == '/registration/accountActivatedSuccessful'
     }
 
 }

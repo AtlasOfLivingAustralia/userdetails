@@ -311,6 +311,13 @@ registration:
     alertArticle:
     activationArticle:
 
+mailchimp:
+    enabled: false
+    apiKey:
+    serverPrefix: us5
+    audienceId:
+    newsletterTag: ALA Newsletter
+
 recaptcha:
   baseUrl: https://recaptchaenterprise.googleapis.com/
   scoreThreshold: 0.7

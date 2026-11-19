@@ -55,6 +55,7 @@ class RegistrationController {
     def emailService
     def passwordService
     def profileService
+    MailchimpNewsletterService mailchimpNewsletterService
 
     @Qualifier('userService')
     IUserService userService
@@ -81,7 +82,7 @@ class RegistrationController {
     def editAccount() {
         def user = userService.currentUser
         render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy(),
-                visibleMFA: isMFAVisible(user)])
+                visibleMFA: isMFAVisible(user), newsletter: mailchimpNewsletterService.getUserStatus(user)])
     }
 
     def passwordReset() {
@@ -242,7 +243,7 @@ class RegistrationController {
                 if (!isCorrectPassword) {
                     flash.message = 'Incorrect password. Could not update account details. Please try again.'
                     render(view: 'createAccount', model: [edit: true, user: user, props: user?.propsAsMap(), passwordPolicy: passwordService.buildPasswordPolicy(),
-                                                          visibleMFA: isMFAVisible(user)])
+                                                          visibleMFA: isMFAVisible(user), newsletter: mailchimpNewsletterService.getUserStatus(user)])
                     return
                 }
             }
@@ -250,6 +251,15 @@ class RegistrationController {
             def success = userService.updateUser(user.userId, params, request.locale)
 
             if (success) {
+                boolean newsletterUpdated = true
+                boolean newsletterSubscribed = params.containsKey('newsletterSubscribed') && params.newsletterSubscribed?.toString() == 'on'
+                Map currentNewsletter = mailchimpNewsletterService.getUserStatus(user)
+                if (currentNewsletter.subscribed != newsletterSubscribed) {
+                    newsletterUpdated = profileService.updateNewsletterSubscription(user, newsletterSubscribed)
+                }
+                if (!newsletterUpdated) {
+                    flash.message = message(code: 'myprofile.newsletter.update.failed')
+                }
                 //when email is changed, cannot access my profile until user activate the account
                 if(hasEmailChanged) {
                     def isCodeRequiredForChange = params.getBoolean("isCodeRequiredForChange") ?: false
@@ -314,6 +324,9 @@ class RegistrationController {
                         try {
                             passwordService.resetPassword(user, params.password, true, null)
                             //store the password
+                            //Only update the db property. Mailchimp newsletter subscription will be added after the account activation.
+                            boolean newsletterOptIn = params.containsKey(ProfileService.NEWSLETTER_OPT_IN)
+                            userService.addOrUpdateProperty(user, ProfileService.NEWSLETTER_OPT_IN, newsletterOptIn.toString())
                             userService.sendAccountActivation(user)
                             redirect(action: 'accountCreated', id: user.id)
                         } catch (e) {
@@ -356,6 +369,15 @@ class RegistrationController {
 
         if (isSuccess) {
             profileService.createAlertForNewsBlogs(user)
+            def newsletterPreference = userService.searchProperty(user, ProfileService.NEWSLETTER_OPT_IN)?.find()?.value
+            boolean newsletterSubscribed = newsletterPreference ? newsletterPreference == 'true' : true
+            if (profileService.updateNewsletterSubscription(user, newsletterSubscribed)) {
+                if (newsletterPreference) {
+                    userService.removeUserProperty(user, [ProfileService.NEWSLETTER_OPT_IN])
+                }
+            } else {
+                log.warn('Could not update newsletter status for activated user {}', user.id)
+            }
             render(view: 'accountActivatedSuccessful', model: [user: user])
         } else {
             render(view: "accountError")

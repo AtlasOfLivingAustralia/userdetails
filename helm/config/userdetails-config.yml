@@ -112,6 +112,13 @@ recaptcha:
   apiKey: {{ .Values.recaptcha.apiKey }}
   scoreThreshold: {{ .Values.recaptcha.scoreThreshold }}
 
+mailchimp:
+  enabled: {{ .Values.mailchimp.enabled }}
+  apiKey: {{ .Values.mailchimp.apiKey }}
+  serverPrefix: {{ .Values.mailchimp.serverPrefix }}
+  audienceId: {{ .Values.mailchimp.audienceId }}
+  newsletterTag: {{ .Values.mailchimp.newsletterTag }}
+
 ala:
   baseURL: https://www.ala.org.au
 
