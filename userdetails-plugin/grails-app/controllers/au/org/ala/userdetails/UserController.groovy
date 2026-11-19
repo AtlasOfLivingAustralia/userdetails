@@ -88,7 +88,7 @@ class UserController {
             passwordService.resetPassword(user, passwordService.generatePassword(user), true, null)
             userService.sendAccountActivation(user)
 
-            redirect(action: "show", id: user.id) ////issueeeeee
+            redirect(action: "show", id: user.id)
         }
         else{
             //ROLE_USER_CREATOR role does not have permission to show(id) action
@@ -107,7 +107,7 @@ class UserController {
         }
 
         String resetPasswordUrl = passwordService.getResetPasswordUrl(userInstance)
-        [userInstance: userInstance, resetPasswordUrl: resetPasswordUrl, newsletter: mailchimpNewsletterService.getUserStatus(userInstance)]
+        [userInstance: userInstance, resetPasswordUrl: resetPasswordUrl, newsletter: getNewsletterStatus(userInstance)]
     }
 
     def edit(String id) {
@@ -118,7 +118,7 @@ class UserController {
             return
         }
         [userInstance: userInstance, props:userInstance.propsAsMap(), visibleMFA: isMFAVisible(userInstance),
-         newsletter: mailchimpNewsletterService.getUserStatus(userInstance)]
+         newsletter: getNewsletterStatus(userInstance)]
     }
 
     def update(String id, Long version) {
@@ -135,15 +135,25 @@ class UserController {
 
         if (!success) {
             render(view: "edit", model: [ userInstance: userInstance, props: userInstance.propsAsMap(),
-                                         visibleMFA: isMFAVisible(userInstance), newsletter: mailchimpNewsletterService.getUserStatus(userInstance)])
+                                         visibleMFA: isMFAVisible(userInstance), newsletter: getNewsletterStatus(userInstance)])
             return
         }
 
         boolean newsletterUpdated = true
         boolean newsletterSubscribed = params.containsKey('newsletterSubscribed') && params.newsletterSubscribed?.toString() == 'on'
-        Map currentNewsletter = mailchimpNewsletterService.getUserStatus(userInstance)
-        if (currentNewsletter.subscribed != newsletterSubscribed) {
-            newsletterUpdated = profileService.updateNewsletterSubscription(userInstance, newsletterSubscribed)
+        if (!userInstance.activated) { // TODO issue in cognito user record.
+            def pendingNewsletterPreference = getPendingNewsletterPreference(userInstance)
+            boolean currentNewsletterSubscribed = pendingNewsletterPreference ?
+                    pendingNewsletterPreference.value == 'true' : true
+            if (currentNewsletterSubscribed != newsletterSubscribed) {
+                newsletterUpdated = userService.addOrUpdateProperty(userInstance, ProfileService.NEWSLETTER_OPT_IN,
+                        newsletterSubscribed.toString())
+            }
+        } else {
+            Map currentNewsletter = mailchimpNewsletterService.getUserStatus(userInstance)
+            if (currentNewsletter.subscribed != newsletterSubscribed) {
+                newsletterUpdated = profileService.updateNewsletterSubscription(userInstance, newsletterSubscribed)
+            }
         }
 
         flash.message = newsletterUpdated ?
@@ -186,5 +196,18 @@ class UserController {
                 MFAUnsupportedRoles.contains(userRoleRecord.role.role))
 
         return isMFAEnabled && !hasMFAUnsupportedRoles
+    }
+
+    private Map getNewsletterStatus(IUser user) {
+        if (!user.activated) { // TODO issue in cognito user record.
+            def pendingNewsletterPreference = getPendingNewsletterPreference(user)
+            boolean subscribed = pendingNewsletterPreference ? pendingNewsletterPreference.value == 'true' : true
+            return [available: true, subscribed: subscribed, status: 'pending']
+        }
+        mailchimpNewsletterService.getUserStatus(user)
+    }
+
+    private getPendingNewsletterPreference(IUser user) {
+        userService.searchProperty(user, ProfileService.NEWSLETTER_OPT_IN)?.find()
     }
 }
